@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanchar Telesystems Limited - Service Centre ERP</title>
+    <title>Sanchar Telesystems Limited - Corporate ERP Gateway</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #0f2c59;
@@ -22,11 +23,84 @@
             color: var(--text-main);
         }
 
-        /* Top Official Navbar */
+        /* 100% SECURE OVERLAY LOGIN GATEWAY SCREEN */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b192c;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 35px 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 22px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .login-field {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .login-btn {
+            background-color: var(--secondary-color);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background-color: #1e40af;
+        }
+
+        .login-error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 12px;
+            font-weight: 500;
+            display: none;
+        }
+
+        /* MAIN SYSTEM ERP PANEL VIEW INTERFACES */
+        .erp-main-wrapper {
+            display: none; /* Controlled completely by Auth Engine verification */
+        }
+
         .navbar {
             background-color: var(--primary-color);
             color: white;
-            padding: 12px 25px;
+            padding: 14px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,14 +111,9 @@
             font-size: 20px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .user-info {
-            font-size: 13px;
-            color: #93c5fd;
-        }
-
-        /* Menu Bars mimicking the sample image */
         .main-menu-bar {
             background-color: #2c3e50;
             display: flex;
@@ -55,10 +124,11 @@
             background: none;
             border: none;
             color: #ecf0f1;
-            padding: 10px 20px;
+            padding: 12px 22px;
             font-size: 13px;
             cursor: pointer;
             transition: background 0.2s;
+            font-weight: 500;
         }
 
         .menu-tab:hover, .menu-tab.active {
@@ -93,7 +163,6 @@
             text-transform: uppercase;
         }
 
-        /* Form Layout Grid */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -107,6 +176,7 @@
 
         .form-group {
             margin-bottom: 10px;
+            position: relative;
         }
 
         .form-group.full-width {
@@ -125,21 +195,45 @@
             color: #475569;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
-            padding: 8px 10px;
+            padding: 9px 11px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 13px;
         }
 
-        input:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
         }
 
-        /* Dynamic Item Table Styling */
+        /* Autosuggest Dropdown Mechanics */
+        .suggestions-box {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            z-index: 100;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12.5px;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f1f5f9;
+        }
+
         .item-add-table {
             width: 100%;
             border-collapse: collapse;
@@ -190,7 +284,6 @@
             margin-top: 20px;
         }
 
-        /* Database View List Table */
         .db-table {
             width: 100%;
             border-collapse: collapse;
@@ -208,7 +301,8 @@
             color: var(--primary-color);
             font-weight: 600;
         }
-db-table tr:hover {
+
+        .db-table tr:hover {
             background-color: #f1f5f9;
             cursor: pointer;
         }
@@ -222,8 +316,17 @@ db-table tr:hover {
             border-radius: 3px;
             cursor: pointer;
         }
+   .view-btn {
+            background-color: #0f2c59;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
 
-        /* EXACT SECOND SAMPLE IMAGE MATCHING CHALLAN DESIGN */
+        /* STRICT ACCURATE A4 CANVAS SHEET CONFIGURATIONS */
         .challan-view-section {
             display: none;
             margin-top: 20px;
@@ -232,67 +335,39 @@ db-table tr:hover {
         .challan-print-box {
             background: #fff;
             border: 1px solid #000;
-            padding: 30px;
+            padding: 45px 35px;
             color: #000;
             font-family: Arial, sans-serif;
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
+        /* Perfectly Centered Top Header - No Logo, No Phone No */
         .challan-top-header {
-            display: flex;
-            align-items: center;
+            text-align: center;
             border-bottom: 1px solid #000;
             padding-bottom: 15px;
-            position: relative;
         }
 
-        /* Custom Modern Oval Multi-line Blue Logo as per Image */
-        .challan-logo-img {
-            width: 90px;
-            height: 75px;
-            margin-right: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 3px solid #1d4ed8;
-            border-radius: 50% 40%;
-            position: relative;
-        }
-        .challan-logo-img::before {
-            content: "S";
-            font-size: 38px;
-            font-weight: 900;
-            color: #1d4ed8;
-            line-height: 1;
-        }
-        .challan-logo-img::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 4px;
-            background-color: #1d4ed8;
-            top: 52%;
-        }
-
-        .challan-company-details {
-            text-align: left;
-        }
-
-        .challan-company-details h2 {
+        .challan-top-header h2 {
             margin: 0;
             font-size: 26px;
             font-weight: bold;
-            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .challan-company-details p {
-            margin: 4px 0;
+        .challan-top-header p {
+            margin: 5px 0 0 0;
             font-size: 13px;
-            color: #333;
+            line-height: 1.4;
         }
 
         .challan-bar-title {
-            background-color: #dbb386; /* Accurate matching corporate light-brown/beige color strip */
+            background-color: #dbb386;
             text-align: center;
             font-weight: bold;
             font-size: 14px;
@@ -326,25 +401,26 @@ db-table tr:hover {
 
         .meta-label {
             font-weight: bold;
-            width: 130px;
+            width: 140px;
         }
 
         .challan-goods-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 12px;
+            margin-top: -1px;
         }
 
         .challan-goods-table th, .challan-goods-table td {
             border-bottom: 1px solid #000;
             border-right: 1px solid #000;
-            padding: 6px 10px;
+            padding: 8px 10px;
             text-align: left;
         }
 
         .challan-goods-table th {
             border-bottom: 2px solid #000;
-            background-color: #e2e8f0; /* Light gray row background matching sample */
+            background-color: #e2e8f0;
             font-weight: bold;
         }
 
@@ -355,15 +431,13 @@ db-table tr:hover {
         .challan-summary-row {
             background-color: #cbd5e1;
             font-weight: bold;
-            font-size: 11.5px;
         }
 
         .challan-signatures {
-            margin-top: 25px;
+            margin-top: 50px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             font-size: 12px;
-            padding-top: 30px;
         }
 
         .sig-box {
@@ -378,226 +452,269 @@ db-table tr:hover {
             margin-top: 15px;
         }
 
-        /* Print Style Override */
+        .btn-download-generic {
+            background-color: #ea580c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         @media print {
             body * { visibility: hidden; }
             #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
-            #challanPrintContainer { position: absolute; left: 0; top: 0; width: 100%; border: none; padding: 0; }
+            #challanPrintContainer { position: absolute; left: 0; top: 0; width: 210mm; border: none; box-shadow: none; padding: 0; }
             .action-buttons { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="navbar-brand">Sanchar Telesystems Limited</div>
-        <div class="user-info">Welcome: Service Administrator</div>
-    </div>
-
-    <div class="main-menu-bar">
-        <button class="menu-tab active" id="tabIssue" onclick="switchTab('issue')">⚙️ Issue</button>
-        <button class="menu-tab" id="tabChallan" onclick="switchTab('challan')">📄 Issue Challan Options</button>
-    </div>
-<div class="container">
-        
-        <div id="issueModule" class="card">
-            <div class="card-title">Material Issue Registry Form</div>
-            <form id="issueForm" onsubmit="submitIssueForm(event)">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Person Name *</label>
-                        <input type="text" id="formPerson" required placeholder="Handled Person Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Party Name / Consigned To *</label>
-                        <input type="text" id="formParty" required placeholder="Client Name / Consignee">
-                    </div>
-                    <div class="form-group">
-                        <label>Consignor Name *</label>
-                        <input type="text" id="formConsignor" required placeholder="Sender Authority Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Consignor Mobile Number *</label>
-                        <input type="text" id="formConsignorMobile" required placeholder="10 Digit Mobile">
-                    </div>
-                    <div class="form-group">
-                        <label>Consignee Name *</label>
-                        <input type="text" id="formConsignee" required placeholder="Receiver Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Consignee Mobile Number *</label>
-                        <input type="text" id="formConsigneeMobile" required placeholder="10 Digit Mobile">
-                    </div>
-                    <div class="form-group">
-                        <label>Shipment By *</label>
-                        <input type="text" id="formShipment" required placeholder="e.g. BY HAND / COURIER">
-                    </div>
-                    <div class="form-group">
-                        <label>Date (DD/MM/YYYY) *</label>
-                        <input type="date" id="formDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label>GSTIN Number</label>
-                        <input type="text" id="formGst" placeholder="07AANCS3850Q1ZK" value="07AANCS3850Q1ZK">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Address *</label>
-                        <input type="text" id="formAddress" required placeholder="Full Destination Address (e.g. BHAWANA-DELHI)">
-                    </div>
-                    <div class="form-group full-width">
-                        <label>Remarks</label>
-                        <textarea id="formRemarks" rows="2" placeholder="Any additional notes..."></textarea>
-                    </div>
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+   <h2>Sanchar Telesystems Limited</h2>
+            
+            <form onsubmit="verifySystemCredentials(event)">
+                <div class="login-field">
+                    <label>Username</label>
+                    <input type="text" id="loginUser" required placeholder="username" autocomplete="off">
                 </div>
+                <div class="login-field">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" required placeholder="password">
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div class="login-error" id="loginErrorMsg">Invalid Credentials. Network Handshake Rejected.</div>
+            </form>
+        </div>
+    </div>
 
-                <div style="border-top: 1px solid #cbd5e1; padding-top: 15px;">
-                    <span style="font-size: 14px; font-weight: 600; color: var(--primary-color);">ITEM TRANSACTION BLOCK</span>
-                    <table class="item-add-table" id="itemAdditionTable">
+    <div class="erp-main-wrapper" id="erpSystemWrapper">
+        
+        <div class="navbar">
+            <div class="navbar-brand">Sanchar Telesystems Limited</div>
+            <div style="font-size:13px; color:#93c5fd;">Active Server Secured</div>
+        </div>
+
+        <div class="main-menu-bar">
+            <button class="menu-tab active" id="tabIssue" onclick="switchTab('issue')">⚙️ Issue Registry</button>
+            <button class="menu-tab" id="tabChallan" onclick="switchTab('challan')">📄 Issue Challan Options</button>
+        </div>
+
+        <div class="container">
+            
+            <div id="issueModule" class="card">
+                <div class="card-title">Material Issue Registry Form</div>
+                <form id="issueForm" onsubmit="submitIssueForm(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Party Name / Consigned To *</label>
+                            <input type="text" id="formParty" required placeholder="Type Client Name..." autocomplete="off" oninput="showSuggestions('party')">
+                            <div id="partySuggestions" class="suggestions-box"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>GSTIN Number *</label>
+                            <input type="text" id="formGst" required placeholder="Type GSTIN..." autocomplete="off" oninput="showSuggestions('gst')">
+                            <div id="gstSuggestions" class="suggestions-box"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Purpose *</label>
+                            <select id="formPurpose" required>
+                                <option value="">-- Select Purpose --</option>
+                                <option value="DEMO PURPOSE">DEMO PURPOSE</option>
+                                <option value="TESTING PURPOSE">TESTING PURPOSE</option>
+                                <option value="REPAIR & SERVICE">REPAIR & SERVICE</option>
+                                <option value="STOCK TRANSFER">STOCK TRANSFER</option>
+                                <option value="OFFICIAL SUPPLY">OFFICIAL SUPPLY</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Consignor Name *</label>
+                            <input type="text" id="formConsignor" required placeholder="Sender Authority Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Consignor Mobile Number *</label>
+                            <input type="text" id="formConsignorMobile" required placeholder="10 Digit Mobile">
+                        </div>
+                        <div class="form-group">
+                            <label>Consignee Name *</label>
+                            <input type="text" id="formConsignee" required placeholder="Receiver Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Consignee Mobile Number *</label>
+                            <input type="text" id="formConsigneeMobile" required placeholder="10 Digit Mobile">
+                        </div>
+                        <div class="form-group">
+                            <label>Shipment By *</label>
+                            <input type="text" id="formShipment" required placeholder="e.g. BY HAND / COURIER">
+                        </div>
+                        <div class="form-group">
+                            <label>Challan Target Date *</label>
+                            <input type="date" id="formDate" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Address *</label>
+                            <input type="text" id="formAddress" required placeholder="Full Destination Address">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Remarks</label>
+                            <textarea id="formRemarks" rows="2" placeholder="Any additional notes..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #cbd5e1; padding-top: 15px;">
+                        <span style="font-size: 14px; font-weight: 600; color: var(--primary-color);">ITEM TRANSACTION BLOCK</span>
+                        <table class="item-add-table" id="itemAdditionTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%;">Material Part Code *</th>
+                                    <th style="width: 45%;">Material Name / Description *</th>
+                                    <th style="width: 15%;">Qty (Units) *</th>
+                                    <th style="width: 5%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemTableBody">
+                                <tr>
+                                    <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                                    <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
+                                    <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
+                                    <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn-add-row" onclick="addNewRow()">+ Add More Item</button>
+                    </div>
+
+                    <button type="submit" class="btn-submit-issue" id="processBtn">💾 Issue Material & Save Database</button>
+                </form>
+            </div>
+<div id="challanListModule" class="card" style="display: none;">
+                <div style="display:flex; justify-content:space-between; align-items:center;" class="card-title">
+                    <span>Issue Challan Database Node</span>
+                    <button class="btn-download-generic" onclick="downloadTablePDF()">📥 Download Logs Report PDF</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="db-table" id="logsTableContainer">
                         <thead>
                             <tr>
-                                <th style="width: 25%;">Material Part Code / Item Name *</th>
-                                <th style="width: 25%;">Material Name / Description *</th>
-                                <th style="width: 15%;">Qty (Units) *</th>
-                                <th style="width: 15%;">Serial Number</th>
-                                <th style="width: 15%;">IMEI / Details</th>
-                                <th style="width: 5%;">Action</th>
+                                <th>Challan Number</th>
+                                <th>Issue Date</th>
+                                <th>Party Name</th>
+                                <th>GSTIN Number</th>
+                                <th>Purpose</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="itemTableBody">
+                        <tbody id="dbTableBody">
                             <tr>
-                                <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                                <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
-                                <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
-                                <td><input type="text" class="row-serial" placeholder="S/N"></td>
-                                <td><input type="text" class="row-imei" placeholder="IMEI/Other"></td>
-                                <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted);">Syncing secure cloud data streams...</td>
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" class="btn-add-row" onclick="addNewRow()">+ Add More Item</button>
                 </div>
-
-                <button type="submit" class="btn-submit-issue" id="processBtn">💾 Issue Material & Save Database</button>
-            </form>
-        </div>
-
-        <div id="challanListModule" class="card" style="display: none;">
-            <div class="card-title">Issue Challan Database Node</div>
-            <div style="overflow-x: auto;">
-                <table class="db-table">
-                    <thead>
-                        <tr>
-                            <th>Challan Number</th>
-                            <th>Issue Date</th>
-                            <th>Party Name</th>
-                            <th>Address</th>
-                            <th>Remarks</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dbTableBody">
-                        <tr>
-                            <td colspan="6" style="text-align: center; color: var(--text-muted);">Syncing secure cloud data streams...</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
-        </div>
 
-        <div id="challanViewSection" class="challan-view-section">
-            <div class="action-buttons">
-                <button class="btn-action" onclick="closeChallanView()">Back to Registry</button>
-                <button class="btn-action print" onclick="window.print()" style="background: #0f2c59; color: white;">🖨️ Print Delivery Challan PDF</button>
-            </div>
-            <br>
-            <div class="challan-print-box" id="challanPrintContainer">
+            <div id="challanViewSection" class="challan-view-section">
+                <div class="action-buttons">
+                    <button style="padding: 8px 15px; border-radius:4px; cursor:pointer;" onclick="closeChallanView()">Back to Registry</button>
+                    <button style="padding: 8px 15px; border-radius:4px; cursor:pointer; background:#ea580c; color:white; border:none; font-weight:bold;" onclick="downloadSingleChallanPDF()">📥 Download Challan PDF</button>
+                    <button style="padding: 8px 15px; border-radius:4px; cursor:pointer; background: #0f2c59; color: white; border:none;" onclick="window.print()">🖨️ Direct Print Layout</button>
+                </div>
+                <br>
                 
-                <div class="challan-top-header">
-                    <div class="challan-logo-img"></div>
-                    <div class="challan-company-details">
+                <div class="challan-print-box" id="challanPrintContainer">
+                    
+                    <div class="challan-top-header">
                         <h2>Sanchar Telesystems Limited</h2>
-                        <p>A-78, Ground Floor,</p>
-                        <p>Okhla Industrial Area, Phase-II,</p>
-                        <p>New Delhi-110020</p>
+                        <p>A-78, Ground Floor, Okhla Industrial Area, Phase-II, New Delhi-110020</p>
                     </div>
-                </div>
 
-                <div class="challan-bar-title">DELIVERY CHALLAN</div>
+                    <div class="challan-bar-title">DELIVERY CHALLAN</div>
 
-                <div class="challan-meta-info">
-                    <div class="meta-col">
-                        <div class="meta-line">
-                            <span class="meta-label">Challan Number:</span>
-                            <span id="lblChallanNo" style="font-weight: bold;">-</span>
+                    <div class="challan-meta-info">
+                        <div class="meta-col">
+                            <div class="meta-line">
+                                <span class="meta-label">Challan Number:</span>
+                                <span id="lblChallanNo" style="font-weight: bold;">-</span>
+                            </div>
+                            <div class="meta-line">
+                                <span class="meta-label">GSTIN Number:</span>
+                                <span id="lblGstNo" style="font-weight: bold;">-</span>
+                            </div>
+                            <div class="meta-line">
+                                <span class="meta-label">Consigned To:</span>
+                                <span id="lblConsignedTo" style="font-weight: bold;">-</span>
+                            </div>
+                            <div class="meta-line">
+                                <span class="meta-label">Address:</span>
+                                <span id="lblAddress">-</span>
+                            </div>
                         </div>
-                        <div class="meta-line">
-                            <span class="meta-label">GSTIN Number:</span>
-                            <span id="lblGstNo">-</span>
-                        </div>
-                        <div class="meta-line">
-                            <span class="meta-label">Consigned To:</span>
-                            <span id="lblConsignedTo" style="font-weight: bold;">-</span>
-                        </div>
-                        <div class="meta-line">
-                            <span class="meta-label"></span>
-                            <span id="lblAddress">-</span>
+                        <div class="meta-col">
+                            <div class="meta-line">
+                                <span class="meta-label">Challan Date:</span>
+                                <span id="lblDate">-</span>
+                            </div>
+                            <div class="meta-line">
+                                <span class="meta-label">Purpose:</span>
+                                <span id="lblPurpose" style="font-weight: bold; color: #b45309;">-</span>
+                            </div>
+                            <div style="margin-top: 5px; border-top: 1px dashed #ccc; padding-top:5px;">
+                                <div class="meta-line"><span class="meta-label">Consignor Name:</span><span id="lblConsignorName">-</span></div>
+                                <div class="meta-line"><span class="meta-label">Consignor Mobile:</span><span id="lblConsignorMobile">-</span></div>
+                                <div class="meta-line"><span class="meta-label">Consignee Name:</span><span id="lblConsigneeName">-</span></div>
+                                <div class="meta-line"><span class="meta-label">Consignee Mobile:</span><span id="lblConsigneeMobile">-</span></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="meta-col">
-                        <div class="meta-line">
-                            <span class="meta-label" style="text-align: right; padding-right:15px; width:150px;">Challan Date:</span>
-                            <span id="lblDate">-</span>
-                        </div>
-                        <div style="margin-top: 10px;">
-                            <div class="meta-line"><span class="meta-label">Consignor Name:</span><span id="lblConsignorName">-</span></div>
-                            <div class="meta-line"><span class="meta-label">Consignor Mobile:</span><span id="lblConsignorMobile">-</span></div>
-                            <div class="meta-line"><span class="meta-label">Consignee Name:</span><span id="lblConsigneeName">-</span></div>
-                            <div class="meta-line"><span class="meta-label">Consignee Mobile:</span><span id="lblConsigneeMobile">-</span></div>
-                        </div>
+
+                    <div style="font-size: 13px; padding: 8px; border-bottom: 1px solid #000;">
+                        <strong>Shipment By :</strong> <span id="lblShipmentBy">-</span>
                     </div>
-                </div>
 
-                <div style="font-size: 13px; padding: 8px; border-bottom: 1px solid #000;">
-                    <strong>Shipment By :</strong> <span id="lblShipmentBy">-</span>
-                </div>
+                    <table class="challan-goods-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 8%; text-align: center;">Sr. No</th>
+                                <th style="width: 37%;">Material Part Code</th>
+                                <th style="width: 35%;">Material Name</th>
+                                <th style="width: 20%;">No. of Units</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lblGoodsTableBody">
+                            </tbody>
+                        <tfoot>
+                            <tr class="challan-summary-row">
+                                <td colspan="3" style="text-align: right; border-right: 1px solid #000; padding: 8px;" id="lblTotalItemsSummary">Total Summary:</td>
+                                <td id="lblTotalQty" style="padding: 8px;">0 Items Nos.</td>
+                            </tr>
+                        </tfoot>
+                    </table>
 
-                <table class="challan-goods-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 8%; text-align: center;">Sr. No</th>
-                            <th style="width: 32%;">Material Part Code</th>
-                            <th style="width: 40%;">Material Name</th>
-                            <th style="width: 20%;">No. of Units</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lblGoodsTableBody">
-                        </tbody>
-                    <tfoot>
-                        <tr class="challan-summary-row">
-                            <td colspan="3" style="text-align: right; border-right: 1px solid #000; padding: 6px;" id="lblTotalItemsSummary">Total Summary:</td>
-                            <td id="lblTotalQty" style="padding: 6px;">0 Items Nos.</td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <div style="margin-top: 15px; font-size: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-                    <strong>Remarks:</strong> <span id="lblRemarks">-</span>
-                </div>
-<div class="challan-signatures">
-                    <div class="sig-box">
-                        <strong>Received By:</strong> <span id="lblReceiverBottom" style="font-size: 11px;">-</span><br><br>
-                        Signature:<br>Name:<br>Date:<br>Mobile Number:
+                    <div style="margin-top: 15px; font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 8px;">
+                        <strong>Remarks:</strong> <span id="lblRemarks">-</span>
                     </div>
-                    <div class="sig-box"><strong>Issued By:</strong></div>
-                    <div class="sig-box"><strong>Verified By:</strong></div>
-                    <div class="sig-box" style="text-align: right;">
-                        <strong>For Sanchar Telesystems Limited.</strong><br><br><br><br>
-                        Signature<br>Name<br>Date<br>Mobile Number
+
+                    <div class="challan-signatures">
+                        <div class="sig-box">
+                            <strong>Received By:</strong><br><br>
+                            Signature:<br>Name:<br>Date:<br>Mobile Number:
+                        </div>
+                        <div class="sig-box"><strong>
+                      </strong></div>
+                        <div class="sig-box"><strong></strong></div>
+                        <div class="sig-box" style="text-align: right;">
+                            <strong>For Sanchar Telesystems Limited.</strong><br><br><br><br>
+                            Authorized Signatory
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 
     <script type="module">
@@ -619,6 +736,24 @@ db-table tr:hover {
         const db = getDatabase(app);
 
         let fetchedChallans = {};
+        let distinctParties = new Set();
+        let distinctGstins = new Set();
+
+        // 100% SECURE TERMINAL CREDENTIALS SECURITY LAYER
+        window.verifySystemCredentials = function(event) {
+            event.preventDefault();
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            const errMsg = document.getElementById('loginErrorMsg');
+
+            if(u === "Sanchar" && p === "Sanchar@2026") {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('erpSystemWrapper').style.display = 'block';
+            } else {
+                errMsg.style.display = 'block';
+                document.getElementById('loginPass').value = "";
+            }
+        }
 
         window.switchTab = function(mode) {
             document.getElementById('tabIssue').classList.remove('active');
@@ -643,8 +778,6 @@ db-table tr:hover {
                 <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
                 <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
                 <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
-                <td><input type="text" class="row-serial" placeholder="S/N"></td>
-                <td><input type="text" class="row-imei" placeholder="IMEI/Other"></td>
                 <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
             `;
             tbody.appendChild(row);
@@ -658,26 +791,80 @@ db-table tr:hover {
                 alert("Minimum 1 item transactional line is mandatory.");
             }
         }
+window.showSuggestions = function(type) {
+            const partyInput = document.getElementById('formParty').value.toLowerCase();
+            const gstInput = document.getElementById('formGst').value.toLowerCase();
+            
+            if(type === 'party') {
+                const box = document.getElementById('partySuggestions');
+                box.innerHTML = "";
+                if(!partyInput) { box.style.display='none'; return; }
+                
+                const filtered = Array.from(distinctParties).filter(item => item.toLowerCase().includes(partyInput));
+                if(filtered.length > 0) {
+                    box.style.display = 'block';
+                    filtered.forEach(name => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.innerText = name;
+                        div.onclick = () => { document.getElementById('formParty').value = name; box.style.display='none'; };
+                        box.appendChild(div);
+                    });
+                } else { box.style.display='none'; }
+            }
+
+            if(type === 'gst') {
+                const box = document.getElementById('gstSuggestions');
+                box.innerHTML = "";
+                if(!gstInput) { box.style.display='none'; return; }
+                
+                const filtered = Array.from(distinctGstins).filter(item => item.toLowerCase().includes(gstInput));
+                if(filtered.length > 0) {
+                    box.style.display = 'block';
+                    filtered.forEach(gst => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.innerText = gst;
+                        div.onclick = () => { document.getElementById('formGst').value = gst; box.style.display='none'; };
+                        box.appendChild(div);
+                    });
+                } else { box.style.display='none'; }
+            }
+        }
+
+        document.addEventListener('click', function(e){
+            if(e.target.id !== 'formParty') document.getElementById('partySuggestions').style.display='none';
+            if(e.target.id !== 'formGst') document.getElementById('gstSuggestions').style.display='none';
+        });
 
         document.getElementById('formDate').valueAsDate = new Date();
 
-        // Submit Form and save to database with requested dynamic Challan format
         window.submitIssueForm = function(event) {
             event.preventDefault();
             const procBtn = document.getElementById('processBtn');
             procBtn.innerText = "Processing Cloud Sync Transaction...";
             procBtn.disabled = true;
 
-            const targetDate = document.getElementById('formDate').value;
-            const dateObj = new Date(targetDate);
+            const selectedDateString = document.getElementById('formDate').value;
+            const dateObj = new Date(selectedDateString);
             
-            // Format segments
             const dd = String(dateObj.getDate()).padStart(2, '0');
             const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
             const yyyy = dateObj.getFullYear();
             const formattedDateString = `${dd}/${mm}/${yyyy}`;
+            const lookupDateKey = `${dd}${mm}${yyyy}`;
 
-            // Loop rows to structure data array
+            // Sequential Serial Logic
+            let totalDailyCount = 1;
+            Object.keys(fetchedChallans).forEach(key => {
+                const item = fetchedChallans[key];
+                if(item.challanNo && item.challanNo.substring(3, 11) === lookupDateKey) {
+                    totalDailyCount++;
+                }
+            });
+            const formattedSerialNo = String(totalDailyCount).padStart(2, '0');
+            const dynamicChallanNumber = `STL${lookupDateKey}${formattedSerialNo}`;
+
             const itemRows = document.querySelectorAll('#itemTableBody tr');
             let itemsArray = [];
             let calculatedTotalQty = 0;
@@ -688,21 +875,15 @@ db-table tr:hover {
                 itemsArray.push({
                     partCode: row.querySelector('.row-part-code').value,
                     materialName: row.querySelector('.row-material-name').value,
-                    quantity: itemQty,
-                    serialNo: row.querySelector('.row-serial').value || '-',
-                    imei: row.querySelector('.row-imei').value || '-'
+                    quantity: itemQty
                 });
             });
 
-            // Generating Requested Custom Challan: STL + DD + MM + YYYY + SerialNo
-            const customSerial = String(Math.floor(10 + Math.random() * 90)); // Dynamic daily counter format
-            const dynamicChallanNumber = `STL${dd}${mm}${yyyy}${customSerial}`;
-
             const issueDataPayload = {
                 challanNo: dynamicChallanNumber,
-                gstNumber: document.getElementById('formGst').value || '07AANCS3850Q1ZK',
-                personName: document.getElementById('formPerson').value,
+                gstNumber: document.getElementById('formGst').value,
                 partyName: document.getElementById('formParty').value,
+                purposeMode: document.getElementById('formPurpose').value,
                 consignorName: document.getElementById('formConsignor').value,
                 consignorMobile: document.getElementById('formConsignorMobile').value,
                 consigneeName: document.getElementById('formConsignee').value,
@@ -717,7 +898,7 @@ db-table tr:hover {
                 timestamp: new Date().toISOString()
             };
 
-            push(ref(db, "sanchar_issues_v2"), issueDataPayload)
+            push(ref(db, "sanchar_issues_v4_secured"), issueDataPayload)
                 .then(() => {
                     alert(`Material Dispatched Successfully! Challan Generated: ${dynamicChallanNumber}`);
                     document.getElementById('issueForm').reset();
@@ -726,8 +907,6 @@ db-table tr:hover {
                             <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
                             <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
                             <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
-                            <td><input type="text" class="row-serial" placeholder="S/N"></td>
-                            <td><input type="text" class="row-imei" placeholder="IMEI/Other"></td>
                             <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
                         </tr>
                     `;
@@ -738,14 +917,13 @@ db-table tr:hover {
                 })
                 .catch(err => {
                     console.error(err);
-                    alert("Database Injection Dropped.");
+                    alert("Database write rejected.");
                     procBtn.innerText = "💾 Issue Material & Save Database";
                     procBtn.disabled = false;
                 });
         }
 
-        // Fetching Realtime Sync Arrays 
-        onValue(ref(db, "sanchar_issues_v2"), (snapshot) => {
+        onValue(ref(db, "sanchar_issues_v4_secured"), (snapshot) => {
             const tableBody = document.getElementById('dbTableBody');
             tableBody.innerHTML = "";
             const data = snapshot.val();
@@ -756,25 +934,29 @@ db-table tr:hover {
             }
 
             fetchedChallans = data;
+            distinctParties.clear();
+            distinctGstins.clear();
 
             Object.keys(data).reverse().forEach(key => {
                 const item = data[key];
+                
+                if(item.partyName) distinctParties.add(item.partyName);
+                if(item.gstNumber) distinctGstins.add(item.gstNumber);
+
                 const tr = document.createElement('tr');
                 tr.onclick = () => renderChallanDocument(key);
                 tr.innerHTML = `
                     <td style="font-weight:bold; color:var(--secondary-color);">${item.challanNo}</td>
                     <td>${item.issueDate}</td>
                     <td>${item.partyName}</td>
-                    <td>${item.address}</td>
-                    <td>${item.remarks}</td>
+                    <td>${item.gstNumber}</td>
+                    <td style="font-weight:600; color:#b45309;">${item.purposeMode || 'DELIVERY'}</td>
                     <td><button class="view-btn">Open Report</button></td>
                 `;
                 tableBody.appendChild(tr);
             });
         });
-
-        // Map live details into exact clone design blueprint
-        window.renderChallanDocument = function(recordKey) {
+window.renderChallanDocument = function(recordKey) {
             const targetData = fetchedChallans[recordKey];
             if(!targetData) return;
 
@@ -783,13 +965,13 @@ db-table tr:hover {
             document.getElementById('lblConsignedTo').innerText = targetData.partyName;
             document.getElementById('lblAddress').innerText = targetData.address;
             document.getElementById('lblDate').innerText = targetData.issueDate;
+            document.getElementById('lblPurpose').innerText = targetData.purposeMode || 'DELIVERY';
             document.getElementById('lblConsignorName').innerText = targetData.consignorName;
             document.getElementById('lblConsignorMobile').innerText = targetData.consignorMobile;
             document.getElementById('lblConsigneeName').innerText = targetData.consigneeName;
             document.getElementById('lblConsigneeMobile').innerText = targetData.consigneeMobile;
             document.getElementById('lblShipmentBy').innerText = targetData.shipmentBy;
             document.getElementById('lblRemarks').innerText = targetData.remarks;
-            document.getElementById('lblReceiverBottom').innerText = targetData.partyName;
 
             const itemsTableBody = document.getElementById('lblGoodsTableBody');
             itemsTableBody.innerHTML = "";
@@ -805,7 +987,7 @@ db-table tr:hover {
                 itemsTableBody.appendChild(tr);
             });
 
-            document.getElementById('lblTotalItemsSummary').innerText = `${targetData.distinctItemsCount} ITEM Description.`;
+            document.getElementById('lblTotalItemsSummary').innerText = `${targetData.distinctItemsCount} ITEM DESCRIPTION / LINES.`;
             document.getElementById('lblTotalQty').innerText = `${targetData.totalUnitsCount} Nos.`;
 
             document.getElementById('challanListModule').style.display = 'none';
@@ -815,6 +997,31 @@ db-table tr:hover {
         window.closeChallanView = function() {
             document.getElementById('challanViewSection').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'block';
+        }
+
+        window.downloadSingleChallanPDF = function() {
+            const element = document.getElementById('challanPrintContainer');
+            const currentChallanNo = document.getElementById('lblChallanNo').innerText;
+            const opt = {
+                margin:       0,
+                filename:     `Challan_${currentChallanNo}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        window.downloadTablePDF = function() {
+            const element = document.getElementById('logsTableContainer');
+            const opt = {
+                margin:       10,
+                filename:     'Sanchar_Challan_Logs_Report.pdf',
+                image:        { type: 'jpeg', quality: 0.95 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(element).save();
         }
     </script>
 </body>
