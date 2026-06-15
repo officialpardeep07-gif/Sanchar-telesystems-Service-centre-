@@ -1,0 +1,383 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanchar Telesystems Limited - Service Centre</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        header h1 {
+            color: #0056b3;
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        header p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-style: italic;
+        }
+        .menu-btn {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        .menu-btn:hover {
+            background-color: #004085;
+        }
+        .sub-menu, .form-section, .challan-section {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .sub-menu {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .sub-btn {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            flex: 1;
+            font-weight: 500;
+        }
+        .sub-btn:hover {
+            background-color: #138496;
+        }
+        .sub-btn.active {
+            background-color: #117a8b;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+        .challan-box {
+            border: 2px dashed #0056b3;
+            padding: 25px;
+            background-color: #fff;
+            margin-top: 30px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .challan-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .challan-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 1px;
+        }
+        .challan-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .challan-table th, .challan-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .challan-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .challan-footer {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature {
+            border-top: 1px solid #333;
+            width: 200px;
+            text-align: center;
+            padding-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        .print-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media print {
+            body * { visibility: hidden; }
+            .challan-box, .challan-box * { visibility: visible; }
+            .challan-box { position: absolute; left: 0; top: 0; width: 100%; border: none; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Sanchar Telesystems Limited</h1>
+        <p>Service Centre Management Portal</p>
+    </header>
+
+    <button class="menu-btn" onclick="toggleSubMenu()">⚙️ Material Consume</button>
+
+    <div id="subMenu" class="sub-menu">
+        <button class="sub-btn" id="btnDispatch" onclick="showForm('dispatch')">📤 Material Dispatch</button>
+        <button class="sub-btn" id="btnReceive" onclick="showForm('receive')">📥 Material Receive</button>
+    </div>
+
+    <div id="dispatchFormSection" class="form-section">
+        <h3 style="color: #0056b3; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Material Dispatch Details</h3>
+        <form id="dispatchForm" onsubmit="generateChallan(event)">
+            <div class="form-group">
+                <label for="itemName">Item Name:</label>
+                <input type="text" id="itemName" required placeholder="e.g., Telecom Router">
+            </div>
+            <div class="form-group">
+                <label for="qty">Quantity (Qty):</label>
+                <input type="number" id="qty" min="1" required placeholder="e.g., 5">
+            </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label for="personName">Person Name:</label>
+                <input type="text" id="personName" required placeholder="Name of person handling dispatch">
+            </div>
+            <div class="form-group">
+                <label for="partyName">Party Name / Client Name:</label>
+                <input type="text" id="partyName" required placeholder="Receiver Party Name">
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">📄 Generate & Save Delivery Challan</button>
+        </form>
+    </div>
+
+    <div id="receiveSection" class="form-section" style="text-align: center; padding: 20px; color: #666;">
+        <h3>Material Receive Module</h3>
+        <p>This module is connected to Firebase and ready for future forms.</p>
+    </div>
+
+    <div id="challanSection" class="challan-section">
+        <div class="challan-box" id="challanBox">
+            <div class="challan-header">
+                <h2 style="margin: 0; color: #0056b3;">SANCHAR TELESYSTEMS LIMITED</h2>
+                <p style="margin: 5px 0; color: #555;">Corporate Service Centre</p>
+                <div class="challan-title">DELIVERY CHALLAN</div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <div>
+                    <strong>Challan No:</strong> <span id="chNumber"></span><br>
+                    <strong>Party Name:</strong> <span id="chPartyName"></span>
+                </div>
+                <div style="text-align: right;">
+                    <strong>Date:</strong> <span id="chDate"></span><br>
+                    <strong>Dispatched By:</strong> <span id="chPersonName"></span>
+                </div>
+            </div>
+
+            <table class="challan-table">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">S.No.</th>
+                        <th style="width: 65%;">Item Description</th>
+                        <th style="width: 25%; text-align: center;">Quantity (Qty)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td id="chItemName"></td>
+                        <td id="chQty" style="text-align: center; font-weight: bold;"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="challan-footer">
+                <div class="signature">Receiver's Signature</div>
+                <div class="signature">For Sanchar Telesystems Ltd.<br><br>(Authorized Signatory)</div>
+            </div>
+        </div>
+        <button class="print-btn" onclick="window.print()">🖨️ Print Challan</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_uUBIp1c3rWgyQNYVc22D7JZ1UlhskoI",
+      authDomain: "sanchar-service-centre.firebaseapp.com",
+      databaseURL: "https://sanchar-service-centre-default-rtdb.firebaseio.com",
+      projectId: "sanchar-service-centre",
+      storageBucket: "sanchar-service-centre.firebasestorage.app",
+      messagingSenderId: "438585498693",
+      appId: "1:438585498693:web:fcf3db5958bc352ca9d72c",
+      measurementId: "G-HHXW1QKY08"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Make functions globally available for UI
+    window.toggleSubMenu = function() {
+        var subMenu = document.getElementById('subMenu');
+        if (subMenu.style.display === 'flex') {
+            subMenu.style.display = 'none';
+            hideAllSections();
+        } else {
+            subMenu.style.display = 'flex';
+        }
+    }
+
+    window.showForm = function(type) {
+        hideAllSections();
+        document.getElementById('btnDispatch').classList.remove('active');
+        document.getElementById('btnReceive').classList.remove('active');
+
+        if (type === 'dispatch') {
+            document.getElementById('btnDispatch').classList.add('active');
+            document.getElementById('dispatchFormSection').style.display = 'block';
+        } else if (type === 'receive') {
+            document.getElementById('btnReceive').classList.add('active');
+            document.getElementById('receiveSection').style.display = 'block';
+        }
+    }
+
+    function hideAllSections() {
+        document.getElementById('dispatchFormSection').style.display = 'none';
+        document.getElementById('receiveSection').style.display = 'none';
+        document.getElementById('challanSection').style.display = 'none';
+    }
+
+    // Set Default Date
+    document.getElementById('date').valueAsDate = new Date();
+
+    // Submit Form & Save to Firebase Realtime Database
+    window.generateChallan = function(event) {
+        event.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerText = "Saving Data...";
+        submitBtn.disabled = true;
+
+        var itemName = document.getElementById('itemName').value;
+        var qty = document.getElementById('qty').value;
+        var date = document.getElementById('date').value;
+        var personName = document.getElementById('personName').value;
+        var partyName = document.getElementById('partyName').value;
+        var challanNo = 'STL/DC/' + Math.floor(Math.random() * 90000 + 10000);
+
+        // Object to save in Firebase
+        const dispatchData = {
+            challanNumber: challanNo,
+            itemName: itemName,
+            quantity: qty,
+            date: date,
+            dispatchedBy: personName,
+            partyName: partyName,
+            timestamp: new Date().toISOString()
+        };
+
+        // Push data to Firebase under 'dispatches' node
+        push(ref(database, 'dispatches'), dispatchData)
+            .then(() => {
+                var formattedDate = new Date(date).toLocaleDateString('en-GB');
+
+                // UI update
+                document.getElementById('chNumber').innerText = challanNo;
+                document.getElementById('chItemName').innerText = itemName;
+                document.getElementById('chQty').innerText = qty;
+                document.getElementById('chDate').innerText = formattedDate;
+                document.getElementById('chPersonName').innerText = personName;
+                document.getElementById('chPartyName').innerText = partyName;
+
+                document.getElementById('challanSection').style.display = 'block';
+                document.getElementById('challanSection').scrollIntoView({ behavior: 'smooth' });
+                
+                submitBtn.innerText = "📄 Generate & Save Delivery Challan";
+                submitBtn.disabled = false;
+                alert("Data saved successfully online!");
+            })
+            .catch((error) => {
+                console.error("Error saving to Firebase:", error);
+                alert("Error saving data online. Please check Firebase rules.");
+                submitBtn.innerText = "📄 Generate & Save Delivery Challan";
+                submitBtn.disabled = false;
+            });
+    }
+</script>
+
+</body>
+</html>
