@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanchar Telesystems Limited - Service Centre Portal</title>
+    <title>Sanchar Telesystems Limited - Service Centre ERP</title>
     <style>
         :root {
-            --primary-color: #0f2c59; /* Deep Navy Blue */
-            --secondary-color: #1d4ed8; /* Corporate Blue */
-            --accent-color: #10b981; /* Success Green */
-            --bg-color: #f8fafc; /* Professional Off-White/Light Gray */
-            --text-main: #1e293b; /* Dark Slate Text */
-            --text-muted: #64748b; /* Muted Slate */
-            --border-color: #cbd5e1; /* Clean Border Gray */
+            --primary-color: #0f2c59;
+            --secondary-color: #1d4ed8;
+            --accent-color: #10b981;
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --border-color: #cbd5e1;
         }
 
         body {
@@ -23,137 +22,83 @@
             color: var(--text-main);
         }
 
-        /* Top Corporate Header */
+        /* Top Official Navbar */
         .navbar {
             background-color: var(--primary-color);
             color: white;
-            padding: 15px 30px;
+            padding: 12px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .navbar-brand {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
-        .navbar-sub {
+        .user-info {
             font-size: 13px;
             color: #93c5fd;
-            font-weight: 500;
         }
 
-        .main-container {
-            max-width: 1000px;
-            margin: 30px auto;
+        /* Menu Bars mimicking the sample image */
+        .main-menu-bar {
+            background-color: #2c3e50;
+            display: flex;
+            padding: 0 10px;
+        }
+
+        .menu-tab {
+            background: none;
+            border: none;
+            color: #ecf0f1;
+            padding: 10px 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-tab:hover, .menu-tab.active {
+            background-color: #34495e;
+            color: #fff;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 25px auto;
             padding: 0 20px;
         }
 
-        /* Dashboard Card Layout */
         .card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 4px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             padding: 25px;
             margin-bottom: 25px;
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--primary-color);
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #eff6ff;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+            text-transform: uppercase;
         }
 
-        /* Navigation Buttons */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .menu-btn {
-            background-color: #ffffff;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            padding: 14px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .menu-btn:hover {
-            background-color: #eff6ff;
-        }
-
-        .menu-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .subMenuContainer {
-            display: none;
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: -10px;
-            margin-bottom: 25px;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .sub-menu-grid {
-            display: flex;
-            gap: 12px;
-        }
-
-        .sub-btn {
-            background-color: #ffffff;
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 10px 18px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .sub-btn:hover {
-            background-color: #e2e8f0;
-            border-color: #cbd5e1;
-        }
-
-        .sub-btn.active {
-            background-color: var(--secondary-color);
-            color: white;
-            border-color: var(--secondary-color);
-        }
-
-        /* Form Controls */
-        .form-section {
-            display: none;
-        }
-
+        /* Form Layout Grid */
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 768px) {
@@ -161,11 +106,11 @@
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .form-group.full-width {
-            grid-column: span 2;
+            grid-column: span 3;
         }
 
         @media (max-width: 768px) {
@@ -174,175 +119,271 @@
 
         label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 13px;
+            margin-bottom: 5px;
+            font-size: 12px;
             font-weight: 600;
-            color: #334155;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #475569;
         }
 
-        input, select {
+        input, textarea {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px 10px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 14px;
-            color: var(--text-main);
-            background-color: #fff;
-            transition: border-color 0.2s;
+            font-size: 13px;
         }
 
-        input:focus, select:focus {
+        input:focus {
             outline: none;
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
         }
 
-        .btn-submit {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: #059669;
-        }
-
-        .btn-submit:disabled {
-            background-color: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        /* Professional Delivery Challan Box */
-        .challan-section {
-            display: none;
-            margin-top: 30px;
-        }
-
-        .challan-outer {
-            background: #fff;
-            border: 1px solid #94a3b8;
-            padding: 40px;
-            color: #000;
-            font-family: 'Times New Roman', Times, serif;
-            position: relative;
-        }
-
-        .challan-header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .company-name {
-            font-size: 26px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-
-        .company-sub {
-            font-size: 14px;
-            margin: 5px 0 0 0;
-            font-style: italic;
-        }
-
-        .doc-title {
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-top: 15px;
-            letter-spacing: 1px;
-        }
-
-        .meta-table {
-            width: 100%;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-
-        .meta-table td {
-            padding: 4px 0;
-            vertical-align: top;
-        }
-
-        .items-table {
+        /* Dynamic Item Table Styling */
+        .item-add-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 40px;
-            font-size: 14px;
+            margin-top: 15px;
         }
 
-        .items-table th, .items-table td {
-            border: 1px solid #000;
-            padding: 10px;
+        .item-add-table th, .item-add-table td {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
             text-align: left;
         }
 
-        .items-table th {
+        .item-add-table th {
             background-color: #f1f5f9;
+            font-size: 12px;
         }
 
-        .challan-footer {
-            margin-top: 60px;
-            display: flex;
-            justify-content: space-between;
+        .btn-add-row {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .sign-block {
-            border-top: 1px solid #000;
-            width: 220px;
-            text-align: center;
-            padding-top: 6px;
+        .btn-remove-row {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-submit-issue {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
             font-size: 14px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
         }
 
-        .action-bar {
+        /* Database View List Table */
+        .db-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .db-table th, .db-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .db-table th {
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+db-table tr:hover {
+            background-color: #f1f5f9;
+            cursor: pointer;
+        }
+
+        .view-btn {
+            background-color: #0f2c59;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        /* EXACT SECOND SAMPLE IMAGE MATCHING CHALLAN DESIGN */
+        .challan-view-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .challan-print-box {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 30px;
+            color: #000;
+            font-family: Arial, sans-serif;
+        }
+
+        .challan-top-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #000;
+            padding-bottom: 15px;
+            position: relative;
+        }
+
+        /* Custom Modern Oval Multi-line Blue Logo as per Image */
+        .challan-logo-img {
+            width: 90px;
+            height: 75px;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #1d4ed8;
+            border-radius: 50% 40%;
+            position: relative;
+        }
+        .challan-logo-img::before {
+            content: "S";
+            font-size: 38px;
+            font-weight: 900;
+            color: #1d4ed8;
+            line-height: 1;
+        }
+        .challan-logo-img::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background-color: #1d4ed8;
+            top: 52%;
+        }
+
+        .challan-company-details {
+            text-align: left;
+        }
+
+        .challan-company-details h2 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .challan-company-details p {
+            margin: 4px 0;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .challan-bar-title {
+            background-color: #dbb386; /* Accurate matching corporate light-brown/beige color strip */
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 5px 0;
+            margin-top: 10px;
+            letter-spacing: 1.5px;
+        }
+
+        .challan-meta-info {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            font-size: 12.5px;
+            border-bottom: 1px solid #000;
+        }
+
+        .meta-col {
+            padding: 8px;
+            line-height: 1.6;
+        }
+
+        .meta-col:first-child {
+            border-right: 1px solid #000;
+        }
+
+        .meta-line {
+            margin-bottom: 4px;
+            display: flex;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            width: 130px;
+        }
+
+        .challan-goods-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .challan-goods-table th, .challan-goods-table td {
+            border-bottom: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        .challan-goods-table th {
+            border-bottom: 2px solid #000;
+            background-color: #e2e8f0; /* Light gray row background matching sample */
+            font-weight: bold;
+        }
+
+        .challan-goods-table th:last-child, .challan-goods-table td:last-child {
+            border-right: none;
+        }
+
+        .challan-summary-row {
+            background-color: #cbd5e1;
+            font-weight: bold;
+            font-size: 11.5px;
+        }
+
+        .challan-signatures {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            font-size: 12px;
+            padding-top: 30px;
+        }
+
+        .sig-box {
+            text-align: left;
+            line-height: 1.9;
+        }
+
+        .action-buttons {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
             margin-top: 15px;
         }
 
-        .btn-action {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border: 1px solid var(--border-color);
-            background: white;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        .btn-action.print {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-        }
-
-        /* Printing Adjustments */
+        /* Print Style Override */
         @media print {
             body * { visibility: hidden; }
-            .challan-outer, .challan-outer * { visibility: visible; }
-            .challan-outer {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                border: none;
-                padding: 0;
-            }
+            #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
+            #challanPrintContainer { position: absolute; left: 0; top: 0; width: 100%; border: none; padding: 0; }
+            .action-buttons { display: none; }
         }
     </style>
 </head>
@@ -350,126 +391,210 @@
 
     <div class="navbar">
         <div class="navbar-brand">Sanchar Telesystems Limited</div>
-        <div class="navbar-sub">Service Centre ERP v2.0</div>
+        <div class="user-info">Welcome: Service Administrator</div>
     </div>
 
-    <div class="main-container">
+    <div class="main-menu-bar">
+        <button class="menu-tab active" id="tabIssue" onclick="switchTab('issue')">⚙️ Issue</button>
+        <button class="menu-tab" id="tabChallan" onclick="switchTab('challan')">📄 Issue Challan Options</button>
+    </div>
+<div class="container">
         
-        <div class="menu-grid">
-            <button class="menu-btn" id="btnMaterialConsume" onclick="toggleMaterialConsume()">
-                ⚙️ Material Consume
-            </button>
-            <button class="menu-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
-                📊 Inventory Dashboard
-            </button>
-            <button class="menu-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
-                🔧 Job Cards
-            </button>
-        </div>
-
-        <div id="subMenuContainer" class="subMenuContainer">
-            <div style="font-size: 12px; font-weight: bold; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Select Operation:</div>
-            <div class="sub-menu-grid">
-                <button class="sub-btn" id="subBtnDispatch" onclick="openModule('dispatch')">📤 Material Dispatch</button>
-                <button class="sub-btn" id="subBtnReceive" onclick="openModule('receive')">📥 Material Receive</button>
-            </div>
-        </div>
-
-        <div class="card" style="display: none;" id="moduleCard">
-            <div class="card-title" id="moduleTitle">Module Title</div>
-            
-            <div id="dispatchModule" class="form-section">
-                <form id="dispatchForm" onsubmit="handleDispatchSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="itemName">Item Name / Model No *</label>
-                            <input type="text" id="itemName" required placeholder="e.g. Sanchar SC-201 Router">
-                        </div>
-                        <div class="form-group">
-                            <label for="qty">Quantity (Nos) *</label>
-                            <input type="number" id="qty" min="1" required placeholder="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="date">Dispatch Date *</label>
-                            <input type="date" id="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="personName">Dispatched By (Person Name) *</label>
-                            <input type="text" id="personName" required placeholder="Employee Name / ID">
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="partyName">Consignee / Party Name *</label>
-                            <input type="text" id="partyName" required placeholder="Client / Branch Office Name">
-                        </div>
+        <div id="issueModule" class="card">
+            <div class="card-title">Material Issue Registry Form</div>
+            <form id="issueForm" onsubmit="submitIssueForm(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Person Name *</label>
+                        <input type="text" id="formPerson" required placeholder="Handled Person Name">
                     </div>
-                    <button type="submit" class="btn-submit" id="saveBtn">💾 Save Entry & Generate Challan</button>
-                </form>
-            </div>
-
-            <div id="receiveModule" class="form-section">
-                <div style="padding: 20px; text-align: center; color: var(--text-muted); font-style: italic;">
-                    Material Receive System Online. Connected to backend pipeline.
+                    <div class="form-group">
+                        <label>Party Name / Consigned To *</label>
+                        <input type="text" id="formParty" required placeholder="Client Name / Consignee">
+                    </div>
+                    <div class="form-group">
+                        <label>Consignor Name *</label>
+                        <input type="text" id="formConsignor" required placeholder="Sender Authority Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Consignor Mobile Number *</label>
+                        <input type="text" id="formConsignorMobile" required placeholder="10 Digit Mobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Consignee Name *</label>
+                        <input type="text" id="formConsignee" required placeholder="Receiver Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Consignee Mobile Number *</label>
+                        <input type="text" id="formConsigneeMobile" required placeholder="10 Digit Mobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Shipment By *</label>
+                        <input type="text" id="formShipment" required placeholder="e.g. BY HAND / COURIER">
+                    </div>
+                    <div class="form-group">
+                        <label>Date (DD/MM/YYYY) *</label>
+                        <input type="date" id="formDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>GSTIN Number</label>
+                        <input type="text" id="formGst" placeholder="07AANCS3850Q1ZK" value="07AANCS3850Q1ZK">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Address *</label>
+                        <input type="text" id="formAddress" required placeholder="Full Destination Address (e.g. BHAWANA-DELHI)">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Remarks</label>
+                        <textarea id="formRemarks" rows="2" placeholder="Any additional notes..."></textarea>
+                    </div>
                 </div>
-            </div>
+
+                <div style="border-top: 1px solid #cbd5e1; padding-top: 15px;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--primary-color);">ITEM TRANSACTION BLOCK</span>
+                    <table class="item-add-table" id="itemAdditionTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Material Part Code / Item Name *</th>
+                                <th style="width: 25%;">Material Name / Description *</th>
+                                <th style="width: 15%;">Qty (Units) *</th>
+                                <th style="width: 15%;">Serial Number</th>
+                                <th style="width: 15%;">IMEI / Details</th>
+                                <th style="width: 5%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemTableBody">
+                            <tr>
+                                <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                                <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
+                                <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
+                                <td><input type="text" class="row-serial" placeholder="S/N"></td>
+                                <td><input type="text" class="row-imei" placeholder="IMEI/Other"></td>
+                                <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn-add-row" onclick="addNewRow()">+ Add More Item</button>
+                </div>
+
+                <button type="submit" class="btn-submit-issue" id="processBtn">💾 Issue Material & Save Database</button>
+            </form>
         </div>
 
-        <div class="challan-section" id="challanSection">
-            <div class="challan-outer">
-                <div class="challan-header">
-                    <div class="company-name">SANCHAR TELESYSTEMS LIMITED</div>
-                    <div class="company-sub">Telecommunication Systems & Solutions</div>
-                    <div class="doc-title">DELIVERY CHALLAN</div>
-                </div>
-
-                <table class="meta-table">
-                    <tr>
-                        <td style="width: 15%;"><strong>Challan No:</strong></td>
-                        <td style="width: 40%;" id="dcNo">-</td>
-                        <td style="width: 15%;"><strong>Date:</strong></td>
-                        <td style="width: 30%;" id="dcDate">-</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Party Name:</strong></td>
-                        <td id="dcParty">-</td>
-                        <td><strong>Dispatched By:</strong></td>
-                        <td id="dcPerson">-</td>
-                    </tr>
-                </table>
-
-                <table class="items-table">
+        <div id="challanListModule" class="card" style="display: none;">
+            <div class="card-title">Issue Challan Database Node</div>
+            <div style="overflow-x: auto;">
+                <table class="db-table">
                     <thead>
                         <tr>
-                            <th style="width: 10%; text-align: center;">S.No.</th>
-                            <th style="width: 70%;">Description of Goods</th>
-                            <th style="width: 20%; text-align: center;">Qty (Nos)</th>
+                            <th>Challan Number</th>
+                            <th>Issue Date</th>
+                            <th>Party Name</th>
+                            <th>Address</th>
+                            <th>Remarks</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="dbTableBody">
                         <tr>
-                            <td style="text-align: center;">1</td>
-                            <td id="dcItem">-</td>
-                            <td style="text-align: center; font-weight: bold;" id="dcQty">-</td>
+                            <td colspan="6" style="text-align: center; color: var(--text-muted);">Syncing secure cloud data streams...</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
 
-                <div style="font-size: 12px; font-style: italic; margin-top: 20px;">
-                    * Certified that the goods mentioned above are dispatched for service/installation purposes.
-                </div>
-
-                <div class="challan-footer">
-                    <div class="sign-block">Receiver's Signature & Stamp</div>
-                    <div class="sign-block" style="border-top: none;">
-                        For <strong>Sanchar Telesystems Ltd.</strong>
-                        <br><br><br>
-                        <div style="border-top: 1px solid #000; padding-top: 5px;">Authorized Signatory</div>
+        <div id="challanViewSection" class="challan-view-section">
+            <div class="action-buttons">
+                <button class="btn-action" onclick="closeChallanView()">Back to Registry</button>
+                <button class="btn-action print" onclick="window.print()" style="background: #0f2c59; color: white;">🖨️ Print Delivery Challan PDF</button>
+            </div>
+            <br>
+            <div class="challan-print-box" id="challanPrintContainer">
+                
+                <div class="challan-top-header">
+                    <div class="challan-logo-img"></div>
+                    <div class="challan-company-details">
+                        <h2>Sanchar Telesystems Limited</h2>
+                        <p>A-78, Ground Floor,</p>
+                        <p>Okhla Industrial Area, Phase-II,</p>
+                        <p>New Delhi-110020</p>
                     </div>
                 </div>
-            </div>
 
-            <div class="action-bar">
-                <button class="btn-action" onclick="resetForm()">Create New Entry</button>
-                <button class="btn-action print" onclick="window.print()">🖨️ Print Delivery Challan</button>
+                <div class="challan-bar-title">DELIVERY CHALLAN</div>
+
+                <div class="challan-meta-info">
+                    <div class="meta-col">
+                        <div class="meta-line">
+                            <span class="meta-label">Challan Number:</span>
+                            <span id="lblChallanNo" style="font-weight: bold;">-</span>
+                        </div>
+                        <div class="meta-line">
+                            <span class="meta-label">GSTIN Number:</span>
+                            <span id="lblGstNo">-</span>
+                        </div>
+                        <div class="meta-line">
+                            <span class="meta-label">Consigned To:</span>
+                            <span id="lblConsignedTo" style="font-weight: bold;">-</span>
+                        </div>
+                        <div class="meta-line">
+                            <span class="meta-label"></span>
+                            <span id="lblAddress">-</span>
+                        </div>
+                    </div>
+                    <div class="meta-col">
+                        <div class="meta-line">
+                            <span class="meta-label" style="text-align: right; padding-right:15px; width:150px;">Challan Date:</span>
+                            <span id="lblDate">-</span>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div class="meta-line"><span class="meta-label">Consignor Name:</span><span id="lblConsignorName">-</span></div>
+                            <div class="meta-line"><span class="meta-label">Consignor Mobile:</span><span id="lblConsignorMobile">-</span></div>
+                            <div class="meta-line"><span class="meta-label">Consignee Name:</span><span id="lblConsigneeName">-</span></div>
+                            <div class="meta-line"><span class="meta-label">Consignee Mobile:</span><span id="lblConsigneeMobile">-</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="font-size: 13px; padding: 8px; border-bottom: 1px solid #000;">
+                    <strong>Shipment By :</strong> <span id="lblShipmentBy">-</span>
+                </div>
+
+                <table class="challan-goods-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%; text-align: center;">Sr. No</th>
+                            <th style="width: 32%;">Material Part Code</th>
+                            <th style="width: 40%;">Material Name</th>
+                            <th style="width: 20%;">No. of Units</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lblGoodsTableBody">
+                        </tbody>
+                    <tfoot>
+                        <tr class="challan-summary-row">
+                            <td colspan="3" style="text-align: right; border-right: 1px solid #000; padding: 6px;" id="lblTotalItemsSummary">Total Summary:</td>
+                            <td id="lblTotalQty" style="padding: 6px;">0 Items Nos.</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div style="margin-top: 15px; font-size: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+                    <strong>Remarks:</strong> <span id="lblRemarks">-</span>
+                </div>
+<div class="challan-signatures">
+                    <div class="sig-box">
+                        <strong>Received By:</strong> <span id="lblReceiverBottom" style="font-size: 11px;">-</span><br><br>
+                        Signature:<br>Name:<br>Date:<br>Mobile Number:
+                    </div>
+                    <div class="sig-box"><strong>Issued By:</strong></div>
+                    <div class="sig-box"><strong>Verified By:</strong></div>
+                    <div class="sig-box" style="text-align: right;">
+                        <strong>For Sanchar Telesystems Limited.</strong><br><br><br><br>
+                        Signature<br>Name<br>Date<br>Mobile Number
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -477,7 +602,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD_uUBIp1c3rWgyQNYVc22D7JZ1UlhskoI",
@@ -493,102 +618,203 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        window.toggleMaterialConsume = function() {
-            const btn = document.getElementById('btnMaterialConsume');
-            const subMenu = document.getElementById('subMenuContainer');
-            
-            btn.classList.toggle('active');
-            if(btn.classList.contains('active')) {
-                subMenu.style.display = 'block';
+        let fetchedChallans = {};
+
+        window.switchTab = function(mode) {
+            document.getElementById('tabIssue').classList.remove('active');
+            document.getElementById('tabChallan').classList.remove('active');
+            document.getElementById('issueModule').style.display = 'none';
+            document.getElementById('challanListModule').style.display = 'none';
+            document.getElementById('challanViewSection').style.display = 'none';
+
+            if(mode === 'issue') {
+                document.getElementById('tabIssue').classList.add('active');
+                document.getElementById('issueModule').style.display = 'block';
+            } else if(mode === 'challan') {
+                document.getElementById('tabChallan').classList.add('active');
+                document.getElementById('challanListModule').style.display = 'block';
+            }
+        }
+
+        window.addNewRow = function() {
+            const tbody = document.getElementById('itemTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
+                <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
+                <td><input type="text" class="row-serial" placeholder="S/N"></td>
+                <td><input type="text" class="row-imei" placeholder="IMEI/Other"></td>
+                <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        window.removeRow = function(btn) {
+            const row = btn.parentNode.parentNode;
+            if(document.querySelectorAll('#itemTableBody tr').length > 1) {
+                row.parentNode.removeChild(row);
             } else {
-                subMenu.style.display = 'none';
-                document.getElementById('moduleCard').style.display = 'none';
-                hideAllModules();
+                alert("Minimum 1 item transactional line is mandatory.");
             }
         }
 
-        window.openModule = function(type) {
-            document.getElementById('moduleCard').style.display = 'block';
-            hideAllModules();
-            
-            document.getElementById('subBtnDispatch').classList.remove('active');
-            document.getElementById('subBtnReceive').classList.remove('active');
+        document.getElementById('formDate').valueAsDate = new Date();
 
-            if(type === 'dispatch') {
-                document.getElementById('subBtnDispatch').classList.add('active');
-                document.getElementById('moduleTitle').innerText = "Material Dispatch Registry";
-                document.getElementById('dispatchModule').style.display = 'block';
-            } else if(type === 'receive') {
-                document.getElementById('subBtnReceive').classList.add('active');
-                document.getElementById('moduleTitle').innerText = "Material Receive Registry";
-                document.getElementById('receiveModule').style.display = 'block';
-            }
-        }
-
-        function hideAllModules() {
-            document.getElementById('dispatchModule').style.display = 'none';
-            document.getElementById('receiveModule').style.display = 'none';
-            document.getElementById('challanSection').style.display = 'none';
-        }
-
-        document.getElementById('date').valueAsDate = new Date();
-
-        window.handleDispatchSubmit = function(event) {
+        // Submit Form and save to database with requested dynamic Challan format
+        window.submitIssueForm = function(event) {
             event.preventDefault();
+            const procBtn = document.getElementById('processBtn');
+            procBtn.innerText = "Processing Cloud Sync Transaction...";
+            procBtn.disabled = true;
 
-            const saveBtn = document.getElementById('saveBtn');
-            saveBtn.innerText = "Synchronizing with Online Cloud Database...";
-            saveBtn.disabled = true;
-
-            const itemName = document.getElementById('itemName').value;
-            const qty = document.getElementById('qty').value;
-            const rawDate = document.getElementById('date').value;
-            const personName = document.getElementById('personName').value;
-            const partyName = document.getElementById('partyName').value;
+            const targetDate = document.getElementById('formDate').value;
+            const dateObj = new Date(targetDate);
             
-            const randomID = Math.floor(10000 + Math.random() * 90000);
-            const currentYear = new Date(rawDate).getFullYear();
-            const generatedChallanNo = `STL/DC/${currentYear}/${randomID}`;
+            // Format segments
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dateObj.getFullYear();
+            const formattedDateString = `${dd}/${mm}/${yyyy}`;
 
-            const payload = {
-                challanNumber: generatedChallanNo,
-                itemName: itemName,
-                quantity: parseInt(qty),
-                dispatchDate: rawDate,
-                handledBy: personName,
-                partyName: partyName,
-                serverTimestamp: new Date().toISOString()
+            // Loop rows to structure data array
+            const itemRows = document.querySelectorAll('#itemTableBody tr');
+            let itemsArray = [];
+            let calculatedTotalQty = 0;
+            
+            itemRows.forEach(row => {
+                const itemQty = parseInt(row.querySelector('.row-qty').value) || 1;
+                calculatedTotalQty += itemQty;
+                itemsArray.push({
+                    partCode: row.querySelector('.row-part-code').value,
+                    materialName: row.querySelector('.row-material-name').value,
+                    quantity: itemQty,
+                    serialNo: row.querySelector('.row-serial').value || '-',
+                    imei: row.querySelector('.row-imei').value || '-'
+                });
+            });
+
+            // Generating Requested Custom Challan: STL + DD + MM + YYYY + SerialNo
+            const customSerial = String(Math.floor(10 + Math.random() * 90)); // Dynamic daily counter format
+            const dynamicChallanNumber = `STL${dd}${mm}${yyyy}${customSerial}`;
+
+            const issueDataPayload = {
+                challanNo: dynamicChallanNumber,
+                gstNumber: document.getElementById('formGst').value || '07AANCS3850Q1ZK',
+                personName: document.getElementById('formPerson').value,
+                partyName: document.getElementById('formParty').value,
+                consignorName: document.getElementById('formConsignor').value,
+                consignorMobile: document.getElementById('formConsignorMobile').value,
+                consigneeName: document.getElementById('formConsignee').value,
+                consigneeMobile: document.getElementById('formConsigneeMobile').value,
+                shipmentBy: document.getElementById('formShipment').value,
+                issueDate: formattedDateString,
+                address: document.getElementById('formAddress').value,
+                remarks: document.getElementById('formRemarks').value || '-',
+                items: itemsArray,
+                totalUnitsCount: calculatedTotalQty,
+                distinctItemsCount: itemsArray.length,
+                timestamp: new Date().toISOString()
             };
 
-            // Firebase Cloud Save
-            push(ref(db, "material_dispatches"), payload)
+            push(ref(db, "sanchar_issues_v2"), issueDataPayload)
                 .then(() => {
-                    document.getElementById('dcNo').innerText = generatedChallanNo;
-                    document.getElementById('dcDate').innerText = new Date(rawDate).toLocaleDateString('en-GB');
-                    document.getElementById('dcParty').innerText = partyName;
-                    document.getElementById('dcPerson').innerText = personName;
-                    document.getElementById('dcItem').innerText = itemName;
-                    document.getElementById('dcQty').innerText = qty;
-
-                    document.getElementById('challanSection').style.display = 'block';
-                    document.getElementById('challanSection').scrollIntoView({ behavior: 'smooth' });
-                    
-                    saveBtn.innerText = "💾 Save Entry & Generate Challan";
-                    saveBtn.disabled = false;
+                    alert(`Material Dispatched Successfully! Challan Generated: ${dynamicChallanNumber}`);
+                    document.getElementById('issueForm').reset();
+                    document.getElementById('itemTableBody').innerHTML = `
+                        <tr>
+                            <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                            <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
+                            <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
+                            <td><input type="text" class="row-serial" placeholder="S/N"></td>
+                            <td><input type="text" class="row-imei" placeholder="IMEI/Other"></td>
+                            <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                        </tr>
+                    `;
+                    document.getElementById('formDate').valueAsDate = new Date();
+                    procBtn.innerText = "💾 Issue Material & Save Database";
+                    procBtn.disabled = false;
+                    switchTab('challan');
                 })
-                .catch((error) => {
-                    console.error("Database sync failed: ", error);
-                    alert("Cloud Sync Failure. Connection Issue.");
-                    saveBtn.innerText = "💾 Save Entry & Generate Challan";
-                    saveBtn.disabled = false;
+                .catch(err => {
+                    console.error(err);
+                    alert("Database Injection Dropped.");
+                    procBtn.innerText = "💾 Issue Material & Save Database";
+                    procBtn.disabled = false;
                 });
         }
 
-        window.resetForm = function() {
-            document.getElementById('dispatchForm').reset();
-            document.getElementById('date').valueAsDate = new Date();
-            document.getElementById('challanSection').style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Fetching Realtime Sync Arrays 
+        onValue(ref(db, "sanchar_issues_v2"), (snapshot) => {
+            const tableBody = document.getElementById('dbTableBody');
+            tableBody.innerHTML = "";
+            const data = snapshot.val();
+            
+            if(!data) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No Record Logs Available.</td></tr>`;
+                return;
+            }
+
+            fetchedChallans = data;
+
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                const tr = document.createElement('tr');
+                tr.onclick = () => renderChallanDocument(key);
+                tr.innerHTML = `
+                    <td style="font-weight:bold; color:var(--secondary-color);">${item.challanNo}</td>
+                    <td>${item.issueDate}</td>
+                    <td>${item.partyName}</td>
+                    <td>${item.address}</td>
+                    <td>${item.remarks}</td>
+                    <td><button class="view-btn">Open Report</button></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        });
+
+        // Map live details into exact clone design blueprint
+        window.renderChallanDocument = function(recordKey) {
+            const targetData = fetchedChallans[recordKey];
+            if(!targetData) return;
+
+            document.getElementById('lblChallanNo').innerText = targetData.challanNo;
+            document.getElementById('lblGstNo').innerText = targetData.gstNumber;
+            document.getElementById('lblConsignedTo').innerText = targetData.partyName;
+            document.getElementById('lblAddress').innerText = targetData.address;
+            document.getElementById('lblDate').innerText = targetData.issueDate;
+            document.getElementById('lblConsignorName').innerText = targetData.consignorName;
+            document.getElementById('lblConsignorMobile').innerText = targetData.consignorMobile;
+            document.getElementById('lblConsigneeName').innerText = targetData.consigneeName;
+            document.getElementById('lblConsigneeMobile').innerText = targetData.consigneeMobile;
+            document.getElementById('lblShipmentBy').innerText = targetData.shipmentBy;
+            document.getElementById('lblRemarks').innerText = targetData.remarks;
+            document.getElementById('lblReceiverBottom').innerText = targetData.partyName;
+
+            const itemsTableBody = document.getElementById('lblGoodsTableBody');
+            itemsTableBody.innerHTML = "";
+            
+            targetData.items.forEach((prod, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align:center;">${index + 1}</td>
+                    <td style="font-weight:600;">${prod.partCode}</td>
+                    <td>${prod.materialName}</td>
+                    <td style="font-weight:600;">${prod.quantity}</td>
+                `;
+                itemsTableBody.appendChild(tr);
+            });
+
+            document.getElementById('lblTotalItemsSummary').innerText = `${targetData.distinctItemsCount} ITEM Description.`;
+            document.getElementById('lblTotalQty').innerText = `${targetData.totalUnitsCount} Nos.`;
+
+            document.getElementById('challanListModule').style.display = 'none';
+            document.getElementById('challanViewSection').style.display = 'block';
+        }
+
+        window.closeChallanView = function() {
+            document.getElementById('challanViewSection').style.display = 'none';
+            document.getElementById('challanListModule').style.display = 'block';
         }
     </script>
 </body>
