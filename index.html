@@ -4,463 +4,221 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sanchar Telesystems Limited - Corporate ERP Gateway</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- html2pdf JS Bundle -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         :root {
-            --primary-color: #0f2c59;
-            --secondary-color: #1d4ed8;
-            --accent-color: #10b981;
-            --bg-color: #f8fafc;
-            --text-main: #1e293b;
-            --border-color: #cbd5e1;
+            --primary-color: #0F4C81;
+            --secondary-color: #1E88E5;
+            --success-color: #22C55E;
+            --bg-color: #F5F7FA;
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 70px;
+            --transition-speed: 0.3s;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            color: var(--text-main);
+            color: #334155;
+            overflow-x: hidden;
         }
 
-        /* 100% SECURE OVERLAY LOGIN GATEWAY SCREEN */
+        /* --- SECURE GATEWAY LOGIN --- */
         .login-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0b192c;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0b192c 0%, #1e293b 100%);
+            z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
         }
-
         .login-card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 35px 30px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .login-card h2 {
-            margin: 0 0 5px 0;
-            color: var(--primary-color);
-            font-size: 22px;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-
-        .login-subtitle {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 25px;
-        }
-
-        .login-field {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
         .login-btn {
-            background-color: var(--secondary-color);
-            color: #fff;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none; color: white; padding: 12px; font-weight: 600; border-radius: 8px;
+            transition: all 0.2s ease;
         }
-
         .login-btn:hover {
-            background-color: #1e40af;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
         }
 
-        .login-error {
-            color: #ef4444;
-            font-size: 13px;
-            margin-top: 12px;
-            font-weight: 500;
-            display: none;
-        }
-
-        /* MAIN SYSTEM ERP PANEL VIEW INTERFACES */
+        /* --- DASHBOARD WRAPPER LAYOUT --- */
         .erp-main-wrapper {
-            display: none; /* Controlled completely by Auth Engine verification */
+            display: none; /* Controlled by Auth */
+            min-height: 100vh;
         }
 
-        .navbar {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 14px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        /* --- COLLAPSIBLE SIDEBAR --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0; left: 0;
+            background-color: #0b192c;
+            color: #94a3b8;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.05);
         }
-
-        .navbar-brand {
-            font-size: 20px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        #sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
         }
-
-        .main-menu-bar {
-            background-color: #2c3e50;
-            display: flex;
-            padding: 0 10px;
-        }
-
-        .menu-tab {
-            background: none;
-            border: none;
-            color: #ecf0f1;
-            padding: 12px 22px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-weight: 500;
-        }
-
-        .menu-tab:hover, .menu-tab.active {
-            background-color: #34495e;
+        #sidebar .sidebar-header {
+            height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
             color: #fff;
-            border-bottom: 3px solid var(--secondary-color);
+        }
+        #sidebar.collapsed .brand-text { display: none; }
+        .sidebar-menu { padding: 15px 0; list-style: none; margin: 0; }
+        .sidebar-menu li a {
+            display: flex; align-items: center; padding: 12px 24px;
+            color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: 500;
+            transition: all 0.2s ease; border-left: 4px solid transparent;
+        }
+        .sidebar-menu li a i { font-size: 18px; width: 30px; }
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            color: #fff; background-color: rgba(255,255,255,0.05);
+            border-left-color: var(--secondary-color);
+        }
+        #sidebar.collapsed .sidebar-menu li a span { display: none; }
+
+        /* --- MAIN CONTENT & GLASSMORPHIC NAVBAR --- */
+        .content-body {
+            margin-left: var(--sidebar-width);
+            transition: all var(--transition-speed) ease;
+            min-height: 100vh;
+            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+        }
+        .content-body.expanded { margin-left: var(--sidebar-collapsed-width); }
+        
+        .top-navbar {
+            height: 70px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            position: sticky; top: 0; z-index: 99;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 25px auto;
-            padding: 0 20px;
+        /* --- UI COMPONENTS & RE-DESIGNED CARDS --- */
+        .stat-card {
+            background: #fff; border: none; border-radius: 12px; padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+        }
+        
+        .panel-card {
+            background: #fff; border: none; border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.02);
+            padding: 30px; margin-bottom: 25px;
+        }
+        .panel-title {
+            font-size: 16px; font-weight: 700; color: var(--primary-color);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 25px;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        .card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 25px;
-            margin-bottom: 25px;
+        /* --- STICKY TABLES --- */
+        .table-responsive-wrapper {
+            max-height: 500px; overflow-y: auto; border-radius: 8px; border: 1px solid #e2e8f0;
+        }
+        .custom-table { width: 100%; border-collapse: collapse; margin: 0; }
+        .custom-table th {
+            position: sticky; top: 0; background-color: #f8fafc; z-index: 10;
+            color: #475569; font-weight: 600; font-size: 13px; padding: 14px;
+            border-bottom: 2px solid #e2e8f0; text-align: left;
+        }
+        .custom-table td { padding: 14px; font-size: 13.5px; border-bottom: 1px solid #edf2f7; vertical-align: middle; }
+        .custom-table tbody tr { transition: background-color 0.15s ease; cursor: pointer; }
+        .custom-table tbody tr:hover { background-color: #f1f5f9; }
+
+        /* --- MODERN GRADIENT BUTTONS --- */
+        .btn-gradient-save {
+            background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+            color: #fff; border: none; font-weight: 600; padding: 12px 24px;
+            border-radius: 8px; transition: all 0.2s ease; width: 100%;
+        }
+        .btn-gradient-save:hover {
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); transform: translateY(-1px); color: #fff;
         }
 
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #eff6ff;
-            padding-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        .form-group.full-width {
-            grid-column: span 3;
-        }
-
-        @media (max-width: 768px) {
-            .form-group.full-width { grid-column: span 1; }
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 9px 11px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 13px;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
-        }
-
-        /* Autosuggest Dropdown Mechanics */
+        /* --- AUTO-SUGGESTION SYSTEM OVERLAY --- */
         .suggestions-box {
-            position: absolute;
-            background: white;
-            border: 1px solid var(--border-color);
-            width: 100%;
-            z-index: 100;
-            max-height: 150px;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: none;
-            border-radius: 0 0 4px 4px;
+            position: absolute; background: white; border: 1px solid #cbd5e1;
+            width: 100%; z-index: 1000; max-height: 180px; overflow-y: auto;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: none; border-radius: 8px; margin-top: 5px;
         }
+        .suggestion-item { padding: 10px 15px; cursor: pointer; font-size: 13px; }
+        .suggestion-item:hover { background-color: #f1f5f9; color: var(--secondary-color); }
 
-        .suggestion-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12.5px;
-        }
-
-        .suggestion-item:hover {
-            background-color: #f1f5f9;
-        }
-
-        .item-add-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .item-add-table th, .item-add-table td {
-            border: 1px solid #cbd5e1;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .item-add-table th {
-            background-color: #f1f5f9;
-            font-size: 12px;
-        }
-
-        .btn-add-row {
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .btn-remove-row {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-submit-issue {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .db-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .db-table th, .db-table td {
-            border: 1px solid #e2e8f0;
-            padding: 12px;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        .db-table th {
-            background-color: #f8fafc;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .db-table tr:hover {
-            background-color: #f1f5f9;
-            cursor: pointer;
-        }
-
-        .view-btn {
-            background-color: #0f2c59;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            font-size: 11px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-   .view-btn {
-            background-color: #0f2c59;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            font-size: 11px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        /* STRICT ACCURATE A4 CANVAS SHEET CONFIGURATIONS */
-        .challan-view-section {
-            display: none;
-            margin-top: 20px;
-        }
-
+        /* --- COMPACT PRINT SHEET LAYOUT --- */
+        .challan-view-section { display: none; margin-top: 20px; }
         .challan-print-box {
-            background: #fff;
-            border: 1px solid #000;
-            padding: 45px 35px;
-            color: #000;
-            font-family: Arial, sans-serif;
-            width: 210mm;
-            min-height: 297mm;
-            box-sizing: border-box;
-            margin: 0 auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: #fff; border: 1px solid #000; padding: 45px 35px; color: #000;
+            font-family: Arial, sans-serif; width: 210mm; min-height: 297mm;
+            box-sizing: border-box; margin: 0 auto; box-shadow: 0 0 15px rgba(0,0,0,0.05);
         }
-
-        /* Perfectly Centered Top Header - No Logo, No Phone No */
-        .challan-top-header {
-            text-align: center;
-            border-bottom: 1px solid #000;
-            padding-bottom: 15px;
-        }
-
-        .challan-top-header h2 {
-            margin: 0;
-            font-size: 26px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .challan-top-header p {
-            margin: 5px 0 0 0;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
+        .challan-top-header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 15px; }
+        .challan-top-header h2 { margin: 0; font-size: 26px; font-weight: bold; text-transform: uppercase; }
         .challan-bar-title {
-            background-color: #dbb386;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            padding: 5px 0;
-            margin-top: 10px;
-            letter-spacing: 1.5px;
+            background-color: #dbb386; text-align: center; font-weight: bold;
+            font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000;
+            padding: 5px 0; margin-top: 10px; letter-spacing: 1.5px;
         }
+        .challan-meta-info { display: grid; grid-template-columns: 1.1fr 0.9fr; font-size: 12.5px; border-bottom: 1px solid #000; }
+        .meta-col { padding: 8px; line-height: 1.6; }
+        .meta-col:first-child { border-right: 1px solid #000; }
+        .meta-line { display: flex; margin-bottom: 4px; }
+        .meta-label { font-weight: bold; width: 140px; }
+        .challan-goods-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: -1px; }
+        .challan-goods-table th, .challan-goods-table td { border-bottom: 1px solid #000; border-right: 1px solid #000; padding: 8px 10px; }
+        .challan-goods-table th { background-color: #e2e8f0; font-weight: bold; border-bottom: 2px solid #000; }
+        .challan-goods-table th:last-child, .challan-goods-table td:last-child { border-right: none; }
+        .challan-signatures { margin-top: 50px; display: grid; grid-template-columns: repeat(2, 1fr); font-size: 12px; }
 
-        .challan-meta-info {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            font-size: 12.5px;
-            border-bottom: 1px solid #000;
-        }
-
-        .meta-col {
-            padding: 8px;
-            line-height: 1.6;
-        }
-
-        .meta-col:first-child {
-            border-right: 1px solid #000;
-        }
-
-        .meta-line {
-            margin-bottom: 4px;
-            display: flex;
-        }
-
-        .meta-label {
-            font-weight: bold;
-            width: 140px;
-        }
-
-        .challan-goods-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-top: -1px;
-        }
-
-        .challan-goods-table th, .challan-goods-table td {
-            border-bottom: 1px solid #000;
-            border-right: 1px solid #000;
-            padding: 8px 10px;
-            text-align: left;
-        }
-
-        .challan-goods-table th {
-            border-bottom: 2px solid #000;
-            background-color: #e2e8f0;
-            font-weight: bold;
-        }
-
-        .challan-goods-table th:last-child, .challan-goods-table td:last-child {
-            border-right: none;
-        }
-
-        .challan-summary-row {
-            background-color: #cbd5e1;
-            font-weight: bold;
-        }
-
-        .challan-signatures {
-            margin-top: 50px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            font-size: 12px;
-        }
-
-        .sig-box {
-            text-align: left;
-            line-height: 1.9;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 15px;
-        }
-
-        .btn-download-generic {
-            background-color: #ea580c;
-            color: white;
-            border: none;
-            padding: 8px 15px;
+        /* --- ERP COMPREHENSIVE FOOTER --- */
+        .erp-footer {
+            margin-top: auto;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
             font-size: 13px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
+        }
+        .footer-brand-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
         }
 
         @media print {
@@ -468,255 +226,422 @@
             #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
             #challanPrintContainer { position: absolute; left: 0; top: 0; width: 210mm; border: none; box-shadow: none; padding: 0; }
             .action-buttons { display: none; }
+            .erp-footer { display: none !important; }
         }
     </style>
 </head>
 <body>
 
+    <!-- --- AUTHENTICATION SHIELD GATEWAY --- -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
-   <h2>Sanchar Telesystems Limited</h2>
+            <div class="text-center mb-4">
+                <div class="p-3 bg-light rounded-circle d-inline-block mb-3" style="color: var(--primary-color);">
+                    <i class="fa-solid fa-shield-halved fa-2x"></i>
+                </div>
+                <h2 class="h4 fw-bold text-dark mb-1">SANCHAR TELESYSTEMS</h2>
+                <p class="text-muted small">Enterprise Resource Gate Authorization</p>
+            </div>
             
             <form onsubmit="verifySystemCredentials(event)">
-                <div class="login-field">
-                    <label>Username</label>
-                    <input type="text" id="loginUser" required placeholder="username" autocomplete="off">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="loginUser" required placeholder="Username" autocomplete="off">
+                    <label for="loginUser">System Username</label>
                 </div>
-                <div class="login-field">
-                    <label>Password</label>
-                    <input type="password" id="loginPass" required placeholder="password">
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="loginPass" required placeholder="Password">
+                    <label for="loginPass">Access Security Key</label>
                 </div>
-                <button type="submit" class="login-btn">Login</button>
-                <div class="login-error" id="loginErrorMsg">Invalid Credentials. Network Handshake Rejected.</div>
+                <button type="submit" class="w-100 login-btn btn mt-2">Verify Handshake</button>
+                <div class="alert alert-danger mt-3 py-2 small text-center" id="loginErrorMsg" style="display:none;">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i> Authentication Failed. Key Rejected.
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- --- MAIN SYSTEM ENTERPRISE WORKSPACE WRAPPER --- -->
     <div class="erp-main-wrapper" id="erpSystemWrapper">
         
-        <div class="navbar">
-            <div class="navbar-brand">Sanchar Telesystems Limited</div>
-            <div style="font-size:13px; color:#93c5fd;">Active Server Secured</div>
-        </div>
+        <!-- --- COLLAPSIBLE NAVIGATION SIDEBAR --- -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish text-info fs-4"></i>
+                    <span class="brand-text fw-bold tracking-wide text-white">SANCHAR ERP</span>
+                </div>
+                <button class="btn btn-sm text-white border-0 p-0" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars-staggered fs-5" id="toggleCollapseIcon"></i>
+                </button>
+            </div>
+            <ul class="sidebar-menu">
+                <li id="sideTabDash" class="active">
+                    <a href="javascript:void(0)" onclick="switchTab('dashboard')">
+                        <i class="fa-solid fa-chart-pie"></i><span>Dashboard Hub</span>
+                    </a>
+                </li>
+                <li id="sideTabIssue">
+                    <a href="javascript:void(0)" onclick="switchTab('issue')">
+                        <i class="fa-solid fa-file-pen"></i><span>Issue Registry</span>
+                    </a>
+                </li>
+                <li id="sideTabChallan">
+                    <a href="javascript:void(0)" onclick="switchTab('challan')">
+                        <i class="fa-solid fa-boxes-packing"></i><span>Challan Operations</span>
+                    </a>
+                </li>
+                <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-chart-line"></i><span>Advanced Reports</span></a></li>
+                <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-database"></i><span>Master Tables</span></a></li>
+                <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-user-gear"></i><span>Access Controls</span></a></li>
+                <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-sliders"></i><span>Global Settings</span></a></li>
+            </ul>
+        </aside>
 
-        <div class="main-menu-bar">
-            <button class="menu-tab active" id="tabIssue" onclick="switchTab('issue')">⚙️ Issue Registry</button>
-            <button class="menu-tab" id="tabChallan" onclick="switchTab('challan')">📄 Issue Challan Options</button>
-        </div>
-
-        <div class="container">
+        <!-- --- MAIN APPLICATION FRAME --- -->
+        <div class="content-body" id="contentBodyFrame">
             
-            <div id="issueModule" class="card">
-                <div class="card-title">Material Issue Registry Form</div>
-                <form id="issueForm" onsubmit="submitIssueForm(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Party Name / Consigned To *</label>
-                            <input type="text" id="formParty" required placeholder="Type Client Name..." autocomplete="off" oninput="showSuggestions('party')">
-                            <div id="partySuggestions" class="suggestions-box"></div>
+            <!-- GLASSMORPHIC CONTROLS TOP NAVBAR -->
+            <header class="top-navbar">
+                <h1 class="h5 fw-bold mb-0 text-dark" id="pageTitleContext">Dashboard Hub</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="position-relative cursor-pointer">
+                        <i class="fa-regular fa-bell fs-5 text-secondary"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                    </div>
+                    <div class="vr mx-1 text-muted"></div>
+                    <div class="dropdown">
+                        <button class="btn d-flex align-items-center gap-2 border-0 p-0" type="button" data-bs-toggle="dropdown">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-weight:600; font-size:13px;">ST</div>
+                            <span class="text-dark fw-medium small d-none d-sm-inline">Sanchar Admin</span>
+                            <i class="fa-solid fa-chevron-down text-muted small"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
+                            <li><a class="dropdown-menu-item dropdown-item small py-2" href="javascript:window.location.reload()"><i class="fa-solid fa-power-off text-danger me-2"></i>Lock Workspace</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container-fluid px-4 py-4">
+
+                <!-- --- MODULE 1: ANALYTICS HUD INDEX --- -->
+                <div id="dashboardHudModule">
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-sm-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Total Challans Issued</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="metricTotalChallans">0</h3>
+                                    </div>
+                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fa-solid fa-file-invoice"></i></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>GSTIN Number *</label>
-                            <input type="text" id="formGst" required placeholder="Type GSTIN..." autocomplete="off" oninput="showSuggestions('gst')">
-                            <div id="gstSuggestions" class="suggestions-box"></div>
+                        <div class="col-12 col-sm-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Material Units Shipped</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="metricTotalUnits">0</h3>
+                                    </div>
+                                    <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="fa-solid fa-cubes"></i></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Purpose *</label>
-                            <select id="formPurpose" required>
-                                <option value="">-- Select Purpose --</option>
-                                <option value="DEMO PURPOSE">DEMO PURPOSE</option>
-                                <option value="TESTING PURPOSE">TESTING PURPOSE</option>
-                                <option value="REPAIR & SERVICE">REPAIR & SERVICE</option>
-                                <option value="STOCK TRANSFER">STOCK TRANSFER</option>
-                                <option value="OFFICIAL SUPPLY">OFFICIAL SUPPLY</option>
-                            </select>
+                        <div class="col-12 col-sm-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Active Client Systems</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="metricTotalClients">0</h3>
+                                    </div>
+                                    <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fa-solid fa-building-shield"></i></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Consignor Name *</label>
-                            <input type="text" id="formConsignor" required placeholder="Sender Authority Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Consignor Mobile Number *</label>
-                            <input type="text" id="formConsignorMobile" required placeholder="10 Digit Mobile">
-                        </div>
-                        <div class="form-group">
-                            <label>Consignee Name *</label>
-                            <input type="text" id="formConsignee" required placeholder="Receiver Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Consignee Mobile Number *</label>
-                            <input type="text" id="formConsigneeMobile" required placeholder="10 Digit Mobile">
-                        </div>
-                        <div class="form-group">
-                            <label>Shipment By *</label>
-                            <input type="text" id="formShipment" required placeholder="e.g. BY HAND / COURIER">
-                        </div>
-                        <div class="form-group">
-                            <label>Challan Target Date *</label>
-                            <input type="date" id="formDate" required>
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Address *</label>
-                            <input type="text" id="formAddress" required placeholder="Full Destination Address">
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Remarks</label>
-                            <textarea id="formRemarks" rows="2" placeholder="Any additional notes..."></textarea>
+                        <div class="col-12 col-sm-6 col-xl-3">
+                            <div class="stat-card">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Pending Returns</p>
+                                        <h3 class="fw-bold mb-0 text-dark">0</h3>
+                                    </div>
+                                    <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div class="panel-card">
+                        <div class="panel-title"><i class="fa-solid fa-bolt text-warning"></i> Quick Actions Portal</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-primary px-4 py-2 small" onclick="switchTab('issue')"><i class="fa-solid fa-plus me-2"></i>Record New Issue Log</button>
+                            <button class="btn btn-outline-secondary px-4 py-2 small" onclick="switchTab('challan')"><i class="fa-solid fa-database me-2"></i>Browse Database Logs</button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div style="border-top: 1px solid #cbd5e1; padding-top: 15px;">
-                        <span style="font-size: 14px; font-weight: 600; color: var(--primary-color);">ITEM TRANSACTION BLOCK</span>
-                        <table class="item-add-table" id="itemAdditionTable">
+                <!-- --- MODULE 2: MATERIAL ISSUE REGISTRY FORM --- -->
+                <div id="issueModule" class="panel-card" style="display: none;">
+                    <div class="panel-title"><i class="fa-solid fa-square-plus text-primary"></i> Material Issue Registry Form</div>
+                    <form id="issueForm" onsubmit="submitIssueForm(event)">
+                        
+                        <div class="row g-3">
+                            <div class="col-md-4 position-relative">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formParty" required placeholder="Client" autocomplete="off" oninput="showSuggestions('party')">
+                                    <label for="formParty">Party Name / Consigned To *</label>
+                                </div>
+                                <div id="partySuggestions" class="suggestions-box"></div>
+                            </div>
+                            <div class="col-md-4 position-relative">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formGst" required placeholder="GST" autocomplete="off" oninput="showSuggestions('gst')">
+                                    <label for="formGst">GSTIN Number *</label>
+                                </div>
+                                <div id="gstSuggestions" class="suggestions-box"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select class="form-select" id="formPurpose" required>
+                                        <option value="">-- Select Purpose --</option>
+                                        <option value="DEMO PURPOSE">DEMO PURPOSE</option>
+                                        <option value="TESTING PURPOSE">TESTING PURPOSE</option>
+                                        <option value="REPAIR & SERVICE">REPAIR & SERVICE</option>
+                                        <option value="STOCK TRANSFER">STOCK TRANSFER</option>
+                                        <option value="OFFICIAL SUPPLY">OFFICIAL SUPPLY</option>
+                                    </select>
+                                    <label for="formPurpose">Transaction Purpose Mode *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formConsignor" required placeholder="Consignor">
+                                    <label for="formConsignor">Consignor Name *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formConsignorMobile" required placeholder="Mobile">
+                                    <label for="formConsignorMobile">Consignor Mobile *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formConsignee" required placeholder="Consignee">
+                                    <label for="formConsignee">Consignee Name *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formConsigneeMobile" required placeholder="Mobile">
+                                    <label for="formConsigneeMobile">Consignee Mobile *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formShipment" required placeholder="Shipment By">
+                                    <label for="formShipment">Shipment Fleet Logistics (e.g. BY HAND / COURIER) *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" id="formDate" required>
+                                    <label for="formDate">Challan Deployment Date *</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formAddress" required placeholder="Address">
+                                    <label for="formAddress">Complete Destination Postal Address *</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="formRemarks" style="height: 80px" placeholder="Remarks"></textarea>
+                                    <label for="formRemarks">Internal Security Remarks & Extra Data Context</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ITEM DESCRIPTIONS BLOCK -->
+                        <div class="border rounded-3 p-4 mt-4 bg-light bg-opacity-50">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-dark fw-bold mb-0 small text-uppercase tracking-wider"><i class="fa-solid fa-list-check text-secondary me-1"></i> Transaction Item Arrays</h5>
+                                <button type="button" class="btn btn-sm btn-outline-primary px-3" onclick="addNewRow()"><i class="fa-solid fa-plus me-1"></i>Add Alternate Row</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle bg-white mb-0" id="itemAdditionTable">
+                                    <thead class="table-light">
+                                        <tr class="small text-uppercase">
+                                            <th style="width: 35%;">Material Part Code *</th>
+                                            <th style="width: 45%;">Material Name / Technical Specifications *</th>
+                                            <th style="width: 15%;">Qty (Units) *</th>
+                                            <th style="width: 5%; text-align:center;">Drop</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="itemTableBody">
+                                        <tr>
+                                            <td><input type="text" class="form-control form-control-sm row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-material-name" required placeholder="e.g. HARDWARE ENGINE"></td>
+                                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" required value="1"></td>
+                                            <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                end text layout -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-4 ms-auto">
+                                <button type="submit" class="btn-gradient-save" id="processBtn">
+                                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Issue Asset & Sync Cluster
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- --- MODULE 3: CHALLAN REGISTRY DATATABLE --- -->
+                <div id="challanListModule" class="panel-card" style="display: none;">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs</div>
+                        <button class="btn btn-sm btn-outline-dark px-3 py-2" onclick="downloadTablePDF()"><i class="fa-solid fa-file-pdf text-danger me-2"></i>Export Logs Sheet (Landscape PDF)</button>
+                    </div>
+                    
+                    <div class="table-responsive-wrapper">
+                        <table class="custom-table" id="logsTableContainer">
                             <thead>
                                 <tr>
-                                    <th style="width: 35%;">Material Part Code *</th>
-                                    <th style="width: 45%;">Material Name / Description *</th>
-                                    <th style="width: 15%;">Qty (Units) *</th>
-                                    <th style="width: 5%;">Action</th>
+                                    <th>Challan Index</th>
+                                    <th>Issue Timestamp</th>
+                                    <th>Consignee Target</th>
+                                    <th>GSTIN Track</th>
+                                    <th>Operation Mode</th>
+                                    <th>Action View</th>
                                 </tr>
                             </thead>
-                            <tbody id="itemTableBody">
+                            <tbody id="dbTableBody">
                                 <tr>
-                                    <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                                    <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
-                                    <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
-                                    <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        <div class="spinner-border spinner-border-sm text-secondary me-2" role="status"></div>
+                                        Fetching active cloud ledger arrays...
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <button type="button" class="btn-add-row" onclick="addNewRow()">+ Add More Item</button>
                     </div>
+                </div>
 
-                    <button type="submit" class="btn-submit-issue" id="processBtn">💾 Issue Material & Save Database</button>
-                </form>
-            </div>
-<div id="challanListModule" class="card" style="display: none;">
-                <div style="display:flex; justify-content:space-between; align-items:center;" class="card-title">
-                    <span>Issue Challan Database Node</span>
-                    <button class="btn-download-generic" onclick="downloadTablePDF()">📥 Download Logs Report PDF</button>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table class="db-table" id="logsTableContainer">
-                        <thead>
-                            <tr>
-                                <th>Challan Number</th>
-                                <th>Issue Date</th>
-                                <th>Party Name</th>
-                                <th>GSTIN Number</th>
-                                <th>Purpose</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dbTableBody">
-                            <tr>
-                                <td colspan="6" style="text-align: center; color: var(--text-muted);">Syncing secure cloud data streams...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="challanViewSection" class="challan-view-section">
-                <div class="action-buttons">
-                    <button style="padding: 8px 15px; border-radius:4px; cursor:pointer;" onclick="closeChallanView()">Back to Registry</button>
-                    <button style="padding: 8px 15px; border-radius:4px; cursor:pointer; background:#ea580c; color:white; border:none; font-weight:bold;" onclick="downloadSingleChallanPDF()">📥 Download Challan PDF</button>
-                    <button style="padding: 8px 15px; border-radius:4px; cursor:pointer; background: #0f2c59; color: white; border:none;" onclick="window.print()">🖨️ Direct Print Layout</button>
-                </div>
-                <br>
-                
-                <div class="challan-print-box" id="challanPrintContainer">
+                <!-- --- MODULE 4: STRICT A4 REPORT PRINT INTERFACE --- -->
+                <div id="challanViewSection" class="challan-view-section">
+                    <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded-3 mb-4">
+                        <button class="btn btn-sm btn-light" onclick="closeChallanView()"><i class="fa-solid fa-arrow-left me-1"></i>Return to Cloud Explorer</button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-warning fw-semibold" onclick="downloadSingleChallanPDF()"><i class="fa-solid fa-download me-1"></i>Secure Download PDF</button>
+                            <button class="btn btn-sm btn-primary fw-semibold" onclick="window.print()"><i class="fa-solid fa-print me-1"></i>Print Hardware Receipt</button>
+                        </div>
+                    </div>
                     
-                    <div class="challan-top-header">
-                        <h2>Sanchar Telesystems Limited</h2>
-                        <p>A-78, Ground Floor, Okhla Industrial Area, Phase-II, New Delhi-110020</p>
-                    </div>
+                    <!-- Strict Physical Architecture Spec Sheet Document -->
+                    <div class="challan-print-box" id="challanPrintContainer">
+                        <div class="challan-top-header">
+                            <h2>Sanchar Telesystems Limited</h2>
+                            <p class="mb-0">A-78, Ground Floor, Okhla Industrial Area, Phase-II, New Delhi-110020</p>
+                        </div>
 
-                    <div class="challan-bar-title">DELIVERY CHALLAN</div>
+                        <div class="challan-bar-title">DELIVERY CHALLAN</div>
 
-                    <div class="challan-meta-info">
-                        <div class="meta-col">
-                            <div class="meta-line">
-                                <span class="meta-label">Challan Number:</span>
-                                <span id="lblChallanNo" style="font-weight: bold;">-</span>
+                        <div class="challan-meta-info">
+                            <div class="meta-col">
+                                <div class="meta-line"><span class="meta-label">Challan Number:</span><span id="lblChallanNo" style="font-weight: bold;">-</span></div>
+                                <div class="meta-line"><span class="meta-label">GSTIN Number:</span><span id="lblGstNo" style="font-weight: bold;">-</span></div>
+                                <div class="meta-line"><span class="meta-label">Consigned To:</span><span id="lblConsignedTo" style="font-weight: bold;">-</span></div>
+                                <div class="meta-line"><span class="meta-label">Address:</span><span id="lblAddress">-</span></div>
                             </div>
-                            <div class="meta-line">
-                                <span class="meta-label">GSTIN Number:</span>
-                                <span id="lblGstNo" style="font-weight: bold;">-</span>
-                            </div>
-                            <div class="meta-line">
-                                <span class="meta-label">Consigned To:</span>
-                                <span id="lblConsignedTo" style="font-weight: bold;">-</span>
-                            </div>
-                            <div class="meta-line">
-                                <span class="meta-label">Address:</span>
-                                <span id="lblAddress">-</span>
+                            <div class="meta-col">
+                                <div class="meta-line"><span class="meta-label">Challan Date:</span><span id="lblDate">-</span></div>
+                                <div class="meta-line"><span class="meta-label">Purpose:</span><span id="lblPurpose" style="font-weight: bold; color: #b45309;">-</span></div>
+                                <div style="margin-top: 5px; border-top: 1px dashed #ccc; padding-top:5px;">
+                                    <div class="meta-line"><span class="meta-label">Consignor Name:</span><span id="lblConsignorName">-</span></div>
+                                    <div class="meta-line"><span class="meta-label">Consignor Mobile:</span><span id="lblConsignorMobile">-</span></div>
+                                    <div class="meta-line"><span class="meta-label">Consignee Name:</span><span id="lblConsigneeName">-</span></div>
+                                    <div class="meta-line"><span class="meta-label">Consignee Mobile:</span><span id="lblConsigneeMobile">-</span></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="meta-col">
-                            <div class="meta-line">
-                                <span class="meta-label">Challan Date:</span>
-                                <span id="lblDate">-</span>
-                            </div>
-                            <div class="meta-line">
-                                <span class="meta-label">Purpose:</span>
-                                <span id="lblPurpose" style="font-weight: bold; color: #b45309;">-</span>
-                            </div>
-                            <div style="margin-top: 5px; border-top: 1px dashed #ccc; padding-top:5px;">
-                                <div class="meta-line"><span class="meta-label">Consignor Name:</span><span id="lblConsignorName">-</span></div>
-                                <div class="meta-line"><span class="meta-label">Consignor Mobile:</span><span id="lblConsignorMobile">-</span></div>
-                                <div class="meta-line"><span class="meta-label">Consignee Name:</span><span id="lblConsigneeName">-</span></div>
-                                <div class="meta-line"><span class="meta-label">Consignee Mobile:</span><span id="lblConsigneeMobile">-</span></div>
-                            </div>
+
+                        <div style="font-size: 13px; padding: 8px; border-bottom: 1px solid #000;">
+                            <strong>Shipment By :</strong> <span id="lblShipmentBy">-</span>
                         </div>
-                    </div>
 
-                    <div style="font-size: 13px; padding: 8px; border-bottom: 1px solid #000;">
-                        <strong>Shipment By :</strong> <span id="lblShipmentBy">-</span>
-                    </div>
+                        <table class="challan-goods-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 8%; text-align: center;">Sr. No</th>
+                                    <th style="width: 37%;">Material Part Code</th>
+                                    <th style="width: 35%;">Material Name</th>
+                                    <th style="width: 20%;">No. of Units</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lblGoodsTableBody"></tbody>
+                            <tfoot>
+                                <tr style="background-color: #cbd5e1; font-weight: bold;">
+                                    <td colspan="3" style="text-align: right; border-right: 1px solid #000; padding: 8px;" id="lblTotalItemsSummary">Total Summary:</td>
+                                    <td id="lblTotalQty" style="padding: 8px;">0 Items Nos.</td>
+                                </tr>
+                            </tfoot>
+                        </table>
 
-                    <table class="challan-goods-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 8%; text-align: center;">Sr. No</th>
-                                <th style="width: 37%;">Material Part Code</th>
-                                <th style="width: 35%;">Material Name</th>
-                                <th style="width: 20%;">No. of Units</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lblGoodsTableBody">
-                            </tbody>
-                        <tfoot>
-                            <tr class="challan-summary-row">
-                                <td colspan="3" style="text-align: right; border-right: 1px solid #000; padding: 8px;" id="lblTotalItemsSummary">Total Summary:</td>
-                                <td id="lblTotalQty" style="padding: 8px;">0 Items Nos.</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-                    <div style="margin-top: 15px; font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 8px;">
-                        <strong>Remarks:</strong> <span id="lblRemarks">-</span>
-                    </div>
-
-                    <div class="challan-signatures">
-                        <div class="sig-box">
-                            <strong>Received By:</strong><br><br>
-                            Signature:<br>Name:<br>Date:<br>Mobile Number:
+                        <div class="mt-3" style="font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 8px;">
+                            <strong>Remarks:</strong> <span id="lblRemarks">-</span>
                         </div>
-                        <div class="sig-box"><strong>
-                      </strong></div>
-                        <div class="sig-box"><strong></strong></div>
-                        <div class="sig-box" style="text-align: right;">
-                            <strong>For Sanchar Telesystems Limited.</strong><br><br><br><br>
-                            Authorized Signatory
+
+                        <div class="challan-signatures">
+                            <div class="sig-box">
+                                <strong>Received By:</strong><br><br>
+                                Signature:<br>Name:<br>Date:<br>Mobile Number:
+                            </div>
+                            <div class="sig-box" style="text-align: right;">
+                                <strong>For Sanchar Telesystems Limited.</strong><br><br><br><br>
+                                Authorized Signatory
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+
+            <!-- --- NEW ENTERPRISE CORPORATE FOOTER --- -->
+            <footer class="erp-footer py-4 px-4 bg-white mt-auto">
+                <div class="row align-items-start g-3">
+                    <div class="col-md-6">
+                        <span class="footer-brand-title d-block mb-1">Sanchar Telesystems Limited</span>
+                        <p class="text-secondary small mb-1">Since 2026 Copyright © Sanchar Telesystem Limited</p>
+                        <p class="text-muted small mb-0" style="font-size: 11px;">
+                            Developed & Designed By Pardeep Shekhawat (<a href="mailto:officialpardeep07@gmail.com" class="text-decoration-none text-secondary">officialpardeep07@gmail.com</a>)
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <span class="text-dark fw-bold tracking-wider small d-block mb-1">CONTACT US</span>
+                        <address class="small text-secondary mb-0" style="line-height: 1.5; font-style: normal;">
+                            Registered and Marketing office: A-78, Ground Floor, Okhla Industrial Area, Phase-II, New Delhi-110020<br>
+                            <span class="text-dark fw-medium">Ph:</span> +91-(11)-46528894-97 | <span class="text-dark fw-medium">Email:</span> <a href="mailto:info@sanchartelesystems.com" class="text-decoration-none text-secondary">info@sanchartelesystems.com</a>
+                        </address>
+                    </div>
+                </div>
+            </footer>
 
         </div>
     </div>
 
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- --- CORE SYSTEM ARCHITECTURE MODULAR ENGINE --- -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -739,7 +664,7 @@
         let distinctParties = new Set();
         let distinctGstins = new Set();
 
-        // 100% SECURE TERMINAL CREDENTIALS SECURITY LAYER
+        // TERMINAL ACCESS SECURITY LAYER
         window.verifySystemCredentials = function(event) {
             event.preventDefault();
             const u = document.getElementById('loginUser').value;
@@ -749,25 +674,53 @@
             if(u === "Sanchar" && p === "Sanchar@2026") {
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('erpSystemWrapper').style.display = 'block';
+                switchTab('dashboard');
             } else {
                 errMsg.style.display = 'block';
                 document.getElementById('loginPass').value = "";
             }
         }
 
+        // SIDEBAR COLLAPSE ACTIONS
+        window.toggleSidebar = function() {
+            const side = document.getElementById('sidebar');
+            const main = document.getElementById('contentBodyFrame');
+            const icon = document.getElementById('toggleCollapseIcon');
+            side.classList.toggle('collapsed');
+            main.classList.toggle('expanded');
+            
+            if(side.classList.contains('collapsed')) {
+                icon.className = "fa-solid fa-right-left fs-5";
+            } else {
+                icon.className = "fa-solid fa-bars-staggered fs-5";
+            }
+        }
+
+        // INTEGRATED SYSTEM NAVIGATION HUB
         window.switchTab = function(mode) {
-            document.getElementById('tabIssue').classList.remove('active');
-            document.getElementById('tabChallan').classList.remove('active');
+            document.getElementById('sideTabDash').classList.remove('active');
+            document.getElementById('sideTabIssue').classList.remove('active');
+            document.getElementById('sideTabChallan').classList.remove('active');
+            
+            document.getElementById('dashboardHudModule').style.display = 'none';
             document.getElementById('issueModule').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'none';
 
-            if(mode === 'issue') {
-                document.getElementById('tabIssue').classList.add('active');
+            const contextTitle = document.getElementById('pageTitleContext');
+
+            if(mode === 'dashboard') {
+                document.getElementById('sideTabDash').classList.add('active');
+                document.getElementById('dashboardHudModule').style.display = 'block';
+                contextTitle.innerText = "Dashboard Hub";
+            } else if(mode === 'issue') {
+                document.getElementById('sideTabIssue').classList.add('active');
                 document.getElementById('issueModule').style.display = 'block';
+                contextTitle.innerText = "Material Issue Registry Form";
             } else if(mode === 'challan') {
-                document.getElementById('tabChallan').classList.add('active');
+                document.getElementById('sideTabChallan').classList.add('active');
                 document.getElementById('challanListModule').style.display = 'block';
+                contextTitle.innerText = "Challan Ledger Workspace";
             }
         }
 
@@ -775,10 +728,10 @@
             const tbody = document.getElementById('itemTableBody');
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
-                <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
-                <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                <td><input type="text" class="form-control form-control-sm row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                <td><input type="text" class="form-control form-control-sm row-material-name" required placeholder="e.g. HARDWARE ENGINE"></td>
+                <td><input type="number" class="form-control form-control-sm row-qty" min="1" required value="1"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
             tbody.appendChild(row);
         }
@@ -791,7 +744,8 @@
                 alert("Minimum 1 item transactional line is mandatory.");
             }
         }
-window.showSuggestions = function(type) {
+
+        window.showSuggestions = function(type) {
             const partyInput = document.getElementById('formParty').value.toLowerCase();
             const gstInput = document.getElementById('formGst').value.toLowerCase();
             
@@ -842,7 +796,7 @@ window.showSuggestions = function(type) {
         window.submitIssueForm = function(event) {
             event.preventDefault();
             const procBtn = document.getElementById('processBtn');
-            procBtn.innerText = "Processing Cloud Sync Transaction...";
+            procBtn.innerText = "Processing Cloud Sync...";
             procBtn.disabled = true;
 
             const selectedDateString = document.getElementById('formDate').value;
@@ -854,7 +808,6 @@ window.showSuggestions = function(type) {
             const formattedDateString = `${dd}/${mm}/${yyyy}`;
             const lookupDateKey = `${dd}${mm}${yyyy}`;
 
-            // Sequential Serial Logic
             let totalDailyCount = 1;
             Object.keys(fetchedChallans).forEach(key => {
                 const item = fetchedChallans[key];
@@ -904,32 +857,33 @@ window.showSuggestions = function(type) {
                     document.getElementById('issueForm').reset();
                     document.getElementById('itemTableBody').innerHTML = `
                         <tr>
-                            <td><input type="text" class="row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                            <td><input type="text" class="row-material-name" required placeholder="e.g. HARDWARE"></td>
-                            <td><input type="number" class="row-qty" min="1" required placeholder="1" value="1"></td>
-                            <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">X</button></td>
+                            <td><input type="text" class="form-control form-control-sm row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
+                            <td><input type="text" class="form-control form-control-sm row-material-name" required placeholder="e.g. HARDWARE ENGINE"></td>
+                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" required value="1"></td>
+                            <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
                     `;
                     document.getElementById('formDate').valueAsDate = new Date();
-                    procBtn.innerText = "💾 Issue Material & Save Database";
+                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Issue Asset & Sync Cluster`;
                     procBtn.disabled = false;
                     switchTab('challan');
                 })
                 .catch(err => {
                     console.error(err);
                     alert("Database write rejected.");
-                    procBtn.innerText = "💾 Issue Material & Save Database";
+                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Issue Asset & Sync Cluster`;
                     procBtn.disabled = false;
                 });
         }
 
+        // SYNCHRONIZED REPLICATION ACCOUNTABILITY EXPLORER
         onValue(ref(db, "sanchar_issues_v4_secured"), (snapshot) => {
             const tableBody = document.getElementById('dbTableBody');
             tableBody.innerHTML = "";
             const data = snapshot.val();
             
             if(!data) {
-                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No Record Logs Available.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
                 return;
             }
 
@@ -937,8 +891,13 @@ window.showSuggestions = function(type) {
             distinctParties.clear();
             distinctGstins.clear();
 
+            let computedUnitsCounter = 0;
+            let totalRecordsCount = 0;
+
             Object.keys(data).reverse().forEach(key => {
                 const item = data[key];
+                totalRecordsCount++;
+                computedUnitsCounter += (parseInt(item.totalUnitsCount) || 0);
                 
                 if(item.partyName) distinctParties.add(item.partyName);
                 if(item.gstNumber) distinctGstins.add(item.gstNumber);
@@ -946,17 +905,23 @@ window.showSuggestions = function(type) {
                 const tr = document.createElement('tr');
                 tr.onclick = () => renderChallanDocument(key);
                 tr.innerHTML = `
-                    <td style="font-weight:bold; color:var(--secondary-color);">${item.challanNo}</td>
-                    <td>${item.issueDate}</td>
-                    <td>${item.partyName}</td>
-                    <td>${item.gstNumber}</td>
-                    <td style="font-weight:600; color:#b45309;">${item.purposeMode || 'DELIVERY'}</td>
-                    <td><button class="view-btn">Open Report</button></td>
+                    <td class="fw-bold text-primary">${item.challanNo}</td>
+                    <td><i class="fa-regular fa-calendar-check me-2 text-muted"></i>${item.issueDate}</td>
+                    <td class="fw-semibold text-dark">${item.partyName}</td>
+                    <td><code>${item.gstNumber}</code></td>
+                    <td><span class="badge bg-warning bg-opacity-10 text-warning-emphasis px-2 py-1">${item.purposeMode || 'DELIVERY'}</span></td>
+                    <td><button class="btn btn-xs btn-outline-primary py-1 px-2 small" style="font-size:11px;">View Document</button></td>
                 `;
                 tableBody.appendChild(tr);
             });
+
+            // DASHBOARD REAL-TIME ANALYTICS INJECTOR
+            document.getElementById('metricTotalChallans').innerText = totalRecordsCount;
+            document.getElementById('metricTotalUnits').innerText = computedUnitsCounter;
+            document.getElementById('metricTotalClients').innerText = distinctParties.size;
         });
-window.renderChallanDocument = function(recordKey) {
+
+        window.renderChallanDocument = function(recordKey) {
             const targetData = fetchedChallans[recordKey];
             if(!targetData) return;
 
@@ -992,11 +957,13 @@ window.renderChallanDocument = function(recordKey) {
 
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'block';
+            document.getElementById('pageTitleContext').innerText = `Document Inspection: ${targetData.challanNo}`;
         }
 
         window.closeChallanView = function() {
             document.getElementById('challanViewSection').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'block';
+            document.getElementById('pageTitleContext').innerText = "Challan Operations";
         }
 
         window.downloadSingleChallanPDF = function() {
