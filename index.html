@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanchar Telesystems Limited - Corporate ERP Gateway</title>
+    <title>Sanchar Telesystems Limited - Service Centre</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -127,6 +127,7 @@
             background: #fff; border: none; border-radius: 12px; padding: 24px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
             transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
         }
         .stat-card:hover {
             transform: translateY(-3px);
@@ -172,15 +173,6 @@
             box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); transform: translateY(-1px); color: #fff;
         }
 
-        /* --- AUTO-SUGGESTION SYSTEM OVERLAY --- */
-        .suggestions-box {
-            position: absolute; background: white; border: 1px solid #cbd5e1;
-            width: 100%; z-index: 1000; max-height: 180px; overflow-y: auto;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: none; border-radius: 8px; margin-top: 5px;
-        }
-        .suggestion-item { padding: 10px 15px; cursor: pointer; font-size: 13px; }
-        .suggestion-item:hover { background-color: #f1f5f9; color: var(--secondary-color); }
-
         /* --- COMPACT PRINT SHEET LAYOUT --- */
         .challan-view-section { display: none; margin-top: 20px; }
         .challan-print-box {
@@ -191,22 +183,16 @@
         .challan-top-header { text-align: center; border-bottom: 1px solid #000; padding-bottom: 15px; }
         .challan-top-header h2 { margin: 0; font-size: 26px; font-weight: bold; text-transform: uppercase; }
         .challan-bar-title {
-            background-color: #dbb386; text-align: center; font-weight: bold;
-            font-size: 14px; border-top: 1px solid #000; border-bottom: 1px solid #000;
-            padding: 5px 0; margin-top: 10px; letter-spacing: 1.5px;
+            text-align: center; font-weight: bold;
+            font-size: 18px; border-top: 1px solid #000; border-bottom: 1px solid #000;
+            padding: 5px 0; margin-top: 10px; letter-spacing: 1.5px; text-decoration: underline;
         }
-        .challan-meta-info { display: grid; grid-template-columns: 1.1fr 0.9fr; font-size: 12.5px; border-bottom: 1px solid #000; }
-        .meta-col { padding: 8px; line-height: 1.6; }
-        .meta-col:first-child { border-right: 1px solid #000; }
-        .meta-line { display: flex; margin-bottom: 4px; }
-        .meta-label { font-weight: bold; width: 140px; }
-        .challan-goods-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: -1px; }
-        .challan-goods-table th, .challan-goods-table td { border-bottom: 1px solid #000; border-right: 1px solid #000; padding: 8px 10px; }
-        .challan-goods-table th { background-color: #e2e8f0; font-weight: bold; border-bottom: 2px solid #000; }
-        .challan-goods-table th:last-child, .challan-goods-table td:last-child { border-right: none; }
-        .challan-signatures { margin-top: 50px; display: grid; grid-template-columns: repeat(2, 1fr); font-size: 12px; }
+        .challan-meta-info { font-size: 13px; border-bottom: 1px solid #000; padding: 10px 0; line-height: 1.8; }
+        .challan-goods-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 15px; border: 1px solid #000; }
+        .challan-goods-table th, .challan-goods-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }
+        .challan-goods-table th { background-color: #f2f2f2; font-weight: bold; }
+        .challan-signatures { margin-top: 60px; display: flex; justify-content: space-between; font-size: 13px; }
 
-        /* --- ERP COMPREHENSIVE FOOTER --- */
         .erp-footer {
             margin-top: auto;
             background-color: #ffffff;
@@ -231,8 +217,7 @@
     </style>
 </head>
 <body>
-
-    <!-- --- AUTHENTICATION SHIELD GATEWAY --- -->
+   <!-- --- AUTHENTICATION SHIELD GATEWAY --- -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
             <div class="text-center mb-4">
@@ -282,7 +267,12 @@
                 </li>
                 <li id="sideTabIssue">
                     <a href="javascript:void(0)" onclick="switchTab('issue')">
-                        <i class="fa-solid fa-file-pen"></i><span>Issue Registry</span>
+                        <i class="fa-solid fa-file-pen"></i><span>Receipt Register</span>
+                    </a>
+                </li>
+                <li id="sideTabOutward">
+                    <a href="javascript:void(0)" onclick="switchTab('outward')">
+                        <i class="fa-solid fa-file-export"></i><span>Outward Register</span>
                     </a>
                 </li>
                 <li id="sideTabChallan">
@@ -290,9 +280,13 @@
                         <i class="fa-solid fa-boxes-packing"></i><span>Challan Operations</span>
                     </a>
                 </li>
+                <li id="sideTabMaster">
+                    <a href="javascript:void(0)" onclick="openMasterTool()">
+                        <i class="fa-solid fa-user-gear"></i><span>Master Tool</span>
+                    </a>
+                </li>
                 <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-chart-line"></i><span>Advanced Reports</span></a></li>
                 <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-database"></i><span>Master Tables</span></a></li>
-                <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-user-gear"></i><span>Access Controls</span></a></li>
                 <li><a href="javascript:void(0)" class="opacity-50"><i class="fa-solid fa-sliders"></i><span>Global Settings</span></a></li>
             </ul>
         </aside>
@@ -326,9 +320,17 @@
 
                 <!-- --- MODULE 1: ANALYTICS HUD INDEX --- -->
                 <div id="dashboardHudModule">
+                    <!-- SEARCH BAR FIELD -->
+                    <div class="mb-4">
+                        <div class="input-group shadow-sm border-0">
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" class="form-control border-start-0 py-2" id="dashboardGlobalSearch" placeholder="Search entries by Date, Challan No, Customer Name or Serial Number..." oninput="triggerDashboardSearch()">
+                        </div>
+                    </div>
+
                     <div class="row g-3 mb-4">
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card">
+                            <div class="stat-card" data-bs-toggle="modal" data-bs-target="#challanTypeModal">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Total Challans Issued</p>
@@ -342,10 +344,10 @@
                             <div class="stat-card">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
-                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Material Units Shipped</p>
-                                        <h3 class="fw-bold mb-0 text-dark" id="metricTotalUnits">0</h3>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Item Aanya (Received)</p>
+                                        <h3 class="fw-bold mb-0 text-success" id="summaryReceivedUnits">0</h3>
                                     </div>
-                                    <div class="stat-icon bg-info bg-opacity-10 text-info"><i class="fa-solid fa-cubes"></i></div>
+                                    <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fa-solid fa-arrow-down-long"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -353,10 +355,10 @@
                             <div class="stat-card">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
-                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Active Client Systems</p>
-                                        <h3 class="fw-bold mb-0 text-dark" id="metricTotalClients">0</h3>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Item Wapis Gya (Dispatched)</p>
+                                        <h3 class="fw-bold mb-0 text-danger" id="summaryDispatchedUnits">0</h3>
                                     </div>
-                                    <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fa-solid fa-building-shield"></i></div>
+                                    <div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="fa-solid fa-arrow-up-long"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -364,151 +366,208 @@
                             <div class="stat-card">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
-                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Pending Returns</p>
-                                        <h3 class="fw-bold mb-0 text-dark">0</h3>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Kitna Bacha (Net Stock)</p>
+                                        <h3 class="fw-bold mb-0 text-primary" id="summaryNetUnits">0</h3>
                                     </div>
-                                    <div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fa-solid fa-boxes-stacked"></i></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- SEARCH RESULTS LIVE CONTAINER -->
+                    <div id="searchResultLogContainer" class="panel-card d-none">
+                        <div class="panel-title text-info"><i class="fa-solid fa-list-check"></i> Live Search Matching Results</div>
+                        <div class="table-responsive-wrapper">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Challan Index</th>
+                                        <th>Date</th>
+                                        <th>Customer Name</th>
+                                        <th>GST No.</th>
+                                        <th>Action View</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="searchResultTableBody"></tbody>
+                            </table>
                         </div>
                     </div>
                     
                     <div class="panel-card">
                         <div class="panel-title"><i class="fa-solid fa-bolt text-warning"></i> Quick Actions Portal</div>
                         <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-primary px-4 py-2 small" onclick="switchTab('issue')"><i class="fa-solid fa-plus me-2"></i>Record New Issue Log</button>
+                            <button class="btn btn-primary px-4 py-2 small" onclick="switchTab('issue')"><i class="fa-solid fa-plus me-2"></i>Record New Receipt</button>
+                            <button class="btn btn-info text-white px-4 py-2 small" onclick="switchTab('outward')"><i class="fa-solid fa-file-export me-2"></i>Record New Outward</button>
                             <button class="btn btn-outline-secondary px-4 py-2 small" onclick="switchTab('challan')"><i class="fa-solid fa-database me-2"></i>Browse Database Logs</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- --- MODULE 2: MATERIAL ISSUE REGISTRY FORM --- -->
+  <!-- --- MODULE 2: MATERIAL RECEIPT REGISTRY FORM --- -->
                 <div id="issueModule" class="panel-card" style="display: none;">
-                    <div class="panel-title"><i class="fa-solid fa-square-plus text-primary"></i> Material Issue Registry Form</div>
+                    <div class="panel-title"><i class="fa-solid fa-square-plus text-primary"></i> Receipt Register Form</div>
                     <form id="issueForm" onsubmit="submitIssueForm(event)">
-                        
                         <div class="row g-3">
-                            <div class="col-md-4 position-relative">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formParty" required placeholder="Client" autocomplete="off" oninput="showSuggestions('party')">
-                                    <label for="formParty">Party Name / Consigned To *</label>
-                                </div>
-                                <div id="partySuggestions" class="suggestions-box"></div>
-                            </div>
-                            <div class="col-md-4 position-relative">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formGst" required placeholder="GST" autocomplete="off" oninput="showSuggestions('gst')">
-                                    <label for="formGst">GSTIN Number *</label>
-                                </div>
-                                <div id="gstSuggestions" class="suggestions-box"></div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-floating">
-                                    <select class="form-select" id="formPurpose" required>
-                                        <option value="">-- Select Purpose --</option>
-                                        <option value="DEMO PURPOSE">DEMO PURPOSE</option>
-                                        <option value="TESTING PURPOSE">TESTING PURPOSE</option>
-                                        <option value="REPAIR & SERVICE">REPAIR & SERVICE</option>
-                                        <option value="STOCK TRANSFER">STOCK TRANSFER</option>
-                                        <option value="OFFICIAL SUPPLY">OFFICIAL SUPPLY</option>
-                                    </select>
-                                    <label for="formPurpose">Transaction Purpose Mode *</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formConsignor" required placeholder="Consignor">
-                                    <label for="formConsignor">Consignor Name *</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formConsignorMobile" required placeholder="Mobile">
-                                    <label for="formConsignorMobile">Consignor Mobile *</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formConsignee" required placeholder="Consignee">
-                                    <label for="formConsignee">Consignee Name *</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formConsigneeMobile" required placeholder="Mobile">
-                                    <label for="formConsigneeMobile">Consignee Mobile *</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="formShipment" required placeholder="Shipment By">
-                                    <label for="formShipment">Shipment Fleet Logistics (e.g. BY HAND / COURIER) *</label>
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="date" class="form-control" id="formDate" required>
-                                    <label for="formDate">Challan Deployment Date *</label>
+                                    <label for="formDate">Date Of Receiving *</label>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control text-customer-autocomplete" id="formCustomerName" required placeholder="Customer Name" oninput="handleCustomerAutofill(this, 'formAddress', 'formGst')">
+                                    <label for="formCustomerName">Customer Name *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formGst" required placeholder="GST No.">
+                                    <label for="formGst">GST No. *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="formAddress" required placeholder="Address">
-                                    <label for="formAddress">Complete Destination Postal Address *</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control" id="formRemarks" style="height: 80px" placeholder="Remarks"></textarea>
-                                    <label for="formRemarks">Internal Security Remarks & Extra Data Context</label>
+                                    <label for="formAddress">Address *</label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ITEM DESCRIPTIONS BLOCK -->
                         <div class="border rounded-3 p-4 mt-4 bg-light bg-opacity-50">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="text-dark fw-bold mb-0 small text-uppercase tracking-wider"><i class="fa-solid fa-list-check text-secondary me-1"></i> Transaction Item Arrays</h5>
-                                <button type="button" class="btn btn-sm btn-outline-primary px-3" onclick="addNewRow()"><i class="fa-solid fa-plus me-1"></i>Add Alternate Row</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary px-3" onclick="addNewRow('itemTableBody')"><i class="fa-solid fa-plus me-1"></i>Add Alternate Row</button>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="itemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 35%;">Material Part Code *</th>
-                                            <th style="width: 45%;">Material Name / Technical Specifications *</th>
-                                            <th style="width: 15%;">Qty (Units) *</th>
+                                            <th style="width: 20%;">Item Model No. *</th>
+                                            <th style="width: 25%;">Description *</th>
+                                            <th style="width: 20%;">Serial Number *</th>
+                                            <th style="width: 10%;">Qty *</th>
+                                            <th style="width: 20%;">Issue Faced *</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
                                     </thead>
                                     <tbody id="itemTableBody">
                                         <tr>
-                                            <td><input type="text" class="form-control form-control-sm row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                                            <td><input type="text" class="form-control form-control-sm row-material-name" required placeholder="e.g. HARDWARE ENGINE"></td>
-                                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" required value="1"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
+                                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                                            <td><input type="text" class="form-control form-control-sm row-serial" required></td>
+                                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-faced" required></td>
                                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>
                                     </tbody>
-                                end text layout -->
-                                    </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="formRemarks" style="height: 80px" placeholder="Remarks"></textarea>
+                                    <label for="formRemarks">Remarks</label>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row mt-4">
                             <div class="col-md-4 ms-auto">
                                 <button type="submit" class="btn-gradient-save" id="processBtn">
-                                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Issue Asset & Sync Cluster
+                                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Challan
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
 
-                <!-- --- MODULE 3: CHALLAN REGISTRY DATATABLE --- -->
+                <!-- --- MODULE 2B: MATERIAL OUTWARD REGISTRY FORM --- -->
+                <div id="outwardModule" class="panel-card" style="display: none;">
+                    <div class="panel-title"><i class="fa-solid fa-square-plus text-info"></i> Outward Register Form</div>
+                    <form id="outwardForm" onsubmit="submitOutwardForm(event)">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" id="outwardFormDate" required>
+                                    <label for="outwardFormDate">Date Of Dispatch *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control text-customer-autocomplete" id="outwardFormCustomerName" required placeholder="Customer Name" oninput="handleCustomerAutofill(this, 'outwardFormAddress', 'outwardFormGst')">
+                                    <label for="outwardFormCustomerName">Customer Name *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="outwardFormGst" required placeholder="GST No.">
+                                    <label for="outwardFormGst">GST No. *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="outwardFormAddress" required placeholder="Address">
+                                    <label for="outwardFormAddress">Address *</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border rounded-3 p-4 mt-4 bg-light bg-opacity-50">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-dark fw-bold mb-0 small text-uppercase tracking-wider"><i class="fa-solid fa-list-check text-secondary me-1"></i> Outward Item Arrays</h5>
+                                <button type="button" class="btn btn-sm btn-outline-primary px-3" onclick="addNewRow('outwardItemTableBody')"><i class="fa-solid fa-plus me-1"></i>Add Alternate Row</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle bg-white mb-0" id="outwardItemAdditionTable">
+                                    <thead class="table-light">
+                                        <tr class="small text-uppercase">
+                                            <th style="width: 20%;">Item Model No. *</th>
+                                            <th style="width: 25%;">Description *</th>
+                                            <th style="width: 20%;">Serial Number *</th>
+                                            <th style="width: 10%;">Qty *</th>
+                                            <th style="width: 20%;">Status / Issue *</th>
+                                            <th style="width: 5%; text-align:center;">Drop</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="outwardItemTableBody">
+                                        <tr>
+                                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
+                                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                                            <td><input type="text" class="form-control form-control-sm row-serial" required></td>
+                                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-faced" required></td>
+                                            <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="outwardFormRemarks" style="height: 80px" placeholder="Remarks"></textarea>
+                                    <label for="outwardFormRemarks">Remarks</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-4 ms-auto">
+                                <button type="submit" class="btn-gradient-save" id="outwardProcessBtn" style="background: linear-gradient(135deg, #1E88E5 0%, #0F4C81 100%);">
+                                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Outward Challan
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+ <!-- --- MODULE 3: CHALLAN REGISTRY DATATABLE --- -->
                 <div id="challanListModule" class="panel-card" style="display: none;">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-                        <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs</div>
+                        <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs (<span id="filterScopeLabel">All Ledger Logs</span>)</div>
                         <button class="btn btn-sm btn-outline-dark px-3 py-2" onclick="downloadTablePDF()"><i class="fa-solid fa-file-pdf text-danger me-2"></i>Export Logs Sheet (Landscape PDF)</button>
                     </div>
                     
@@ -517,21 +576,41 @@
                             <thead>
                                 <tr>
                                     <th>Challan Index</th>
-                                    <th>Issue Timestamp</th>
-                                    <th>Consignee Target</th>
-                                    <th>GSTIN Track</th>
-                                    <th>Operation Mode</th>
+                                    <th>Receiving / Dispatch Date</th>
+                                    <th>Customer Name</th>
+                                    <th>GST No.</th>
                                     <th>Action View</th>
                                 </tr>
                             </thead>
                             <tbody id="dbTableBody">
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">
+                                    <td colspan="5" class="text-center py-4 text-muted">
                                         <div class="spinner-border spinner-border-sm text-secondary me-2" role="status"></div>
                                         Fetching active cloud ledger arrays...
                                     </td>
                                 </tr>
                             </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- --- MODULE 3B: MASTER TOOL PANEL (EDIT/DELETE) --- -->
+                <div id="masterToolModule" class="panel-card" style="display: none;">
+                    <div class="panel-title text-danger"><i class="fa-solid fa-screwdriver-wrench"></i> Master Architecture Configuration Hub</div>
+                    <p class="text-muted small">Yahan se aap system ke kisi bhi entry ko edit ya permanently delete kar sakte hain.</p>
+                    
+                    <div class="table-responsive-wrapper">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Challan No</th>
+                                    <th>Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Type</th>
+                                    <th style="width: 15%; text-align: center;">Controls</th>
+                                </tr>
+                            </thead>
+                            <tbody id="masterTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -546,68 +625,49 @@
                         </div>
                     </div>
                     
-                    <!-- Strict Physical Architecture Spec Sheet Document -->
                     <div class="challan-print-box" id="challanPrintContainer">
                         <div class="challan-top-header">
                             <h2>Sanchar Telesystems Limited</h2>
-                            <p class="mb-0">A-78, Ground Floor, Okhla Industrial Area, Phase-II, New Delhi-110020</p>
+                            <p class="mb-0">A-78, Ground Floor, Okhla Industrial Area, Phase II, New Delhi - 110020</p>
+                            <p class="mb-0">GSTIN/UIN: 07AAKCS3561K1ZZ, State Name: Delhi</p>
+                            <p class="mb-0">CIN: U32204DL2006PLC155919</p>
                         </div>
 
-                        <div class="challan-bar-title">DELIVERY CHALLAN</div>
+                        <div class="challan-bar-title" id="lblChallanTitle">Receipt Challan</div>
 
                         <div class="challan-meta-info">
-                            <div class="meta-col">
-                                <div class="meta-line"><span class="meta-label">Challan Number:</span><span id="lblChallanNo" style="font-weight: bold;">-</span></div>
-                                <div class="meta-line"><span class="meta-label">GSTIN Number:</span><span id="lblGstNo" style="font-weight: bold;">-</span></div>
-                                <div class="meta-line"><span class="meta-label">Consigned To:</span><span id="lblConsignedTo" style="font-weight: bold;">-</span></div>
-                                <div class="meta-line"><span class="meta-label">Address:</span><span id="lblAddress">-</span></div>
-                            </div>
-                            <div class="meta-col">
-                                <div class="meta-line"><span class="meta-label">Challan Date:</span><span id="lblDate">-</span></div>
-                                <div class="meta-line"><span class="meta-label">Purpose:</span><span id="lblPurpose" style="font-weight: bold; color: #b45309;">-</span></div>
-                                <div style="margin-top: 5px; border-top: 1px dashed #ccc; padding-top:5px;">
-                                    <div class="meta-line"><span class="meta-label">Consignor Name:</span><span id="lblConsignorName">-</span></div>
-                                    <div class="meta-line"><span class="meta-label">Consignor Mobile:</span><span id="lblConsignorMobile">-</span></div>
-                                    <div class="meta-line"><span class="meta-label">Consignee Name:</span><span id="lblConsigneeName">-</span></div>
-                                    <div class="meta-line"><span class="meta-label">Consignee Mobile:</span><span id="lblConsigneeMobile">-</span></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="font-size: 13px; padding: 8px; border-bottom: 1px solid #000;">
-                            <strong>Shipment By :</strong> <span id="lblShipmentBy">-</span>
+                            <div><strong>Challan No:</strong> <span id="lblChallanNo">-</span></div>
+                            <div><strong>Date:</strong> <span id="lblDate">-</span></div>
+                            <div><strong>Customer Name & Address & GST Details:</strong> <span id="lblCustomerDetails">-</span></div>
+                            <div><strong>GST NO :</strong> <span id="lblGstNo">-</span></div>
+                            <div><strong>Customer Type:</strong> Government</div>
                         </div>
 
                         <table class="challan-goods-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 8%; text-align: center;">Sr. No</th>
-                                    <th style="width: 37%;">Material Part Code</th>
-                                    <th style="width: 35%;">Material Name</th>
-                                    <th style="width: 20%;">No. of Units</th>
+                                    <th style="width: 8%;">SR NO</th>
+                                    <th style="width: 25%;">Item Model No.</th>
+                                    <th style="width: 25%;">Description</th>
+                                    <th style="width: 17%;">Serial No.</th>
+                                    <th style="width: 10%;">Qty</th>
+                                    <th style="width: 15%;" id="lblTableFacedColumn">Issue Faced</th>
                                 </tr>
                             </thead>
                             <tbody id="lblGoodsTableBody"></tbody>
-                            <tfoot>
-                                <tr style="background-color: #cbd5e1; font-weight: bold;">
-                                    <td colspan="3" style="text-align: right; border-right: 1px solid #000; padding: 8px;" id="lblTotalItemsSummary">Total Summary:</td>
-                                    <td id="lblTotalQty" style="padding: 8px;">0 Items Nos.</td>
-                                </tr>
-                            </tfoot>
                         </table>
 
-                        <div class="mt-3" style="font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 8px;">
-                            <strong>Remarks:</strong> <span id="lblRemarks">-</span>
+                        <div class="mt-4" style="font-size: 13px; line-height: 1.6;">
+                            <div><strong>Remarks</strong></div>
+                            <div id="lblRemarks" class="text-muted" style="margin-bottom: 10px;">-</div>
+                            <div><strong>Declaration</strong></div>
+                            <div class="text-muted">NA</div>
                         </div>
 
                         <div class="challan-signatures">
-                            <div class="sig-box">
-                                <strong>Received By:</strong><br><br>
-                                Signature:<br>Name:<br>Date:<br>Mobile Number:
-                            </div>
-                            <div class="sig-box" style="text-align: right;">
-                                <strong>For Sanchar Telesystems Limited.</strong><br><br><br><br>
-                                Authorized Signatory
+                            <div></div>
+                            <div style="text-align: right; border-top: unset; margin-top: 40px;">
+                                <strong style="text-decoration: underline;">Authorized Signatory</strong>
                             </div>
                         </div>
                     </div>
@@ -615,26 +675,80 @@
 
             </div>
 
-            <!-- --- NEW ENTERPRISE CORPORATE FOOTER --- -->
+            <!-- --- FOOTER --- -->
             <footer class="erp-footer py-4 px-4 bg-white mt-auto">
                 <div class="row align-items-start g-3">
                     <div class="col-md-6">
                         <span class="footer-brand-title d-block mb-1">Sanchar Telesystems Limited</span>
                         <p class="text-secondary small mb-1">Since 2026 Copyright © Sanchar Telesystem Limited</p>
-                        <p class="text-muted small mb-0" style="font-size: 11px;">
-                            Developed & Designed By Pardeep Shekhawat (<a href="mailto:officialpardeep07@gmail.com" class="text-decoration-none text-secondary">officialpardeep07@gmail.com</a>)
-                        </p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <span class="text-dark fw-bold tracking-wider small d-block mb-1">CONTACT US</span>
-                        <address class="small text-secondary mb-0" style="line-height: 1.5; font-style: normal;">
-                            Registered and Marketing office: A-78, Ground Floor, Okhla Industrial Area, Phase-II, New Delhi-110020<br>
-                            <span class="text-dark fw-medium">Ph:</span> +91-(11)-46528894-97 | <span class="text-dark fw-medium">Email:</span> <a href="mailto:info@sanchartelesystems.com" class="text-decoration-none text-secondary">info@sanchartelesystems.com</a>
-                        </address>
                     </div>
                 </div>
             </footer>
 
+        </div>
+    </div>
+
+    <!-- --- DYNAMIC MODAL FOR DASHBOARD CHALLAN CLICK --- -->
+    <div class="modal fade" id="challanTypeModal" tabindex="-1" aria-labelledby="challanTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-dark" id="challanTypeModalLabel"><i class="fa-solid fa-sliders text-primary me-2"></i>Select Challan Registry View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="text-muted small mb-4">Choose which repository stream logs you want to process or view right now:</p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <button class="btn btn-outline-primary w-100 py-3 fw-semibold" onclick="applyChallanFilter('receipt')" data-bs-dismiss="modal">
+                                <i class="fa-solid fa-file-arrow-down fs-4 d-block mb-2"></i> Receipt Challan
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-info w-100 py-3 fw-semibold text-info" onclick="applyChallanFilter('delivery')" data-bs-dismiss="modal">
+                                <i class="fa-solid fa-file-export fs-4 d-block mb-2"></i> Delivery Challan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT SYSTEM MODAL (FOR MASTER TOOL) -->
+    <div class="modal fade" id="masterEditModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Ledger Record</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editRecordKey">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Customer Name</label>
+                            <input type="text" class="form-control" id="editCustName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">GST Number</label>
+                            <input type="text" class="form-control" id="editGstNo" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Address</label>
+                            <input type="text" class="form-control" id="editAddress" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Remarks</label>
+                            <textarea class="form-control" id="editRemarks" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm px-3" onclick="saveMasterEditedData()">Commit Changes</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -644,7 +758,7 @@
     <!-- --- CORE SYSTEM ARCHITECTURE MODULAR ENGINE --- -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD_uUBIp1c3rWgyQNYVc22D7JZ1UlhskoI",
@@ -661,8 +775,8 @@
         const db = getDatabase(app);
 
         let fetchedChallans = {};
-        let distinctParties = new Set();
-        let distinctGstins = new Set();
+        let currentFilterMode = "all"; 
+        let isMasterAuthenticated = false;
 
         // TERMINAL ACCESS SECURITY LAYER
         window.verifySystemCredentials = function(event) {
@@ -700,11 +814,15 @@
         window.switchTab = function(mode) {
             document.getElementById('sideTabDash').classList.remove('active');
             document.getElementById('sideTabIssue').classList.remove('active');
+            document.getElementById('sideTabOutward').classList.remove('active');
             document.getElementById('sideTabChallan').classList.remove('active');
+            document.getElementById('sideTabMaster').classList.remove('active');
             
             document.getElementById('dashboardHudModule').style.display = 'none';
             document.getElementById('issueModule').style.display = 'none';
+            document.getElementById('outwardModule').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'none';
+            document.getElementById('masterToolModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'none';
 
             const contextTitle = document.getElementById('pageTitleContext');
@@ -716,21 +834,68 @@
             } else if(mode === 'issue') {
                 document.getElementById('sideTabIssue').classList.add('active');
                 document.getElementById('issueModule').style.display = 'block';
-                contextTitle.innerText = "Material Issue Registry Form";
+                contextTitle.innerText = "Receipt Register Form";
+            } else if(mode === 'outward') {
+                document.getElementById('sideTabOutward').classList.add('active');
+                document.getElementById('outwardModule').style.display = 'block';
+                contextTitle.innerText = "Outward Register Form";
             } else if(mode === 'challan') {
                 document.getElementById('sideTabChallan').classList.add('active');
                 document.getElementById('challanListModule').style.display = 'block';
                 contextTitle.innerText = "Challan Ledger Workspace";
+            } else if(mode === 'master') {
+                document.getElementById('sideTabMaster').classList.add('active');
+                document.getElementById('masterToolModule').style.display = 'block';
+                contextTitle.innerText = "Master Tool Panel";
+            }
+        }
+   // PASSWORD-PROTECTED MASTER TOOL INITIALIZATION
+        window.openMasterTool = function() {
+            if (isMasterAuthenticated) {
+                switchTab('master');
+                renderMasterTableRows();
+            } else {
+                const pass = prompt("Please enter secure Master Password to open control gateway:");
+                if (pass === "Pardeep@1999") {
+                    isMasterAuthenticated = true;
+                    switchTab('master');
+                    renderMasterTableRows();
+                } else if(pass !== null) {
+                    alert("Access Denied! Incorrect Master Security Key.");
+                }
             }
         }
 
-        window.addNewRow = function() {
-            const tbody = document.getElementById('itemTableBody');
+        // ADDRESS AUTO-SAVE & AUTO-FILL UTILITIES
+        window.handleCustomerAutofill = function(inputElem, addressId, gstId) {
+            const inputVal = inputElem.value.trim().toLowerCase();
+            if(!inputVal) return;
+            const savedAddressMap = JSON.parse(localStorage.getItem('sanchar_address_cache') || '{}');
+            
+            // Checking if key matching saved client exists
+            const matchedKey = Object.keys(savedAddressMap).find(k => k.toLowerCase() === inputVal);
+            if(matchedKey) {
+                document.getElementById(addressId).value = savedAddressMap[matchedKey].address || '';
+                document.getElementById(gstId).value = savedAddressMap[matchedKey].gst || '';
+            }
+        }
+
+        function cacheCustomerData(name, address, gst) {
+            if(!name) return;
+            const savedAddressMap = JSON.parse(localStorage.getItem('sanchar_address_cache') || '{}');
+            savedAddressMap[name.trim()] = { address: address.trim(), gst: gst.trim() };
+            localStorage.setItem('sanchar_address_cache', JSON.stringify(savedAddressMap));
+        }
+
+        window.addNewRow = function(bodyId) {
+            const tbody = document.getElementById(bodyId);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><input type="text" class="form-control form-control-sm row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                <td><input type="text" class="form-control form-control-sm row-material-name" required placeholder="e.g. HARDWARE ENGINE"></td>
-                <td><input type="number" class="form-control form-control-sm row-qty" min="1" required value="1"></td>
+                <td><input type="text" class="form-control form-control-sm row-model" required></td>
+                <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                <td><input type="text" class="form-control form-control-sm row-serial" required></td>
+                <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                <td><input type="text" class="form-control form-control-sm row-faced" required></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
             tbody.appendChild(row);
@@ -738,61 +903,69 @@
 
         window.removeRow = function(btn) {
             const row = btn.parentNode.parentNode;
-            if(document.querySelectorAll('#itemTableBody tr').length > 1) {
+            if(row.parentNode.querySelectorAll('tr').length > 1) {
                 row.parentNode.removeChild(row);
             } else {
                 alert("Minimum 1 item transactional line is mandatory.");
             }
         }
 
-        window.showSuggestions = function(type) {
-            const partyInput = document.getElementById('formParty').value.toLowerCase();
-            const gstInput = document.getElementById('formGst').value.toLowerCase();
+        document.getElementById('formDate').valueAsDate = new Date();
+        document.getElementById('outwardFormDate').valueAsDate = new Date();
+
+        // GLOBAL SEARCH SYSTEM ON DASHBOARD HUB
+        window.triggerDashboardSearch = function() {
+            const query = document.getElementById('dashboardGlobalSearch').value.trim().toLowerCase();
+            const container = document.getElementById('searchResultLogContainer');
+            const tbody = document.getElementById('searchResultTableBody');
             
-            if(type === 'party') {
-                const box = document.getElementById('partySuggestions');
-                box.innerHTML = "";
-                if(!partyInput) { box.style.display='none'; return; }
-                
-                const filtered = Array.from(distinctParties).filter(item => item.toLowerCase().includes(partyInput));
-                if(filtered.length > 0) {
-                    box.style.display = 'block';
-                    filtered.forEach(name => {
-                        const div = document.createElement('div');
-                        div.className = 'suggestion-item';
-                        div.innerText = name;
-                        div.onclick = () => { document.getElementById('formParty').value = name; box.style.display='none'; };
-                        box.appendChild(div);
-                    });
-                } else { box.style.display='none'; }
+            if(!query) {
+                container.classList.add('d-none');
+                tbody.innerHTML = "";
+                return;
             }
 
-            if(type === 'gst') {
-                const box = document.getElementById('gstSuggestions');
-                box.innerHTML = "";
-                if(!gstInput) { box.style.display='none'; return; }
+            tbody.innerHTML = "";
+            let matchCount = 0;
+
+            Object.keys(fetchedChallans).forEach(key => {
+                const item = fetchedChallans[key];
                 
-                const filtered = Array.from(distinctGstins).filter(item => item.toLowerCase().includes(gstInput));
-                if(filtered.length > 0) {
-                    box.style.display = 'block';
-                    filtered.forEach(gst => {
-                        const div = document.createElement('div');
-                        div.className = 'suggestion-item';
-                        div.innerText = gst;
-                        div.onclick = () => { document.getElementById('formGst').value = gst; box.style.display='none'; };
-                        box.appendChild(div);
-                    });
-                } else { box.style.display='none'; }
+                const matchChallanNo = item.challanNo ? item.challanNo.toLowerCase().includes(query) : false;
+                const matchDate = item.receivingDate ? item.receivingDate.toLowerCase().includes(query) : false;
+                const matchCustomer = item.customerName ? item.customerName.toLowerCase().includes(query) : false;
+                
+                let matchSerial = false;
+                if(item.items && Array.isArray(item.items)) {
+                    matchSerial = item.items.some(prod => prod.serialNo && prod.serialNo.toLowerCase().includes(query));
+                }
+
+                if(matchChallanNo || matchDate || matchCustomer || matchSerial) {
+                    matchCount++;
+                    const tr = document.createElement('tr');
+                    tr.onclick = () => {
+                        renderChallanDocument(key);
+                    };
+                    tr.innerHTML = `
+                        <td class="fw-bold text-primary">${item.challanNo || ''}</td>
+                        <td>${item.receivingDate || ''}</td>
+                        <td class="fw-semibold text-dark">${item.customerName || ''}</td>
+                        <td><code>${item.gstNumber || ''}</code></td>
+                        <td><button class="btn btn-xs btn-outline-primary py-1 px-2 text-xs" style="font-size:11px;">Inspect</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if(matchCount > 0) {
+                container.classList.remove('d-none');
+            } else {
+                container.classList.remove('d-none');
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No entry matches your query keywords.</td></tr>`;
             }
         }
 
-        document.addEventListener('click', function(e){
-            if(e.target.id !== 'formParty') document.getElementById('partySuggestions').style.display='none';
-            if(e.target.id !== 'formGst') document.getElementById('gstSuggestions').style.display='none';
-        });
-
-        document.getElementById('formDate').valueAsDate = new Date();
-
+        // SUBMIT RECEIPT FORM
         window.submitIssueForm = function(event) {
             event.preventDefault();
             const procBtn = document.getElementById('processBtn');
@@ -805,172 +978,378 @@
             const dd = String(dateObj.getDate()).padStart(2, '0');
             const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
             const yyyy = dateObj.getFullYear();
-            const formattedDateString = `${dd}/${mm}/${yyyy}`;
-            const lookupDateKey = `${dd}${mm}${yyyy}`;
+            const formattedDateString = `${dd} - ${mm} - ${yyyy}`;
 
-            let totalDailyCount = 1;
-            Object.keys(fetchedChallans).forEach(key => {
-                const item = fetchedChallans[key];
-                if(item.challanNo && item.challanNo.substring(3, 11) === lookupDateKey) {
-                    totalDailyCount++;
-                }
-            });
-            const formattedSerialNo = String(totalDailyCount).padStart(2, '0');
-            const dynamicChallanNumber = `STL${lookupDateKey}${formattedSerialNo}`;
+            let receiptCount = Object.values(fetchedChallans).filter(c => c.challanNo && c.challanNo.includes('STL/R/')).length;
+            const formattedSerialNo = String(receiptCount + 1).padStart(3, '0');
+            const dynamicChallanNumber = `STL/R/26-27/${formattedSerialNo}`;
 
             const itemRows = document.querySelectorAll('#itemTableBody tr');
             let itemsArray = [];
             let calculatedTotalQty = 0;
             
             itemRows.forEach(row => {
-                const itemQty = parseInt(row.querySelector('.row-qty').value) || 1;
+                const itemQty = parseFloat(row.querySelector('.row-qty').value) || 1;
                 calculatedTotalQty += itemQty;
                 itemsArray.push({
-                    partCode: row.querySelector('.row-part-code').value,
-                    materialName: row.querySelector('.row-material-name').value,
-                    quantity: itemQty
+                    itemModel: row.querySelector('.row-model').value,
+                    description: row.querySelector('.row-desc').value,
+                    serialNo: row.querySelector('.row-serial').value,
+                    quantity: itemQty.toFixed(2),
+                    issueFaced: row.querySelector('.row-faced').value
                 });
             });
 
             const issueDataPayload = {
+                type: 'receipt',
                 challanNo: dynamicChallanNumber,
+                receivingDate: formattedDateString,
+                customerName: document.getElementById('formCustomerName').value,
                 gstNumber: document.getElementById('formGst').value,
-                partyName: document.getElementById('formParty').value,
-                purposeMode: document.getElementById('formPurpose').value,
-                consignorName: document.getElementById('formConsignor').value,
-                consignorMobile: document.getElementById('formConsignorMobile').value,
-                consigneeName: document.getElementById('formConsignee').value,
-                consigneeMobile: document.getElementById('formConsigneeMobile').value,
-                shipmentBy: document.getElementById('formShipment').value,
-                issueDate: formattedDateString,
                 address: document.getElementById('formAddress').value,
-                remarks: document.getElementById('formRemarks').value || '-',
+                remarks: document.getElementById('formRemarks').value || 'NA',
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
-                distinctItemsCount: itemsArray.length,
                 timestamp: new Date().toISOString()
             };
+ // Triggering Cache Operation
+            cacheCustomerData(issueDataPayload.customerName, issueDataPayload.address, issueDataPayload.gstNumber);
 
-            push(ref(db, "sanchar_issues_v4_secured"), issueDataPayload)
+            push(ref(db, "sanchar_receipt_register_v1"), issueDataPayload)
                 .then(() => {
-                    alert(`Material Dispatched Successfully! Challan Generated: ${dynamicChallanNumber}`);
+                    alert(`Receipt Saved Successfully! Challan Generated: ${dynamicChallanNumber}`);
                     document.getElementById('issueForm').reset();
                     document.getElementById('itemTableBody').innerHTML = `
                         <tr>
-                            <td><input type="text" class="form-control form-control-sm row-part-code" required placeholder="e.g. WELCOM REDICRE (IP)"></td>
-                            <td><input type="text" class="form-control form-control-sm row-material-name" required placeholder="e.g. HARDWARE ENGINE"></td>
-                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" required value="1"></td>
+                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
+                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                            <td><input type="text" class="form-control form-control-sm row-serial" required></td>
+                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                            <td><input type="text" class="form-control form-control-sm row-faced" required></td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
                     `;
                     document.getElementById('formDate').valueAsDate = new Date();
-                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Issue Asset & Sync Cluster`;
+                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Challan`;
                     procBtn.disabled = false;
+                    currentFilterMode = "receipt";
                     switchTab('challan');
                 })
                 .catch(err => {
                     console.error(err);
                     alert("Database write rejected.");
-                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Issue Asset & Sync Cluster`;
+                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Challan`;
                     procBtn.disabled = false;
                 });
         }
 
-        // SYNCHRONIZED REPLICATION ACCOUNTABILITY EXPLORER
-        onValue(ref(db, "sanchar_issues_v4_secured"), (snapshot) => {
-            const tableBody = document.getElementById('dbTableBody');
-            tableBody.innerHTML = "";
-            const data = snapshot.val();
+        // SUBMIT OUTWARD FORM
+        window.submitOutwardForm = function(event) {
+            event.preventDefault();
+            const procBtn = document.getElementById('outwardProcessBtn');
+            procBtn.innerText = "Processing Outward Sync...";
+            procBtn.disabled = true;
+
+            const selectedDateString = document.getElementById('outwardFormDate').value;
+            const dateObj = new Date(selectedDateString);
             
-            if(!data) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dateObj.getFullYear();
+            const formattedDateString = `${dd} - ${mm} - ${yyyy}`;
+
+            let outwardCount = Object.values(fetchedChallans).filter(c => c.challanNo && c.challanNo.includes('STL/RE/')).length;
+            const formattedSerialNo = String(outwardCount + 1).padStart(3, '0');
+            const dynamicChallanNumber = `STL/RE/26-27/${formattedSerialNo}`;
+
+            const itemRows = document.querySelectorAll('#outwardItemTableBody tr');
+            let itemsArray = [];
+            let calculatedTotalQty = 0;
+            
+            itemRows.forEach(row => {
+                const itemQty = parseFloat(row.querySelector('.row-qty').value) || 1;
+                calculatedTotalQty += itemQty;
+                itemsArray.push({
+                    itemModel: row.querySelector('.row-model').value,
+                    description: row.querySelector('.row-desc').value,
+                    serialNo: row.querySelector('.row-serial').value,
+                    quantity: itemQty.toFixed(2),
+                    issueFaced: row.querySelector('.row-faced').value
+                });
+            });
+
+            const outwardDataPayload = {
+                type: 'delivery',
+                challanNo: dynamicChallanNumber,
+                receivingDate: formattedDateString,
+                customerName: document.getElementById('outwardFormCustomerName').value,
+                gstNumber: document.getElementById('outwardFormGst').value,
+                address: document.getElementById('outwardFormAddress').value,
+                remarks: document.getElementById('outwardFormRemarks').value || 'NA',
+                items: itemsArray,
+                totalUnitsCount: calculatedTotalQty,
+                timestamp: new Date().toISOString()
+            };
+
+            // Triggering Cache Operation
+            cacheCustomerData(outwardDataPayload.customerName, outwardDataPayload.address, outwardDataPayload.gstNumber);
+
+            push(ref(db, "sanchar_receipt_register_v1"), outwardDataPayload)
+                .then(() => {
+                    alert(`Outward Saved Successfully! Delivery Challan Generated: ${dynamicChallanNumber}`);
+                    document.getElementById('outwardForm').reset();
+                    document.getElementById('outwardItemTableBody').innerHTML = `
+                        <tr>
+                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
+                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                            <td><input type="text" class="form-control form-control-sm row-serial" required></td>
+                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                            <td><input type="text" class="form-control form-control-sm row-faced" required></td>
+                            <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+                        </tr>
+                    `;
+                    document.getElementById('outwardFormDate').valueAsDate = new Date();
+                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Outward Challan`;
+                    procBtn.disabled = false;
+                    currentFilterMode = "delivery";
+                    switchTab('challan');
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Database write rejected.");
+                    procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Outward Challan`;
+                    procBtn.disabled = false;
+                });
+        }
+
+        // FILTER SCOPE LOGIC FROM MODAL CLICK
+        window.applyChallanFilter = function(filterMode) {
+            currentFilterMode = filterMode;
+            switchTab('challan');
+            renderTableRows();
+        }
+
+        function renderTableRows() {
+            const tableBody = document.getElementById('dbTableBody');
+            const filterLabel = document.getElementById('filterScopeLabel');
+            tableBody.innerHTML = "";
+
+            if(currentFilterMode === 'receipt') {
+                filterLabel.innerText = "Receipt Challans Only";
+            } else if(currentFilterMode === 'delivery') {
+                filterLabel.innerText = "Delivery Challans (Outward) Only";
+            } else {
+                filterLabel.innerText = "All Ledger Logs";
+            }
+
+            let filteredKeys = Object.keys(fetchedChallans).filter(key => {
+                const item = fetchedChallans[key];
+                if(currentFilterMode === 'receipt') return item.type === 'receipt' || (!item.type && item.challanNo.includes('STL/R/'));
+                if(currentFilterMode === 'delivery') return item.type === 'delivery' || item.challanNo.includes('STL/RE/');
+                return true;
+            });
+
+            if(filteredKeys.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">Selected filter configuration contains zero entries.</td></tr>`;
                 return;
             }
 
-            fetchedChallans = data;
-            distinctParties.clear();
-            distinctGstins.clear();
-
-            let computedUnitsCounter = 0;
-            let totalRecordsCount = 0;
-
-            Object.keys(data).reverse().forEach(key => {
-                const item = data[key];
-                totalRecordsCount++;
-                computedUnitsCounter += (parseInt(item.totalUnitsCount) || 0);
-                
-                if(item.partyName) distinctParties.add(item.partyName);
-                if(item.gstNumber) distinctGstins.add(item.gstNumber);
-
+            filteredKeys.reverse().forEach(key => {
+                const item = fetchedChallans[key];
                 const tr = document.createElement('tr');
                 tr.onclick = () => renderChallanDocument(key);
                 tr.innerHTML = `
                     <td class="fw-bold text-primary">${item.challanNo}</td>
-                    <td><i class="fa-regular fa-calendar-check me-2 text-muted"></i>${item.issueDate}</td>
-                    <td class="fw-semibold text-dark">${item.partyName}</td>
+                    <td><i class="fa-regular fa-calendar-check me-2 text-muted"></i>${item.receivingDate}</td>
+                    <td class="fw-semibold text-dark">${item.customerName}</td>
                     <td><code>${item.gstNumber}</code></td>
-                    <td><span class="badge bg-warning bg-opacity-10 text-warning-emphasis px-2 py-1">${item.purposeMode || 'DELIVERY'}</span></td>
                     <td><button class="btn btn-xs btn-outline-primary py-1 px-2 small" style="font-size:11px;">View Document</button></td>
                 `;
                 tableBody.appendChild(tr);
             });
+        }
+      // RENDER MASTER PANEL ENTRIES (WITH CONTROLS)
+        function renderMasterTableRows() {
+            const mBody = document.getElementById('masterTableBody');
+            mBody.innerHTML = "";
+            const keys = Object.keys(fetchedChallans).reverse();
 
-            // DASHBOARD REAL-TIME ANALYTICS INJECTOR
+            if(keys.length === 0) {
+                mBody.innerHTML = `<tr><td colspan="5" class="text-center py-3">No logs available inside system pipeline.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(key => {
+                const item = fetchedChallans[key];
+                const typeBadge = (item.type === 'delivery' || item.challanNo.includes('STL/RE/')) ? 
+                    `<span class="badge bg-info text-dark">Outward</span>` : `<span class="badge bg-primary">Receipt</span>`;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold">${item.challanNo}</td>
+                    <td>${item.receivingDate}</td>
+                    <td>${item.customerName}</td>
+                    <td>${typeBadge}</td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success" onclick="triggerMasterEditDirect('${key}')"><i class="fa-solid fa-user-pen"></i></button>
+                            <button class="btn btn-outline-danger" onclick="triggerMasterDeleteDirect('${key}')"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                mBody.appendChild(tr);
+            });
+        }
+
+        // MASTER CONTROLS ACTIONS
+        window.triggerMasterEditDirect = function(key) {
+            const record = fetchedChallans[key];
+            if(!record) return;
+            document.getElementById('editRecordKey').value = key;
+            document.getElementById('editCustName').value = record.customerName || '';
+            document.getElementById('editGstNo').value = record.gstNumber || '';
+            document.getElementById('editAddress').value = record.address || '';
+            document.getElementById('editRemarks').value = record.remarks || '';
+            
+            const modalObj = new bootstrap.Modal(document.getElementById('masterEditModal'));
+            modalObj.show();
+        }
+
+        window.saveMasterEditedData = function() {
+            const key = document.getElementById('editRecordKey').value;
+            if(!key) return;
+
+            const updatedObj = {
+                customerName: document.getElementById('editCustName').value,
+                gstNumber: document.getElementById('editGstNo').value,
+                address: document.getElementById('editAddress').value,
+                remarks: document.getElementById('editRemarks').value
+            };
+
+            update(ref(db, `sanchar_receipt_register_v1/${key}`), updatedObj)
+                .then(() => {
+                    alert("Changes pushed & synchronized safely.");
+                    bootstrap.Modal.getInstance(document.getElementById('masterEditModal')).hide();
+                }).catch(err => alert("Error committing changes: " + err.message));
+        }
+
+        window.triggerMasterDeleteDirect = function(key) {
+            if(confirm("Warning! Are you absolutely sure you want to permanently wipe this ledger entry from cloud history? This action cannot be reversed.")) {
+                remove(ref(db, `sanchar_receipt_register_v1/${key}`))
+                    .then(() => {
+                        alert("Entry cleared successfully.");
+                    }).catch(err => alert("Error dropping record: " + err.message));
+            }
+        }
+
+        // REALTIME DATABASE DETECTOR
+        onValue(ref(db, "sanchar_receipt_register_v1"), (snapshot) => {
+            const data = snapshot.val();
+            if(!data) {
+                fetchedChallans = {};
+                document.getElementById('dbTableBody').innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
+                document.getElementById('metricTotalChallans').innerText = "0";
+                document.getElementById('summaryReceivedUnits').innerText = "0";
+                document.getElementById('summaryDispatchedUnits').innerText = "0";
+                document.getElementById('summaryNetUnits').innerText = "0";
+                return;
+            }
+
+            fetchedChallans = data;
+            let totalRecordsCount = 0;
+            let totalReceived = 0;
+            let totalDispatched = 0;
+
+            Object.keys(data).forEach(key => {
+                const item = data[key];
+                totalRecordsCount++;
+                
+                let currentItemQty = 0;
+                if(item.items && Array.isArray(item.items)) {
+                    item.items.forEach(p => { currentItemQty += (parseFloat(p.quantity) || 0); });
+                } else {
+                    currentItemQty = parseFloat(item.totalUnitsCount) || 0;
+                }
+
+                if(item.type === 'delivery' || item.challanNo.includes('STL/RE/')) {
+                    totalDispatched += currentItemQty;
+                } else {
+                    totalReceived += currentItemQty;
+                }
+            });
+
             document.getElementById('metricTotalChallans').innerText = totalRecordsCount;
-            document.getElementById('metricTotalUnits').innerText = computedUnitsCounter;
-            document.getElementById('metricTotalClients').innerText = distinctParties.size;
+            document.getElementById('summaryReceivedUnits').innerText = totalReceived;
+            document.getElementById('summaryDispatchedUnits').innerText = totalDispatched;
+            document.getElementById('summaryNetUnits').innerText = (totalReceived - totalDispatched);
+
+            renderTableRows();
+            if(document.getElementById('masterToolModule').style.display === 'block') {
+                renderMasterTableRows();
+            }
+            if(!document.getElementById('searchResultLogContainer').classList.contains('d-none')) {
+                triggerDashboardSearch();
+            }
         });
 
         window.renderChallanDocument = function(recordKey) {
             const targetData = fetchedChallans[recordKey];
             if(!targetData) return;
 
+            const isDelivery = targetData.type === 'delivery' || targetData.challanNo.includes('STL/RE/');
+            
+            document.getElementById('lblChallanTitle').innerText = isDelivery ? "Delivery Challan" : "Receipt Challan";
+            document.getElementById('lblTableFacedColumn').innerText = isDelivery ? "Status / Issue" : "Issue Faced";
+
             document.getElementById('lblChallanNo').innerText = targetData.challanNo;
+            document.getElementById('lblDate').innerText = targetData.receivingDate;
+            document.getElementById('lblCustomerDetails').innerText = `${targetData.customerName}, ${targetData.address}`;
             document.getElementById('lblGstNo').innerText = targetData.gstNumber;
-            document.getElementById('lblConsignedTo').innerText = targetData.partyName;
-            document.getElementById('lblAddress').innerText = targetData.address;
-            document.getElementById('lblDate').innerText = targetData.issueDate;
-            document.getElementById('lblPurpose').innerText = targetData.purposeMode || 'DELIVERY';
-            document.getElementById('lblConsignorName').innerText = targetData.consignorName;
-            document.getElementById('lblConsignorMobile').innerText = targetData.consignorMobile;
-            document.getElementById('lblConsigneeName').innerText = targetData.consigneeName;
-            document.getElementById('lblConsigneeMobile').innerText = targetData.consigneeMobile;
-            document.getElementById('lblShipmentBy').innerText = targetData.shipmentBy;
             document.getElementById('lblRemarks').innerText = targetData.remarks;
 
             const itemsTableBody = document.getElementById('lblGoodsTableBody');
             itemsTableBody.innerHTML = "";
             
-            targetData.items.forEach((prod, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="text-align:center;">${index + 1}</td>
-                    <td style="font-weight:600;">${prod.partCode}</td>
-                    <td>${prod.materialName}</td>
-                    <td style="font-weight:600;">${prod.quantity}</td>
-                `;
-                itemsTableBody.appendChild(tr);
-            });
-
-            document.getElementById('lblTotalItemsSummary').innerText = `${targetData.distinctItemsCount} ITEM DESCRIPTION / LINES.`;
-            document.getElementById('lblTotalQty').innerText = `${targetData.totalUnitsCount} Nos.`;
-
+            if(targetData.items && Array.isArray(targetData.items)) {
+                targetData.items.forEach((prod, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td style="font-weight:600;">${prod.itemModel}</td>
+                        <td>${prod.description}</td>
+                        <td>${prod.serialNo}</td>
+                        <td>${prod.quantity}</td>
+                        <td>${prod.issueFaced}</td>
+                    `;
+                    itemsTableBody.appendChild(tr);
+                });
+            }
+    document.getElementById('dashboardHudModule').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'none';
+            document.getElementById('masterToolModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'block';
             document.getElementById('pageTitleContext').innerText = `Document Inspection: ${targetData.challanNo}`;
         }
 
         window.closeChallanView = function() {
             document.getElementById('challanViewSection').style.display = 'none';
-            document.getElementById('challanListModule').style.display = 'block';
-            document.getElementById('pageTitleContext').innerText = "Challan Operations";
+            if (isMasterAuthenticated && document.getElementById('sideTabMaster').classList.contains('active')) {
+                document.getElementById('masterToolModule').style.display = 'block';
+                document.getElementById('pageTitleContext').innerText = "Master Tool Panel";
+            } else if (document.getElementById('sideTabDash').classList.contains('active')) {
+                document.getElementById('dashboardHudModule').style.display = 'block';
+                document.getElementById('pageTitleContext').innerText = "Dashboard Hub";
+            } else {
+                document.getElementById('challanListModule').style.display = 'block';
+                document.getElementById('pageTitleContext').innerText = "Challan Operations";
+            }
         }
 
         window.downloadSingleChallanPDF = function() {
             const element = document.getElementById('challanPrintContainer');
-            const currentChallanNo = document.getElementById('lblChallanNo').innerText;
+            const currentChallanNo = document.getElementById('lblChallanNo').innerText.replace(/\//g, '_');
             const opt = {
-                margin:       0,
+                margin:       5,
                 filename:     `Challan_${currentChallanNo}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
