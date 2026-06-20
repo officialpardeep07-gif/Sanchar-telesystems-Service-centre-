@@ -440,13 +440,24 @@
                                     <label for="formCustomerName">Customer Name *</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="formGst" required placeholder="GST No.">
                                     <label for="formGst">GST No. *</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select class="form-select" id="formCustomerType" required>
+                                        <option value="Government" selected>Government</option>
+                                        <option value="Private">Private</option>
+                                        <option value="Dealer">Dealer</option>
+                                        <option value="Individual">Individual</option>
+                                    </select>
+                                    <label for="formCustomerType">Customer Type *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-floating">
                                     <input type="text" class="form-control text-address-autocomplete" id="formAddress" required placeholder="Address" list="cachedAddresses">
                                     <label for="formAddress">Address *</label>
@@ -526,13 +537,24 @@
                                     <label for="outwardFormCustomerName">Customer Name *</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="outwardFormGst" required placeholder="GST No.">
                                     <label for="outwardFormGst">GST No. *</label>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <select class="form-select" id="outwardFormCustomerType" required>
+                                        <option value="Government" selected>Government</option>
+                                        <option value="Private">Private</option>
+                                        <option value="Dealer">Dealer</option>
+                                        <option value="Individual">Individual</option>
+                                    </select>
+                                    <label for="outwardFormCustomerType">Customer Type *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-floating">
                                     <input type="text" class="form-control text-address-autocomplete" id="outwardFormAddress" required placeholder="Address" list="cachedAddresses">
                                     <label for="outwardFormAddress">Address *</label>
@@ -599,7 +621,22 @@
                 <div id="challanListModule" class="panel-card" style="display: none;">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                         <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs (<span id="filterScopeLabel">All Ledger Logs</span>)</div>
-                        <button class="btn btn-sm btn-outline-dark px-3 py-2" onclick="downloadTablePDF()"><i class="fa-solid fa-file-pdf text-danger me-2"></i>Export Logs Sheet (Landscape PDF)</button>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" id="challanLogTypeFilter" onchange="handleChallanLogFilterChange()" style="width: 180px;">
+                                <option value="all">All Logs (Mixed)</option>
+                                <option value="receipt">Receipt Register</option>
+                                <option value="delivery">Outward Register</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-dark px-3" onclick="downloadTablePDF()"><i class="fa-solid fa-file-pdf text-danger me-2"></i>Export Logs Sheet</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar inside Challan Operations -->
+                    <div class="mb-3">
+                        <div class="input-group input-group-sm shadow-sm border-0">
+                            <span class="input-group-text bg-white text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" class="form-control" id="challanOperationsSearch" placeholder="Search logs by Challan No, Customer, GST, Type..." oninput="renderTableRows()">
+                        </div>
                     </div>
                     
                     <div class="table-responsive-wrapper">
@@ -609,13 +646,14 @@
                                     <th>Challan Index</th>
                                     <th>Receiving / Dispatch Date</th>
                                     <th>Customer Name</th>
+                                    <th>Customer Type</th>
                                     <th>GST No.</th>
                                     <th>Action View</th>
                                 </tr>
                             </thead>
                             <tbody id="dbTableBody">
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">
+                                    <td colspan="6" class="text-center py-4 text-muted">
                                         <div class="spinner-border spinner-border-sm text-secondary me-2" role="status"></div>
                                         Fetching active cloud ledger arrays...
                                     </td>
@@ -667,7 +705,7 @@
                             <div><strong>Date:</strong> <span id="lblDate">-</span></div>
                             <div><strong>Customer Name & Address & GST Details:</strong> <span id="lblCustomerDetails">-</span></div>
                             <div><strong>GST NO :</strong> <span id="lblGstNo">-</span></div>
-                            <div><strong>Customer Type:</strong> Government</div>
+                            <div><strong>Customer Type:</strong> <span id="lblCustomerType">-</span></div>
                         </div>
 
                         <table class="challan-goods-table">
@@ -757,6 +795,15 @@
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">GST Number</label>
                             <input type="text" class="form-control" id="editGstNo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Customer Type</label>
+                            <select class="form-select" id="editCustomerType" required>
+                                <option value="Government">Government</option>
+                                <option value="Private">Private</option>
+                                <option value="Dealer">Dealer</option>
+                                <option value="Individual">Individual</option>
+                            </select>
                         </div>
                         <div class="col-12">
                             <label class="form-label small fw-bold">Address</label>
@@ -871,6 +918,8 @@
                 document.getElementById('sideTabChallan').classList.add('active');
                 document.getElementById('challanListModule').style.display = 'block';
                 contextTitle.innerText = "Challan Ledger Workspace";
+                document.getElementById('challanLogTypeFilter').value = currentFilterMode;
+                renderTableRows();
             } else if(mode === 'master') {
                 document.getElementById('sideTabMaster').classList.add('active');
                 document.getElementById('masterToolModule').style.display = 'block';
@@ -1047,6 +1096,7 @@ function cacheFieldInputs(address, itemsArray) {
                 receivingDate: formattedDateString,
                 customerName: document.getElementById('formCustomerName').value,
                 gstNumber: document.getElementById('formGst').value,
+                customerType: document.getElementById('formCustomerType').value,
                 address: document.getElementById('formAddress').value,
                 remarks: document.getElementById('formRemarks').value || 'NA',
                 declaration: document.getElementById('formDeclaration').value || 'NA',
@@ -1055,7 +1105,7 @@ function cacheFieldInputs(address, itemsArray) {
                 timestamp: new Date().toISOString()
             };
 
-// Independent caching execution
+            // Independent caching execution
             cacheFieldInputs(issueDataPayload.address, itemsArray);
 
             push(ref(db, "sanchar_receipt_register_v1"), issueDataPayload)
@@ -1127,6 +1177,7 @@ function cacheFieldInputs(address, itemsArray) {
                 receivingDate: formattedDateString,
                 customerName: document.getElementById('outwardFormCustomerName').value,
                 gstNumber: document.getElementById('outwardFormGst').value,
+                customerType: document.getElementById('outwardFormCustomerType').value,
                 address: document.getElementById('outwardFormAddress').value,
                 remarks: document.getElementById('outwardFormRemarks').value || 'NA',
                 declaration: document.getElementById('outwardFormDeclaration').value || 'NA',
@@ -1170,6 +1221,10 @@ function cacheFieldInputs(address, itemsArray) {
         window.applyChallanFilter = function(filterMode) {
             currentFilterMode = filterMode;
             switchTab('challan');
+        }
+
+        window.handleChallanLogFilterChange = function() {
+            currentFilterMode = document.getElementById('challanLogTypeFilter').value;
             renderTableRows();
         }
 
@@ -1209,7 +1264,7 @@ function cacheFieldInputs(address, itemsArray) {
                 return;
             }
 
-filteredItems.forEach(item => {
+            filteredItems.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="fw-bold text-dark">${item.itemModel || '-'}</td>
@@ -1230,9 +1285,10 @@ filteredItems.forEach(item => {
             });
         }
 
-        function renderTableRows() {
+        window.renderTableRows = function() {
             const tableBody = document.getElementById('dbTableBody');
             const filterLabel = document.getElementById('filterScopeLabel');
+            const searchInput = document.getElementById('challanOperationsSearch').value.trim().toLowerCase();
             tableBody.innerHTML = "";
 
             if(currentFilterMode === 'receipt') {
@@ -1245,13 +1301,33 @@ filteredItems.forEach(item => {
 
             let filteredKeys = Object.keys(fetchedChallans).filter(key => {
                 const item = fetchedChallans[key];
-                if(currentFilterMode === 'receipt') return item.type === 'receipt' || (!item.type && item.challanNo.includes('STL/R/'));
-                if(currentFilterMode === 'delivery') return item.type === 'delivery' || item.challanNo.includes('STL/RE/');
+                
+                // 1. Filter by Type (Separation Logic)
+                let typeMatch = true;
+                if(currentFilterMode === 'receipt') {
+                    typeMatch = (item.type === 'receipt' || (!item.type && item.challanNo.includes('STL/R/')));
+                } else if(currentFilterMode === 'delivery') {
+                    typeMatch = (item.type === 'delivery' || item.challanNo.includes('STL/RE/'));
+                }
+                
+                if (!typeMatch) return false;
+                
+                // 2. Filter by Search Input inside Challan Operations
+                if (searchInput) {
+                    const matchChallanNo = item.challanNo ? item.challanNo.toLowerCase().includes(searchInput) : false;
+                    const matchDate = item.receivingDate ? item.receivingDate.toLowerCase().includes(searchInput) : false;
+                    const matchCustomer = item.customerName ? item.customerName.toLowerCase().includes(searchInput) : false;
+                    const matchGst = item.gstNumber ? item.gstNumber.toLowerCase().includes(searchInput) : false;
+                    const matchCustType = item.customerType ? item.customerType.toLowerCase().includes(searchInput) : false;
+                    
+                    return (matchChallanNo || matchDate || matchCustomer || matchGst || matchCustType);
+                }
+                
                 return true;
             });
 
             if(filteredKeys.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">Selected filter configuration contains zero entries.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No records match the current filter configuration or search query.</td></tr>`;
                 return;
             }
 
@@ -1263,6 +1339,7 @@ filteredItems.forEach(item => {
                     <td class="fw-bold text-primary">${item.challanNo}</td>
                     <td><i class="fa-regular fa-calendar-check me-2 text-muted"></i>${item.receivingDate}</td>
                     <td class="fw-semibold text-dark">${item.customerName}</td>
+                    <td><span class="badge bg-secondary bg-opacity-10 text-secondary">${item.customerType || 'Government'}</span></td>
                     <td><code>${item.gstNumber}</code></td>
                     <td><button class="btn btn-xs btn-outline-primary py-1 px-2 small" style="font-size:11px;">View Document</button></td>
                 `;
@@ -1310,6 +1387,7 @@ filteredItems.forEach(item => {
             document.getElementById('editRecordKey').value = key;
             document.getElementById('editCustName').value = record.customerName || '';
             document.getElementById('editGstNo').value = record.gstNumber || '';
+            document.getElementById('editCustomerType').value = record.customerType || 'Government';
             document.getElementById('editAddress').value = record.address || '';
             document.getElementById('editRemarks').value = record.remarks || '';
             document.getElementById('editDeclaration').value = record.declaration || '';
@@ -1325,6 +1403,7 @@ filteredItems.forEach(item => {
             const updatedObj = {
                 customerName: document.getElementById('editCustName').value,
                 gstNumber: document.getElementById('editGstNo').value,
+                customerType: document.getElementById('editCustomerType').value,
                 address: document.getElementById('editAddress').value,
                 remarks: document.getElementById('editRemarks').value,
                 declaration: document.getElementById('editDeclaration').value
@@ -1352,7 +1431,7 @@ filteredItems.forEach(item => {
             if(!data) {
                 fetchedChallans = {};
                 globalStockBreakdownItems = [];
-                document.getElementById('dbTableBody').innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
+                document.getElementById('dbTableBody').innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
                 document.getElementById('stockSummaryTableBody').innerHTML = `<tr><td colspan="9" class="text-center py-3 text-muted">No item records available.</td></tr>`;
                 document.getElementById('metricTotalChallans').innerText = "0";
                 document.getElementById('summaryReceivedUnits').innerText = "0";
@@ -1397,7 +1476,7 @@ filteredItems.forEach(item => {
                 } else {
                     currentItemQty = parseFloat(item.totalUnitsCount) || 0;
                 }
-if(currentChallanType === 'delivery') {
+                if(currentChallanType === 'delivery') {
                     totalDispatched += currentItemQty;
                 } else {
                     totalReceived += currentItemQty;
@@ -1433,6 +1512,7 @@ if(currentChallanType === 'delivery') {
             document.getElementById('lblDate').innerText = targetData.receivingDate;
             document.getElementById('lblCustomerDetails').innerText = `${targetData.customerName}, ${targetData.address}`;
             document.getElementById('lblGstNo').innerText = targetData.gstNumber;
+            document.getElementById('lblCustomerType').innerText = targetData.customerType || 'Government';
             document.getElementById('lblRemarks').innerText = targetData.remarks;
             document.getElementById('lblDeclaration').innerText = targetData.declaration || 'NA';
 
