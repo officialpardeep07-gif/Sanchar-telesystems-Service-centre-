@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sanchar Telesystems Limited - Service Centre</title>
     
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6 Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- html2pdf JS Bundle -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
@@ -200,7 +196,7 @@
             color: #64748b;
             font-size: 13px;
         }
-        .footer-brand-title {
+ .footer-brand-title {
             color: var(--primary-color);
             font-weight: 700;
             font-size: 14px;
@@ -217,8 +213,11 @@
     </style>
 </head>
 <body>
-   <!-- --- AUTHENTICATION SHIELD GATEWAY --- -->
-    <div class="login-overlay" id="loginOverlay">
+    <datalist id="cachedAddresses"></datalist>
+    <datalist id="cachedItemModels"></datalist>
+    <datalist id="cachedItemDescriptions"></datalist>
+
+   <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
             <div class="text-center mb-4">
                 <div class="p-3 bg-light rounded-circle d-inline-block mb-3" style="color: var(--primary-color);">
@@ -245,10 +244,8 @@
         </div>
     </div>
 
-    <!-- --- MAIN SYSTEM ENTERPRISE WORKSPACE WRAPPER --- -->
     <div class="erp-main-wrapper" id="erpSystemWrapper">
         
-        <!-- --- COLLAPSIBLE NAVIGATION SIDEBAR --- -->
         <aside id="sidebar">
             <div class="sidebar-header">
                 <div class="d-flex align-items-center gap-2">
@@ -291,10 +288,8 @@
             </ul>
         </aside>
 
-        <!-- --- MAIN APPLICATION FRAME --- -->
         <div class="content-body" id="contentBodyFrame">
             
-            <!-- GLASSMORPHIC CONTROLS TOP NAVBAR -->
             <header class="top-navbar">
                 <h1 class="h5 fw-bold mb-0 text-dark" id="pageTitleContext">Dashboard Hub</h1>
                 <div class="d-flex align-items-center gap-3">
@@ -318,9 +313,7 @@
 
             <div class="container-fluid px-4 py-4">
 
-                <!-- --- MODULE 1: ANALYTICS HUD INDEX --- -->
                 <div id="dashboardHudModule">
-                    <!-- SEARCH BAR FIELD -->
                     <div class="mb-4">
                         <div class="input-group shadow-sm border-0">
                             <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -341,10 +334,10 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="applyChallanFilter('receipt')">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
-                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Item Aanya (Received)</p>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Received Units</p>
                                         <h3 class="fw-bold mb-0 text-success" id="summaryReceivedUnits">0</h3>
                                     </div>
                                     <div class="stat-icon bg-success bg-opacity-10 text-success"><i class="fa-solid fa-arrow-down-long"></i></div>
@@ -352,10 +345,10 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="applyChallanFilter('delivery')">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
-                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Item Wapis Gya (Dispatched)</p>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Dispatched Units</p>
                                         <h3 class="fw-bold mb-0 text-danger" id="summaryDispatchedUnits">0</h3>
                                     </div>
                                     <div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="fa-solid fa-arrow-up-long"></i></div>
@@ -363,10 +356,10 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card">
+                            <div class="stat-card" onclick="applyChallanFilter('all')">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
-                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Kitna Bacha (Net Stock)</p>
+                                        <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Net Balance Stock</p>
                                         <h3 class="fw-bold mb-0 text-primary" id="summaryNetUnits">0</h3>
                                     </div>
                                     <div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="fa-solid fa-boxes-stacked"></i></div>
@@ -375,7 +368,6 @@
                         </div>
                     </div>
 
-                    <!-- SEARCH RESULTS LIVE CONTAINER -->
                     <div id="searchResultLogContainer" class="panel-card d-none">
                         <div class="panel-title text-info"><i class="fa-solid fa-list-check"></i> Live Search Matching Results</div>
                         <div class="table-responsive-wrapper">
@@ -403,7 +395,7 @@
                         </div>
                     </div>
                 </div>
-  <!-- --- MODULE 2: MATERIAL RECEIPT REGISTRY FORM --- -->
+
                 <div id="issueModule" class="panel-card" style="display: none;">
                     <div class="panel-title"><i class="fa-solid fa-square-plus text-primary"></i> Receipt Register Form</div>
                     <form id="issueForm" onsubmit="submitIssueForm(event)">
@@ -416,7 +408,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control text-customer-autocomplete" id="formCustomerName" required placeholder="Customer Name" oninput="handleCustomerAutofill(this, 'formAddress', 'formGst')">
+                                    <input type="text" class="form-control" id="formCustomerName" required placeholder="Customer Name">
                                     <label for="formCustomerName">Customer Name *</label>
                                 </div>
                             </div>
@@ -428,7 +420,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="formAddress" required placeholder="Address">
+                                    <input type="text" class="form-control text-address-autocomplete" id="formAddress" required placeholder="Address" list="cachedAddresses">
                                     <label for="formAddress">Address *</label>
                                 </div>
                             </div>
@@ -453,8 +445,8 @@
                                     </thead>
                                     <tbody id="itemTableBody">
                                         <tr>
-                                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
-                                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                                            <td><input type="text" class="form-control form-control-sm row-model" required list="cachedItemModels"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                                             <td><input type="text" class="form-control form-control-sm row-faced" required></td>
@@ -465,11 +457,17 @@
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-12">
+                        <div class="row mt-3 g-3">
+                            <div class="col-md-6">
                                 <div class="form-floating">
                                     <textarea class="form-control" id="formRemarks" style="height: 80px" placeholder="Remarks"></textarea>
                                     <label for="formRemarks">Remarks</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="formDeclaration" style="height: 80px" placeholder="Declaration"></textarea>
+                                    <label for="formDeclaration">Declaration Clause</label>
                                 </div>
                             </div>
                         </div>
@@ -484,7 +482,6 @@
                     </form>
                 </div>
 
-                <!-- --- MODULE 2B: MATERIAL OUTWARD REGISTRY FORM --- -->
                 <div id="outwardModule" class="panel-card" style="display: none;">
                     <div class="panel-title"><i class="fa-solid fa-square-plus text-info"></i> Outward Register Form</div>
                     <form id="outwardForm" onsubmit="submitOutwardForm(event)">
@@ -497,7 +494,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control text-customer-autocomplete" id="outwardFormCustomerName" required placeholder="Customer Name" oninput="handleCustomerAutofill(this, 'outwardFormAddress', 'outwardFormGst')">
+                                    <input type="text" class="form-control" id="outwardFormCustomerName" required placeholder="Customer Name">
                                     <label for="outwardFormCustomerName">Customer Name *</label>
                                 </div>
                             </div>
@@ -509,7 +506,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="outwardFormAddress" required placeholder="Address">
+                                    <input type="text" class="form-control text-address-autocomplete" id="outwardFormAddress" required placeholder="Address" list="cachedAddresses">
                                     <label for="outwardFormAddress">Address *</label>
                                 </div>
                             </div>
@@ -534,8 +531,8 @@
                                     </thead>
                                     <tbody id="outwardItemTableBody">
                                         <tr>
-                                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
-                                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                                            <td><input type="text" class="form-control form-control-sm row-model" required list="cachedItemModels"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                                             <td><input type="text" class="form-control form-control-sm row-faced" required></td>
@@ -546,11 +543,17 @@
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-12">
+                        <div class="row mt-3 g-3">
+                            <div class="col-12 col-md-6">
                                 <div class="form-floating">
                                     <textarea class="form-control" id="outwardFormRemarks" style="height: 80px" placeholder="Remarks"></textarea>
                                     <label for="outwardFormRemarks">Remarks</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="outwardFormDeclaration" style="height: 80px" placeholder="Declaration"></textarea>
+                                    <label for="outwardFormDeclaration">Declaration Clause</label>
                                 </div>
                             </div>
                         </div>
@@ -564,7 +567,7 @@
                         </div>
                     </form>
                 </div>
- <!-- --- MODULE 3: CHALLAN REGISTRY DATATABLE --- -->
+
                 <div id="challanListModule" class="panel-card" style="display: none;">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                         <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs (<span id="filterScopeLabel">All Ledger Logs</span>)</div>
@@ -593,11 +596,9 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- --- MODULE 3B: MASTER TOOL PANEL (EDIT/DELETE) --- -->
-                <div id="masterToolModule" class="panel-card" style="display: none;">
+   <div id="masterToolModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-danger"><i class="fa-solid fa-screwdriver-wrench"></i> Master Architecture Configuration Hub</div>
-                    <p class="text-muted small">Yahan se aap system ke kisi bhi entry ko edit ya permanently delete kar sakte hain.</p>
+                    <p class="text-muted small">From here you can edit or permanently delete any ledger entry from the system history database.</p>
                     
                     <div class="table-responsive-wrapper">
                         <table class="custom-table">
@@ -615,7 +616,6 @@
                     </div>
                 </div>
 
-                <!-- --- MODULE 4: STRICT A4 REPORT PRINT INTERFACE --- -->
                 <div id="challanViewSection" class="challan-view-section">
                     <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded-3 mb-4">
                         <button class="btn btn-sm btn-light" onclick="closeChallanView()"><i class="fa-solid fa-arrow-left me-1"></i>Return to Cloud Explorer</button>
@@ -630,7 +630,6 @@
                             <h2>Sanchar Telesystems Limited</h2>
                             <p class="mb-0">A-78, Ground Floor, Okhla Industrial Area, Phase II, New Delhi - 110020</p>
                             <p class="mb-0">GSTIN/UIN: 07AAKCS3561K1ZZ, State Name: Delhi</p>
-                            <p class="mb-0">CIN: U32204DL2006PLC155919</p>
                         </div>
 
                         <div class="challan-bar-title" id="lblChallanTitle">Receipt Challan</div>
@@ -661,7 +660,7 @@
                             <div><strong>Remarks</strong></div>
                             <div id="lblRemarks" class="text-muted" style="margin-bottom: 10px;">-</div>
                             <div><strong>Declaration</strong></div>
-                            <div class="text-muted">NA</div>
+                            <div id="lblDeclaration" class="text-muted">-</div>
                         </div>
 
                         <div class="challan-signatures">
@@ -675,7 +674,6 @@
 
             </div>
 
-            <!-- --- FOOTER --- -->
             <footer class="erp-footer py-4 px-4 bg-white mt-auto">
                 <div class="row align-items-start g-3">
                     <div class="col-md-6">
@@ -688,7 +686,6 @@
         </div>
     </div>
 
-    <!-- --- DYNAMIC MODAL FOR DASHBOARD CHALLAN CLICK --- -->
     <div class="modal fade" id="challanTypeModal" tabindex="-1" aria-labelledby="challanTypeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
@@ -715,7 +712,6 @@
         </div>
     </div>
 
-    <!-- EDIT SYSTEM MODAL (FOR MASTER TOOL) -->
     <div class="modal fade" id="masterEditModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow">
@@ -738,9 +734,13 @@
                             <label class="form-label small fw-bold">Address</label>
                             <input type="text" class="form-control" id="editAddress" required>
                         </div>
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label class="form-label small fw-bold">Remarks</label>
                             <textarea class="form-control" id="editRemarks" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Declaration</label>
+                            <textarea class="form-control" id="editDeclaration" rows="2"></textarea>
                         </div>
                     </div>
                 </div>
@@ -752,10 +752,8 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- --- CORE SYSTEM ARCHITECTURE MODULAR ENGINE --- -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -809,8 +807,7 @@
                 icon.className = "fa-solid fa-bars-staggered fs-5";
             }
         }
-
-        // INTEGRATED SYSTEM NAVIGATION HUB
+// INTEGRATED SYSTEM NAVIGATION HUB
         window.switchTab = function(mode) {
             document.getElementById('sideTabDash').classList.remove('active');
             document.getElementById('sideTabIssue').classList.remove('active');
@@ -849,7 +846,8 @@
                 contextTitle.innerText = "Master Tool Panel";
             }
         }
-   // PASSWORD-PROTECTED MASTER TOOL INITIALIZATION
+
+        // PASSWORD-PROTECTED MASTER TOOL INITIALIZATION
         window.openMasterTool = function() {
             if (isMasterAuthenticated) {
                 switchTab('master');
@@ -866,33 +864,45 @@
             }
         }
 
-        // ADDRESS AUTO-SAVE & AUTO-FILL UTILITIES
-        window.handleCustomerAutofill = function(inputElem, addressId, gstId) {
-            const inputVal = inputElem.value.trim().toLowerCase();
-            if(!inputVal) return;
-            const savedAddressMap = JSON.parse(localStorage.getItem('sanchar_address_cache') || '{}');
-            
-            // Checking if key matching saved client exists
-            const matchedKey = Object.keys(savedAddressMap).find(k => k.toLowerCase() === inputVal);
-            if(matchedKey) {
-                document.getElementById(addressId).value = savedAddressMap[matchedKey].address || '';
-                document.getElementById(gstId).value = savedAddressMap[matchedKey].gst || '';
-            }
+        // COMPREHENSIVE INDEPENDENT AUTOCOMPLETE SYSTEM
+        function updateDataListInterface() {
+            const savedAddresses = JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
+            const savedModels = JSON.parse(localStorage.getItem('sanchar_cached_models') || '[]');
+            const savedDescs = JSON.parse(localStorage.getItem('sanchar_cached_descs') || '[]');
+
+            document.getElementById('cachedAddresses').innerHTML = savedAddresses.map(a => `<option value="${a}">`).join('');
+            document.getElementById('cachedItemModels').innerHTML = savedModels.map(m => `<option value="${m}">`).join('');
+            document.getElementById('cachedItemDescriptions').innerHTML = savedDescs.map(d => `<option value="${d}">`).join('');
         }
 
-        function cacheCustomerData(name, address, gst) {
-            if(!name) return;
-            const savedAddressMap = JSON.parse(localStorage.getItem('sanchar_address_cache') || '{}');
-            savedAddressMap[name.trim()] = { address: address.trim(), gst: gst.trim() };
-            localStorage.setItem('sanchar_address_cache', JSON.stringify(savedAddressMap));
+        function cacheFieldInputs(address, itemsArray) {
+            if(address) {
+                let savedAddresses = JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
+                if(!savedAddresses.includes(address.trim())) {
+                    savedAddresses.push(address.trim());
+                    localStorage.setItem('sanchar_cached_addresses', JSON.stringify(savedAddresses));
+                }
+            }
+            if(itemsArray && itemsArray.length > 0) {
+                let savedModels = JSON.parse(localStorage.getItem('sanchar_cached_models') || '[]');
+                let savedDescs = JSON.parse(localStorage.getItem('sanchar_cached_descs') || '[]');
+
+                itemsArray.forEach(item => {
+                    if(item.itemModel && !savedModels.includes(item.itemModel.trim())) savedModels.push(item.itemModel.trim());
+                    if(item.description && !savedDescs.includes(item.description.trim())) savedDescs.push(item.description.trim());
+                });
+localStorage.setItem('sanchar_cached_models', JSON.stringify(savedModels));
+                localStorage.setItem('sanchar_cached_descs', JSON.stringify(savedDescs));
+            }
+            updateDataListInterface();
         }
 
         window.addNewRow = function(bodyId) {
             const tbody = document.getElementById(bodyId);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><input type="text" class="form-control form-control-sm row-model" required></td>
-                <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                <td><input type="text" class="form-control form-control-sm row-model" required list="cachedItemModels"></td>
+                <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                 <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                 <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                 <td><input type="text" class="form-control form-control-sm row-faced" required></td>
@@ -912,6 +922,7 @@
 
         document.getElementById('formDate').valueAsDate = new Date();
         document.getElementById('outwardFormDate').valueAsDate = new Date();
+        updateDataListInterface();
 
         // GLOBAL SEARCH SYSTEM ON DASHBOARD HUB
         window.triggerDashboardSearch = function() {
@@ -999,8 +1010,7 @@
                     issueFaced: row.querySelector('.row-faced').value
                 });
             });
-
-            const issueDataPayload = {
+const issueDataPayload = {
                 type: 'receipt',
                 challanNo: dynamicChallanNumber,
                 receivingDate: formattedDateString,
@@ -1008,12 +1018,14 @@
                 gstNumber: document.getElementById('formGst').value,
                 address: document.getElementById('formAddress').value,
                 remarks: document.getElementById('formRemarks').value || 'NA',
+                declaration: document.getElementById('formDeclaration').value || 'NA',
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
                 timestamp: new Date().toISOString()
             };
- // Triggering Cache Operation
-            cacheCustomerData(issueDataPayload.customerName, issueDataPayload.address, issueDataPayload.gstNumber);
+
+            // Independent caching execution
+            cacheFieldInputs(issueDataPayload.address, itemsArray);
 
             push(ref(db, "sanchar_receipt_register_v1"), issueDataPayload)
                 .then(() => {
@@ -1021,8 +1033,8 @@
                     document.getElementById('issueForm').reset();
                     document.getElementById('itemTableBody').innerHTML = `
                         <tr>
-                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
-                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                            <td><input type="text" class="form-control form-control-sm row-model" required list="cachedItemModels"></td>
+                            <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                             <td><input type="text" class="form-control form-control-sm row-faced" required></td>
@@ -1086,13 +1098,14 @@
                 gstNumber: document.getElementById('outwardFormGst').value,
                 address: document.getElementById('outwardFormAddress').value,
                 remarks: document.getElementById('outwardFormRemarks').value || 'NA',
+                declaration: document.getElementById('outwardFormDeclaration').value || 'NA',
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
                 timestamp: new Date().toISOString()
             };
 
-            // Triggering Cache Operation
-            cacheCustomerData(outwardDataPayload.customerName, outwardDataPayload.address, outwardDataPayload.gstNumber);
+            // Independent caching execution
+            cacheFieldInputs(outwardDataPayload.address, itemsArray);
 
             push(ref(db, "sanchar_receipt_register_v1"), outwardDataPayload)
                 .then(() => {
@@ -1100,8 +1113,8 @@
                     document.getElementById('outwardForm').reset();
                     document.getElementById('outwardItemTableBody').innerHTML = `
                         <tr>
-                            <td><input type="text" class="form-control form-control-sm row-model" required></td>
-                            <td><input type="text" class="form-control form-control-sm row-desc" required></td>
+                            <td><input type="text" class="form-control form-control-sm row-model" required list="cachedItemModels"></td>
+                            <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                             <td><input type="text" class="form-control form-control-sm row-faced" required></td>
@@ -1121,8 +1134,7 @@
                     procBtn.disabled = false;
                 });
         }
-
-        // FILTER SCOPE LOGIC FROM MODAL CLICK
+             // FILTER SCOPE LOGIC FROM MODAL OR DASHBOARD CLICK
         window.applyChallanFilter = function(filterMode) {
             currentFilterMode = filterMode;
             switchTab('challan');
@@ -1168,7 +1180,8 @@
                 tableBody.appendChild(tr);
             });
         }
-      // RENDER MASTER PANEL ENTRIES (WITH CONTROLS)
+
+        // RENDER MASTER PANEL ENTRIES (WITH CONTROLS)
         function renderMasterTableRows() {
             const mBody = document.getElementById('masterTableBody');
             mBody.innerHTML = "";
@@ -1210,6 +1223,7 @@
             document.getElementById('editGstNo').value = record.gstNumber || '';
             document.getElementById('editAddress').value = record.address || '';
             document.getElementById('editRemarks').value = record.remarks || '';
+            document.getElementById('editDeclaration').value = record.declaration || '';
             
             const modalObj = new bootstrap.Modal(document.getElementById('masterEditModal'));
             modalObj.show();
@@ -1223,7 +1237,8 @@
                 customerName: document.getElementById('editCustName').value,
                 gstNumber: document.getElementById('editGstNo').value,
                 address: document.getElementById('editAddress').value,
-                remarks: document.getElementById('editRemarks').value
+                remarks: document.getElementById('editRemarks').value,
+                declaration: document.getElementById('editDeclaration').value
             };
 
             update(ref(db, `sanchar_receipt_register_v1/${key}`), updatedObj)
@@ -1291,8 +1306,7 @@
                 triggerDashboardSearch();
             }
         });
-
-        window.renderChallanDocument = function(recordKey) {
+window.renderChallanDocument = function(recordKey) {
             const targetData = fetchedChallans[recordKey];
             if(!targetData) return;
 
@@ -1306,6 +1320,7 @@
             document.getElementById('lblCustomerDetails').innerText = `${targetData.customerName}, ${targetData.address}`;
             document.getElementById('lblGstNo').innerText = targetData.gstNumber;
             document.getElementById('lblRemarks').innerText = targetData.remarks;
+            document.getElementById('lblDeclaration').innerText = targetData.declaration || 'NA';
 
             const itemsTableBody = document.getElementById('lblGoodsTableBody');
             itemsTableBody.innerHTML = "";
@@ -1324,7 +1339,8 @@
                     itemsTableBody.appendChild(tr);
                 });
             }
-    document.getElementById('dashboardHudModule').style.display = 'none';
+
+            document.getElementById('dashboardHudModule').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('masterToolModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'block';
