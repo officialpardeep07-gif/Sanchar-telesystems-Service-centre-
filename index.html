@@ -196,7 +196,7 @@
             color: #64748b;
             font-size: 13px;
         }
- .footer-brand-title {
+        .footer-brand-title {
             color: var(--primary-color);
             font-weight: 700;
             font-size: 14px;
@@ -213,7 +213,7 @@
     </style>
 </head>
 <body>
-    <datalist id="cachedAddresses"></datalist>
+<datalist id="cachedAddresses"></datalist>
     <datalist id="cachedItemModels"></datalist>
     <datalist id="cachedItemDescriptions"></datalist>
 
@@ -334,7 +334,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card" onclick="applyChallanFilter('receipt')">
+                            <div class="stat-card" onclick="handleDashboardMetricClick('receipt')">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Received Units</p>
@@ -345,7 +345,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card" onclick="applyChallanFilter('delivery')">
+                            <div class="stat-card" onclick="handleDashboardMetricClick('delivery')">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Dispatched Units</p>
@@ -356,7 +356,7 @@
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-xl-3">
-                            <div class="stat-card" onclick="applyChallanFilter('all')">
+                            <div class="stat-card" onclick="handleDashboardMetricClick('all')">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div>
                                         <p class="text-uppercase tracking-wider text-muted small fw-semibold mb-1">Net Balance Stock</p>
@@ -382,6 +382,34 @@
                                     </tr>
                                 </thead>
                                 <tbody id="searchResultTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+<div id="stockSummaryPanel" class="panel-card mb-4">
+                        <div class="panel-title text-primary d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div><i class="fa-solid fa-boxes-stacked"></i> Live Stock Balance Ledger (<span id="stockFilterLabel" class="text-secondary text-capitalize">All Units</span>)</div>
+                            <button class="btn btn-xs btn-outline-secondary py-1 px-2 text-xs" style="font-size: 11px;" onclick="updateStockSummaryTable('all')"><i class="fa-solid fa-rotate-left me-1"></i>Reset Filter</button>
+                        </div>
+                        <div class="table-responsive-wrapper">
+                            <table class="custom-table" id="stockSummaryTable">
+                                <thead>
+                                    <tr>
+                                        <th>Item Model No</th>
+                                        <th>Description</th>
+                                        <th>Serial Number</th>
+                                        <th>Qty</th>
+                                        <th>Customer Name</th>
+                                        <th>Address</th>
+                                        <th>Date</th>
+                                        <th>Remark</th>
+                                        <th style="text-align: center;">Challan Option</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stockSummaryTableBody">
+                                    <tr>
+                                        <td colspan="9" class="text-center py-3 text-muted">Loading stock balance registers...</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -596,7 +624,7 @@
                         </table>
                     </div>
                 </div>
-   <div id="masterToolModule" class="panel-card" style="display: none;">
+<div id="masterToolModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-danger"><i class="fa-solid fa-screwdriver-wrench"></i> Master Architecture Configuration Hub</div>
                     <p class="text-muted small">From here you can edit or permanently delete any ledger entry from the system history database.</p>
                     
@@ -775,6 +803,7 @@
         let fetchedChallans = {};
         let currentFilterMode = "all"; 
         let isMasterAuthenticated = false;
+        let globalStockBreakdownItems = [];
 
         // TERMINAL ACCESS SECURITY LAYER
         window.verifySystemCredentials = function(event) {
@@ -807,7 +836,8 @@
                 icon.className = "fa-solid fa-bars-staggered fs-5";
             }
         }
-// INTEGRATED SYSTEM NAVIGATION HUB
+
+        // INTEGRATED SYSTEM NAVIGATION HUB
         window.switchTab = function(mode) {
             document.getElementById('sideTabDash').classList.remove('active');
             document.getElementById('sideTabIssue').classList.remove('active');
@@ -828,6 +858,7 @@
                 document.getElementById('sideTabDash').classList.add('active');
                 document.getElementById('dashboardHudModule').style.display = 'block';
                 contextTitle.innerText = "Dashboard Hub";
+                updateStockSummaryTable('all');
             } else if(mode === 'issue') {
                 document.getElementById('sideTabIssue').classList.add('active');
                 document.getElementById('issueModule').style.display = 'block';
@@ -874,8 +905,7 @@
             document.getElementById('cachedItemModels').innerHTML = savedModels.map(m => `<option value="${m}">`).join('');
             document.getElementById('cachedItemDescriptions').innerHTML = savedDescs.map(d => `<option value="${d}">`).join('');
         }
-
-        function cacheFieldInputs(address, itemsArray) {
+function cacheFieldInputs(address, itemsArray) {
             if(address) {
                 let savedAddresses = JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
                 if(!savedAddresses.includes(address.trim())) {
@@ -891,7 +921,7 @@
                     if(item.itemModel && !savedModels.includes(item.itemModel.trim())) savedModels.push(item.itemModel.trim());
                     if(item.description && !savedDescs.includes(item.description.trim())) savedDescs.push(item.description.trim());
                 });
-localStorage.setItem('sanchar_cached_models', JSON.stringify(savedModels));
+                localStorage.setItem('sanchar_cached_models', JSON.stringify(savedModels));
                 localStorage.setItem('sanchar_cached_descs', JSON.stringify(savedDescs));
             }
             updateDataListInterface();
@@ -1010,7 +1040,8 @@ localStorage.setItem('sanchar_cached_models', JSON.stringify(savedModels));
                     issueFaced: row.querySelector('.row-faced').value
                 });
             });
-const issueDataPayload = {
+
+            const issueDataPayload = {
                 type: 'receipt',
                 challanNo: dynamicChallanNumber,
                 receivingDate: formattedDateString,
@@ -1024,7 +1055,7 @@ const issueDataPayload = {
                 timestamp: new Date().toISOString()
             };
 
-            // Independent caching execution
+// Independent caching execution
             cacheFieldInputs(issueDataPayload.address, itemsArray);
 
             push(ref(db, "sanchar_receipt_register_v1"), issueDataPayload)
@@ -1134,11 +1165,69 @@ const issueDataPayload = {
                     procBtn.disabled = false;
                 });
         }
-             // FILTER SCOPE LOGIC FROM MODAL OR DASHBOARD CLICK
+
+        // FILTER SCOPE LOGIC FROM MODAL OR DASHBOARD CLICK
         window.applyChallanFilter = function(filterMode) {
             currentFilterMode = filterMode;
             switchTab('challan');
             renderTableRows();
+        }
+
+        // HANDLES METRIC CLICKS FROM DASHBOARD HUB
+        window.handleDashboardMetricClick = function(filterContext) {
+            updateStockSummaryTable(filterContext);
+            const targetElement = document.getElementById('stockSummaryPanel');
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // DYNAMIC STOCK BREAKDOWN LEDGER DISPLAY FUNCTION
+        window.updateStockSummaryTable = function(filterMode = 'all') {
+            const tbody = document.getElementById('stockSummaryTableBody');
+            const filterLabel = document.getElementById('stockFilterLabel');
+            if(!tbody) return;
+
+            tbody.innerHTML = "";
+            
+            if(filterMode === 'receipt') {
+                filterLabel.innerText = "Received Units Context";
+            } else if(filterMode === 'delivery') {
+                filterLabel.innerText = "Dispatched Units Context";
+            } else {
+                filterLabel.innerText = "All Units Ledger";
+            }
+
+            let filteredItems = globalStockBreakdownItems.filter(item => {
+                if(filterMode === 'receipt') return item.type === 'receipt';
+                if(filterMode === 'delivery') return item.type === 'delivery';
+                return true;
+            });
+
+            if(filteredItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-3 text-muted">No specific item rows matches this operational filter.</td></tr>`;
+                return;
+            }
+
+filteredItems.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold text-dark">${item.itemModel || '-'}</td>
+                    <td>${item.description || '-'}</td>
+                    <td><span class="badge bg-light text-dark border">${item.serialNo || '-'}</span></td>
+                    <td class="fw-semibold text-center">${parseFloat(item.quantity || 0)}</td>
+                    <td>${item.customerName || '-'}</td>
+                    <td class="small text-muted" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${item.address || ''}">${item.address || '-'}</td>
+                    <td class="text-nowrap">${item.date || '-'}</td>
+                    <td class="text-secondary small">${item.remarks || '-'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary px-2 py-1 text-nowrap" style="font-size: 11px;" onclick="renderChallanDocument('${item.recordKey}')">
+                            <i class="fa-solid fa-file-invoice me-1"></i> ${item.challanNo}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function renderTableRows() {
@@ -1262,7 +1351,9 @@ const issueDataPayload = {
             const data = snapshot.val();
             if(!data) {
                 fetchedChallans = {};
+                globalStockBreakdownItems = [];
                 document.getElementById('dbTableBody').innerHTML = `<tr><td colspan="5" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
+                document.getElementById('stockSummaryTableBody').innerHTML = `<tr><td colspan="9" class="text-center py-3 text-muted">No item records available.</td></tr>`;
                 document.getElementById('metricTotalChallans').innerText = "0";
                 document.getElementById('summaryReceivedUnits').innerText = "0";
                 document.getElementById('summaryDispatchedUnits').innerText = "0";
@@ -1271,6 +1362,7 @@ const issueDataPayload = {
             }
 
             fetchedChallans = data;
+            globalStockBreakdownItems = [];
             let totalRecordsCount = 0;
             let totalReceived = 0;
             let totalDispatched = 0;
@@ -1279,14 +1371,33 @@ const issueDataPayload = {
                 const item = data[key];
                 totalRecordsCount++;
                 
+                const currentChallanType = (item.type === 'delivery' || item.challanNo.includes('STL/RE/')) ? 'delivery' : 'receipt';
                 let currentItemQty = 0;
+
                 if(item.items && Array.isArray(item.items)) {
-                    item.items.forEach(p => { currentItemQty += (parseFloat(p.quantity) || 0); });
+                    item.items.forEach(p => { 
+                        const calculatedQty = (parseFloat(p.quantity) || 0);
+                        currentItemQty += calculatedQty;
+
+                        // Har product row ko breakdown framework me store karna
+                        globalStockBreakdownItems.push({
+                            recordKey: key,
+                            type: currentChallanType,
+                            challanNo: item.challanNo,
+                            date: item.receivingDate,
+                            customerName: item.customerName,
+                            address: item.address,
+                            remarks: item.remarks || 'NA',
+                            itemModel: p.itemModel,
+                            description: p.description,
+                            serialNo: p.serialNo,
+                            quantity: calculatedQty
+                        });
+                    });
                 } else {
                     currentItemQty = parseFloat(item.totalUnitsCount) || 0;
                 }
-
-                if(item.type === 'delivery' || item.challanNo.includes('STL/RE/')) {
+if(currentChallanType === 'delivery') {
                     totalDispatched += currentItemQty;
                 } else {
                     totalReceived += currentItemQty;
@@ -1299,6 +1410,8 @@ const issueDataPayload = {
             document.getElementById('summaryNetUnits').innerText = (totalReceived - totalDispatched);
 
             renderTableRows();
+            updateStockSummaryTable('all');
+            
             if(document.getElementById('masterToolModule').style.display === 'block') {
                 renderMasterTableRows();
             }
@@ -1306,7 +1419,8 @@ const issueDataPayload = {
                 triggerDashboardSearch();
             }
         });
-window.renderChallanDocument = function(recordKey) {
+
+        window.renderChallanDocument = function(recordKey) {
             const targetData = fetchedChallans[recordKey];
             if(!targetData) return;
 
@@ -1334,7 +1448,7 @@ window.renderChallanDocument = function(recordKey) {
                         <td>${prod.description}</td>
                         <td>${prod.serialNo}</td>
                         <td>${prod.quantity}</td>
-                        <td>${prod.issueFaced}</td>
+                        <td>${prod.issueFaced || '-'}</td>
                     `;
                     itemsTableBody.appendChild(tr);
                 });
