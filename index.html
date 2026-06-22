@@ -240,10 +240,19 @@
         /* --- EXACT DELIVERY CHALLAN PRINT LAYOUT (A4 SIZE) --- */
         .challan-view-section { display: none; margin-top: 20px; }
         .challan-print-box {
-            background: #fff !important; border: 1px solid #000 !important; color: #000 !important;
-            font-family: Arial, sans-serif; width: 210mm; min-height: 295mm;
-            box-sizing: border-box; margin: 0 auto; box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            position: relative; padding: 0; page-break-inside: avoid;
+            background: #fff !important; 
+            border: 1px solid #000 !important; 
+            color: #000 !important;
+            font-family: Arial, sans-serif; 
+            width: 100%; 
+            max-width: 195mm; /* Safe printable width to avoid right cutoff */
+            height: auto; /* Removed min-height to fix the blank space at the bottom */
+            box-sizing: border-box; 
+            margin: 0 auto; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            position: relative; 
+            padding: 0; 
+            page-break-inside: avoid;
         }
         .challan-print-box * { color: #000 !important; }
         .challan-top-header { text-align: center; border: 1px solid #000; margin: 10px; padding: 15px; background: #fff; }
@@ -275,7 +284,7 @@
         .challan-bottom-left { width: 55%; border-right: 1px solid #000; padding: 8px; font-size: 12px; line-height: 1.6; }
         .challan-bottom-right { width: 45%; padding: 8px; font-size: 12px; line-height: 1.6; }
         
-        .challan-footer-declaration { display: flex; width: 100%; font-size: 12px; border-bottom: 1px solid #000; }
+        .challan-footer-declaration { display: flex; width: 100%; font-size: 12px; }
         .challan-decl-text { width: 55%; border-right: 1px solid #000; padding: 10px; line-height: 1.5; min-height: 120px; }
         .challan-sign-authority { width: 45%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; text-align: right; min-height: 120px; }
 
@@ -293,30 +302,64 @@
             text-transform: uppercase;
         }
 
+        /* Set proper printing margins to prevent cutting */
         @media print {
-            html, body { background: #fff; margin: 0 !important; padding: 0 !important; height: 100%; overflow: hidden; }
-            .erp-main-wrapper, #sidebar, .top-navbar, .action-buttons, .erp-footer, .btn, .challan-view-section > .d-flex { display: none !important; }
-            .content-body { margin-left: 0 !important; padding: 0 !important; }
+            /* Hide all UI elements except the print container */
+            body * { visibility: hidden; }
+            #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
             
-            #challanViewSection { display: block !important; margin: 0 !important; padding: 0 !important; }
+            /* Reset positioning for print */
+            body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
             #challanPrintContainer { 
-                visibility: visible;
                 position: absolute; 
                 left: 0; top: 0; 
-                width: 100% !important; 
-                max-width: 100% !important;
+                width: 210mm !important; 
+                height:280mm !important;
                 border: 1px solid #000 !important; 
-                box-shadow: none !important; 
-                padding: 0 !important;
+                box-shadow: none !important;
                 margin: 0 !important;
-                box-sizing: border-box !important;
-                page-break-after: avoid !important;
-                page-break-before: avoid !important;
+                padding: 10px !important;
+                
             }
+            @page { size: A4; margin: 5mm; }
         }
     </style>
 </head>
 <body>
+<!-- ... (Rest of your HTML body remains exactly as it was) ... -->
+
+    <!-- Update the script for PDF and Print -->
+    <script type="module">
+        // ... (Keep existing imports and firebaseConfig) ...
+
+        // Fix: Ensure print visibility and structure
+        window.printChallan = function() {
+            window.print();
+        }
+
+        // Updated PDF Download logic
+        window.downloadSingleChallanPDF = function() {
+            const element = document.getElementById('challanPrintContainer');
+            const currentChallanNo = document.getElementById('lblChallanNo').innerText.replace(/\//g, '_');
+            
+            // Ensure element is visible before generating PDF
+            element.style.display = "block";
+            
+            const opt = {
+                margin:       5,
+                filename:     `Challan_${currentChallanNo}.pdf`,
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2, letterRendering: true, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+        }
+        
+        // ... (Keep rest of your JS functions) ...
+    </script>
+</body>
+</html>
 <datalist id="cachedAddresses"></datalist>
     <datalist id="cachedItemModels"></datalist>
     <datalist id="cachedItemDescriptions"></datalist>
@@ -564,7 +607,7 @@
                             <input type="hidden" id="formCustomerType" value="Private">
                         </div>
 
-<!-- Product Table -->
+                        <!-- Product Table -->
                         <div class="border rounded-3 p-4 mt-4 bg-light bg-opacity-50">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold mb-0 small text-uppercase tracking-wider" style="color: var(--text-color);"><i class="fa-solid fa-list-check text-secondary me-1"></i> Product Details</h5>
@@ -786,7 +829,8 @@
                             <button class="btn btn-primary py-3 w-100 fw-semibold" onclick="executeSerialTracking()"><i class="fa-solid fa-magnifying-glass-chart me-2"></i>Fetch Timeline Logs</button>
                         </div>
                     </div>
-<div id="divSerialTrackerSummary" class="row g-3 mb-4 d-none">
+                    
+                    <div id="divSerialTrackerSummary" class="row g-3 mb-4 d-none">
                         <div class="col-6 col-sm-4">
                             <div class="p-3 border rounded bg-light text-center">
                                 <span class="text-muted small d-block uppercase">Total Entry Times</span>
@@ -918,7 +962,8 @@
             </footer>
         </div>
     </div>
-<!-- Modals -->
+
+    <!-- Modals -->
     <div class="modal fade" id="challanTypeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
@@ -1110,7 +1155,8 @@
                 contextTitle.innerText = "Master Tool Panel";
             }
         }
-window.executeSerialTracking = function() {
+
+        window.executeSerialTracking = function() {
             const query = document.getElementById('txtTrackerSearch') ? document.getElementById('txtTrackerSearch').value.trim() : document.getElementById('txtTrackerSerialSearch').value.trim();
             const summaryDiv = document.getElementById('divSerialTrackerSummary');
             const resultsDiv = document.getElementById('divSerialTrackerResults');
@@ -1297,7 +1343,8 @@ window.executeSerialTracking = function() {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">No entry matches your query keywords.</td></tr>`;
             }
         }
-window.submitIssueForm = function(event) {
+
+        window.submitIssueForm = function(event) {
             event.preventDefault();
             const procBtn = document.getElementById('processBtn');
             procBtn.innerText = "Processing Cloud Sync...";
@@ -1558,7 +1605,7 @@ window.submitIssueForm = function(event) {
                 return;
             }
 
-filteredKeys.reverse().forEach(key => {
+            filteredKeys.reverse().forEach(key => {
                 const item = fetchedChallans[key];
                 const tr = document.createElement('tr');
                 tr.onclick = () => renderChallanDocument(key);
@@ -1793,7 +1840,8 @@ filteredKeys.reverse().forEach(key => {
                     </div>
                 `;
             }
-document.getElementById('lblChallanNo').innerText = targetData.challanNo;
+
+            document.getElementById('lblChallanNo').innerText = targetData.challanNo;
             document.getElementById('lblDate').innerText = targetData.receivingDate;
             document.getElementById('lblCustNameText').innerText = targetData.customerName;
             document.getElementById('lblAddressText').innerText = targetData.address;
@@ -1847,7 +1895,7 @@ document.getElementById('lblChallanNo').innerText = targetData.challanNo;
             const element = document.getElementById('challanPrintContainer');
             const currentChallanNo = document.getElementById('lblChallanNo').innerText.replace(/\//g, '_');
             const opt = {
-                margin:       0,
+                margin:       [10, 10, 10, 10], // Added Margins to prevent PDF cut
                 filename:     `Challan_${currentChallanNo}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, logging: false },
