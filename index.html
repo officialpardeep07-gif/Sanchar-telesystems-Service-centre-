@@ -303,7 +303,7 @@
         }
 
         /* Set proper printing margins to prevent cutting */
-       @media print {
+      @media print {
     body * { visibility: hidden; }
     #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
     
@@ -314,25 +314,19 @@
         width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
-        color: #000 !important; /* Text ko thoda neutral rakhein */
+        color: #333 !important; /* Pure black (#000) ki jagah dark grey (#333) use karein */
     }
 
-    /* Table border ko dark se normal (1px) karein */
-    .challan-goods-table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-        border: 1px solid #333 !important; /* 2px ki jagah 1px */
+    /* Table borders aur text weight ko halka karein */
+    .challan-goods-table, .challan-goods-table th, .challan-goods-table td {
+        border: 0.5px solid #666 !important; /* border ko patla (0.5px) aur grey kiya */
+        padding: 4px !important; /* Padding kam karke space balance kiya */
+        font-weight: 300 !important; /* Text ko thoda lighter weight diya */
     }
 
-    .challan-goods-table th, .challan-goods-table td {
-        border: 1px solid #333 !important;
-        padding: 6px !important; /* Padding 8px se kam karke 6px ki */
-        font-weight: 400 !important; /* Text weight normal kiya */
-    }
-
-    /* Header text ko thoda halka karein */
-    h1, h2, h3, h4 { font-weight: 500 !important; }
-
+    /* Titles aur Headers ko control karein */
+    h1, h2, h3, h4, strong { font-weight: 500 !important; }
+    
     @page { size: A4 portrait; margin: 10mm; }
 }
  </style>
@@ -351,19 +345,16 @@
 
         // Updated PDF Download logic
         window.downloadSingleChallanPDF = function() {
-            const element = document.getElementById('challanPrintContainer');
-            const currentChallanNo = document.getElementById('lblChallanNo').innerText.replace(/\//g, '_');
-            
-            // Ensure element is visible before generating PDF
-            element.style.display = "block";
-            
-            const opt = {
-                margin:       5,
-                filename:     `Challan_${currentChallanNo}.pdf`,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, letterRendering: true, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+    const element = document.getElementById('challanPrintContainer');
+    const opt = {
+        margin: 5,
+        filename: 'Challan.pdf',
+        image: { type: 'jpeg', quality: 0.8 }, // Quality thodi kam ki
+        html2canvas: { scale: 2, useCORS: true }, // Scale 4 se 2 kiya
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+}
             
             html2pdf().set(opt).from(element).save();
         }
@@ -1908,8 +1899,8 @@
     const opt = {
         margin: 5,
         filename: 'Challan.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 4, useCORS: true },
+        image: { type: 'jpeg', quality: 0.8 }, // Quality thodi kam ki
+        html2canvas: { scale: 2, useCORS: true }, // Scale 4 se 2 kiya
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     html2pdf().set(opt).from(element).save();
