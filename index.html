@@ -50,7 +50,6 @@
             transition: background-color var(--transition-speed), color var(--transition-speed);
         }
 
-        /* Dark Mode Text Visibility Overrides */
         [data-theme="dark"] .custom-table td, 
         [data-theme="dark"] .custom-table th,
         [data-theme="dark"] .stat-card p,
@@ -67,7 +66,6 @@
             background-color: rgba(255, 255, 255, 0.05) !important;
         }
 
-        /* --- SECURE GATEWAY LOGIN --- */
         .login-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -94,13 +92,11 @@
             box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
         }
 
-        /* --- DASHBOARD WRAPPER LAYOUT --- */
         .erp-main-wrapper {
             display: none;
             min-height: 100vh;
         }
 
-        /* --- COLLAPSIBLE SIDEBAR --- */
         #sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -138,7 +134,6 @@
         }
         #sidebar.collapsed .sidebar-menu li a span { display: none; }
 
-        /* Sidebar Footer Version Details */
         .sidebar-footer-version {
             padding: 15px 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -153,7 +148,6 @@
         }
         #sidebar.collapsed .sidebar-footer-version span { display: none; }
 
-        /* --- MAIN CONTENT & GLASSMORPHIC NAVBAR --- */
         .content-body {
             margin-left: var(--sidebar-width);
             transition: all var(--transition-speed) ease;
@@ -175,7 +169,6 @@
             padding: 0 30px;
         }
 
-        /* --- UI COMPONENTS & RE-DESIGNED CARDS --- */
         .stat-card {
             background: var(--card-bg); border: none; border-radius: 12px; padding: 24px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
@@ -203,7 +196,6 @@
             display: flex; align-items: center; gap: 10px;
         }
 
-        /* --- STICKY TABLES --- */
         .table-responsive-wrapper {
             max-height: 500px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border-color);
         }
@@ -217,7 +209,6 @@
         .custom-table tbody tr { transition: background-color 0.15s ease; cursor: pointer; }
         .custom-table tbody tr:hover { background-color: rgba(0,0,0,0.02); }
 
-        /* Dark mode corrections for inputs */
         [data-theme="dark"] .form-control, [data-theme="dark"] .form-select {
             background-color: #1e293b !important; color: #f1f5f9 !important; border-color: #334155 !important;
         }
@@ -227,7 +218,6 @@
         [data-theme="dark"] .table-light { --bs-table-bg: #334155; --bs-table-color: #f1f5f9; }
         [data-theme="dark"] .bg-light { background-color: #334155 !important; color: #f1f5f9 !important; }
 
-        /* --- MODERN GRADIENT BUTTONS --- */
         .btn-gradient-save {
             background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
             color: #fff; border: none; font-weight: 600; padding: 12px 24px;
@@ -237,7 +227,6 @@
             box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); transform: translateY(-1px); color: #fff;
         }
 
-        /* --- EXACT DELIVERY CHALLAN PRINT LAYOUT (A4 SIZE) --- */
         .challan-view-section { display: none; margin-top: 20px; }
         .challan-print-box {
             background: #fff !important; 
@@ -245,8 +234,8 @@
             color: #000 !important;
             font-family: Arial, sans-serif; 
             width: 100%; 
-            max-width: 195mm; /* Safe printable width to avoid right cutoff */
-            height: auto; /* Removed min-height to fix the blank space at the bottom */
+            max-width: 195mm;
+            height: auto; 
             box-sizing: border-box; 
             margin: 0 auto; 
             box-shadow: 0 0 15px rgba(0,0,0,0.05);
@@ -302,68 +291,35 @@
             text-transform: uppercase;
         }
 
-        /* Set proper printing margins to prevent cutting */
       @media print {
-    body * { visibility: hidden; }
-    #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
-    
-    #challanPrintContainer {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        color: #333 !important; /* Pure black (#000) ki jagah dark grey (#333) use karein */
-    }
+        body * { visibility: hidden; }
+        #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
+        
+        #challanPrintContainer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            color: #333 !important; 
+        }
 
-    /* Table borders aur text weight ko halka karein */
-    .challan-goods-table, .challan-goods-table th, .challan-goods-table td {
-        border: 0.5px solid #666 !important; /* border ko patla (0.5px) aur grey kiya */
-        padding: 4px !important; /* Padding kam karke space balance kiya */
-        font-weight: 300 !important; /* Text ko thoda lighter weight diya */
-    }
+        .challan-goods-table, .challan-goods-table th, .challan-goods-table td {
+            border: 0.5px solid #666 !important; 
+            padding: 4px !important; 
+            font-weight: 300 !important; 
+        }
 
-    /* Titles aur Headers ko control karein */
-    h1, h2, h3, h4, strong { font-weight: 500 !important; }
-    
-    @page { size: A4 portrait; margin: 10mm; }
-}
- </style>
+        h1, h2, h3, h4, strong { font-weight: 500 !important; }
+        
+        @page { size: A4 portrait; margin: 10mm; }
+      }
+    </style>
 </head>
 <body>
-<!-- ... (Rest of your HTML body remains exactly as it was) ... -->
 
-    <!-- Update the script for PDF and Print -->
-    <script type="module">
-        // ... (Keep existing imports and firebaseConfig) ...
-
-        // Fix: Ensure print visibility and structure
-        window.printChallan = function() {
-            window.print();
-        }
-
-        // Updated PDF Download logic
-        window.downloadSingleChallanPDF = function() {
-    const element = document.getElementById('challanPrintContainer');
-    const opt = {
-        margin: 5,
-        filename: 'Challan.pdf',
-        image: { type: 'jpeg', quality: 0.8 }, // Quality thodi kam ki
-        html2canvas: { scale: 2, useCORS: true }, // Scale 4 se 2 kiya
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
-}
-            
-            html2pdf().set(opt).from(element).save();
-        }
-        
-        // ... (Keep rest of your JS functions) ...
-    </script>
-</body>
-</html>
-<datalist id="cachedAddresses"></datalist>
+    <datalist id="cachedAddresses"></datalist>
     <datalist id="cachedItemModels"></datalist>
     <datalist id="cachedItemDescriptions"></datalist>
 
@@ -465,7 +421,6 @@
             </header>
 
             <div class="container-fluid px-4 py-4">
-                <!-- Dashboard Hub -->
                 <div id="dashboardHudModule">
                     <div class="mb-4">
                         <div class="input-group shadow-sm border-0">
@@ -549,7 +504,7 @@
                                 <thead>
                                     <tr>
                                         <th>Item Model No</th>
-                                        <th>Description</th>
+                                        <th>Product Description</th>
                                         <th>Serial Number</th>
                                         <th>Qty</th>
                                         <th>Customer Name</th>
@@ -578,7 +533,6 @@
                     </div>
                 </div>
 
-                <!-- Receipt Register Form -->
                 <div id="issueModule" class="panel-card" style="display: none;">
                     <div class="panel-title"><i class="fa-solid fa-square-plus text-primary"></i> Receipt Register Form</div>
                     <form id="issueForm" onsubmit="submitIssueForm(event)">
@@ -610,7 +564,6 @@
                             <input type="hidden" id="formCustomerType" value="Private">
                         </div>
 
-                        <!-- Product Table -->
                         <div class="border rounded-3 p-4 mt-4 bg-light bg-opacity-50">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold mb-0 small text-uppercase tracking-wider" style="color: var(--text-color);"><i class="fa-solid fa-list-check text-secondary me-1"></i> Product Details</h5>
@@ -649,7 +602,6 @@
                         </div>
                         <input type="hidden" id="formDeclaration" value="This is only a receipt of goods,it however does not automatically reflect the acceptance there of">
 
-                        <!-- Bottom Meta -->
                         <div class="row mt-4 bg-light p-3 rounded align-items-center border">
                             <div class="col-md-6 d-flex gap-2">
                                 <div class="form-floating flex-grow-1">
@@ -675,7 +627,6 @@
                     </form>
                 </div>
 
-                <!-- Outward Register Form -->
                 <div id="outwardModule" class="panel-card" style="display: none;">
                     <div class="panel-title"><i class="fa-solid fa-square-plus text-info"></i> Outward Register Form</div>
                     <form id="outwardForm" onsubmit="submitOutwardForm(event)">
@@ -771,7 +722,6 @@
                     </form>
                 </div>
 
-                <!-- Database Logs View -->
                 <div id="challanListModule" class="panel-card" style="display: none;">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                         <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs (<span id="filterScopeLabel">All Ledger Logs</span>)</div>
@@ -816,7 +766,6 @@
                     </div>
                 </div>
 
-                <!-- Advance Serial History Tracker Tool -->
                 <div id="serialTrackerModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-success"><i class="fa-solid fa-clock-rotate-left"></i> Advance Serial Number Lifecycle Tracker</div>
                     <p class="text-muted small">System database history se kisi bhi hardware serial number ka trace logs automatic check karein.</p>
@@ -872,7 +821,6 @@
                     </div>
                 </div>
 
-                <!-- Master Tool Module -->
                 <div id="masterToolModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-danger"><i class="fa-solid fa-screwdriver-wrench"></i> Master Architecture Configuration Hub</div>
                     <p class="text-muted small">From here you can edit or permanently delete any ledger entry from the system history database.</p>
@@ -892,7 +840,6 @@
                     </div>
                 </div>
 
-                <!-- Live Print Challan Layout Screen -->
                 <div id="challanViewSection" class="challan-view-section">
                     <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded-3 mb-4">
                         <button class="btn btn-sm btn-light" onclick="closeChallanView()"><i class="fa-solid fa-arrow-left me-1"></i>Return to Cloud Explorer</button>
@@ -930,7 +877,7 @@
                             <thead>
                                 <tr>
                                     <th style="width: 8%;">S.No.</th>
-                                    <th style="width: 42%;" id="lblColDescHeader">Description</th>
+                                    <th style="width: 42%;" id="lblColDescHeader">Product Description</th>
                                     <th style="width: 22%;">Serial No.</th>
                                     <th style="width: 11%;">Quantity</th>
                                     <th style="width: 17%;" id="lblColRemarksHeader">Issue Faced</th>
@@ -940,11 +887,9 @@
                         </table>
 
                         <div class="challan-bottom-grid" id="lblChallanBottomSection">
-                            <!-- Dynamic Content based on type via JavaScript -->
                         </div>
 
                         <div class="challan-footer-declaration" id="lblChallanFooterSection">
-                            <!-- Dynamic Layout content structured through javascript -->
                         </div>
                     </div>
                 </div>
@@ -966,7 +911,6 @@
         </div>
     </div>
 
-    <!-- Modals -->
     <div class="modal fade" id="challanTypeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
@@ -1057,7 +1001,6 @@
         let isMasterAuthenticated = false;
         let globalStockBreakdownItems = [];
 
-        // Night Mode Feature Functionality
         window.toggleSystemTheme = function() {
             const htmlNode = document.documentElement;
             const btnIcon = document.querySelector('#themeToggleButton i');
@@ -1072,7 +1015,6 @@
             }
         };
 
-        // Cache preference loader
         if (localStorage.getItem('sanchar_theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
             setTimeout(() => {
@@ -1160,7 +1102,7 @@
         }
 
         window.executeSerialTracking = function() {
-            const query = document.getElementById('txtTrackerSearch') ? document.getElementById('txtTrackerSearch').value.trim() : document.getElementById('txtTrackerSerialSearch').value.trim();
+            const query = document.getElementById('txtTrackerSerialSearch').value.trim();
             const summaryDiv = document.getElementById('divSerialTrackerSummary');
             const resultsDiv = document.getElementById('divSerialTrackerResults');
             const tbody = document.getElementById('trackerTableBody');
@@ -1819,7 +1761,7 @@
                     </div>
                 `;
             } else {
-                document.getElementById('lblColDescHeader').innerText = "DESCRIPTION";
+                document.getElementById('lblColDescHeader').innerText = "PRODUCT DESCRIPTION";
                 document.getElementById('lblColRemarksHeader').innerText = "ISSUE FACED";
                 document.getElementById('lblMaterialDispatchType').style.display = "none";
 
@@ -1894,17 +1836,17 @@
             }
         }
 
-       window.downloadSingleChallanPDF = function() {
-    const element = document.getElementById('challanPrintContainer');
-    const opt = {
-        margin: 5,
-        filename: 'Challan.pdf',
-        image: { type: 'jpeg', quality: 0.8 }, // Quality thodi kam ki
-        html2canvas: { scale: 2, useCORS: true }, // Scale 4 se 2 kiya
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
-}
+        window.downloadSingleChallanPDF = function() {
+            const element = document.getElementById('challanPrintContainer');
+            const opt = {
+                margin: 5,
+                filename: 'Challan.pdf',
+                image: { type: 'jpeg', quality: 0.8 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
 
         window.downloadTablePDF = function() {
             const element = document.getElementById('logsTableContainer');
