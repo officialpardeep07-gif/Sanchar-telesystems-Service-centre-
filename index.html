@@ -376,7 +376,7 @@
                     </li>
                     <li id="sideTabOutward">
                         <a href="javascript:void(0)" onclick="switchTab('outward')">
-                            <i class="fa-solid fa-file-export"></i><span>Outward Register</span>
+                            <i class="fa-solid fa-file-export"></i><span>Delivery Register</span>
                         </a>
                     </li>
                     <li id="sideTabChallan">
@@ -629,7 +629,7 @@
                 </div>
 
                 <div id="outwardModule" class="panel-card" style="display: none;">
-                    <div class="panel-title"><i class="fa-solid fa-square-plus text-info"></i> Outward Register Form</div>
+                    <div class="panel-title"><i class="fa-solid fa-square-plus text-info"></i> Delivery Register Form</div>
                     <form id="outwardForm" onsubmit="submitOutwardForm(event)">
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -730,7 +730,7 @@
                             <select class="form-select form-select-sm" id="challanLogTypeFilter" onchange="handleChallanLogFilterChange()" style="width: 180px;">
                                 <option value="all">All Logs (Mixed)</option>
                                 <option value="receipt">Receipt Register</option>
-                                <option value="delivery">Outward Register</option>
+                                <option value="delivery">Delivery Register</option>
                             </select>
                             <button class="btn btn-sm btn-outline-dark px-3" onclick="downloadTablePDF()"><i class="fa-solid fa-file-pdf text-danger me-2"></i>Export Logs Sheet</button>
                         </div>
@@ -1109,7 +1109,7 @@
             } else if(mode === 'outward') {
                 document.getElementById('sideTabOutward').classList.add('active');
                 document.getElementById('outwardModule').style.display = 'block';
-                contextTitle.innerText = "Outward Register Form";
+                contextTitle.innerText = "Delivery Register Form";
             } else if(mode === 'challan') {
                 document.getElementById('sideTabChallan').classList.add('active');
                 document.getElementById('challanListModule').style.display = 'block';
