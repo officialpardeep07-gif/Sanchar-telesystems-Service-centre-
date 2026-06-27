@@ -165,7 +165,7 @@
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 99;
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center; justify-content: justify-content; justify-content: space-between;
             padding: 0 30px;
         }
 
@@ -322,6 +322,7 @@
     <datalist id="cachedAddresses"></datalist>
     <datalist id="cachedItemModels"></datalist>
     <datalist id="cachedItemDescriptions"></datalist>
+    <datalist id="cachedCustomerNames"></datalist>
 
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
@@ -545,7 +546,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="formCustomerName" required placeholder="Customer Name">
+                                    <input type="text" class="form-control" id="formCustomerName" required placeholder="Customer Name" list="cachedCustomerNames">
                                     <label for="formCustomerName">Customer Name *</label>
                                 </div>
                             </div>
@@ -639,7 +640,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="outwardFormCustomerName" required placeholder="Customer Name">
+                                    <input type="text" class="form-control" id="outwardFormCustomerName" required placeholder="Customer Name" list="cachedCustomerNames">
                                     <label for="outwardFormCustomerName">Customer Name *</label>
                                 </div>
                             </div>
@@ -1022,6 +1023,9 @@
         let currentFilterMode = "all"; 
         let isMasterAuthenticated = false;
         let globalStockBreakdownItems = [];
+        
+        // Global customer data storage for auto-fill mapping
+        window.customerAutocompleteMap = {};
 
         window.toggleSystemTheme = function() {
             const htmlNode = document.documentElement;
@@ -1200,6 +1204,10 @@
             document.getElementById('cachedAddresses').innerHTML = savedAddresses.map(a => `<option value="${a}">`).join('');
             document.getElementById('cachedItemModels').innerHTML = savedModels.map(m => `<option value="${m}">`).join('');
             document.getElementById('cachedItemDescriptions').innerHTML = savedDescs.map(d => `<option value="${d}">`).join('');
+            
+            // Populating customer data list explicitly
+            const custNames = Object.keys(window.customerAutocompleteMap || {});
+            document.getElementById('cachedCustomerNames').innerHTML = custNames.map(c => `<option value="${c}">`).join('');
         }
 
         function cacheFieldInputs(address, itemsArray) {
@@ -1261,6 +1269,24 @@
 
         document.getElementById('formDate').valueAsDate = new Date();
         document.getElementById('outwardFormDate').valueAsDate = new Date();
+        
+        // Auto fill setup listeners for input operations
+        document.getElementById('formCustomerName').addEventListener('input', function(e) {
+            const val = e.target.value;
+            if(window.customerAutocompleteMap && window.customerAutocompleteMap[val]) {
+                document.getElementById('formAddress').value = window.customerAutocompleteMap[val].address || '';
+                document.getElementById('formGst').value = window.customerAutocompleteMap[val].gstNumber || '';
+            }
+        });
+
+        document.getElementById('outwardFormCustomerName').addEventListener('input', function(e) {
+            const val = e.target.value;
+            if(window.customerAutocompleteMap && window.customerAutocompleteMap[val]) {
+                document.getElementById('outwardFormAddress').value = window.customerAutocompleteMap[val].address || '';
+                document.getElementById('outwardFormGst').value = window.customerAutocompleteMap[val].gstNumber || '';
+            }
+        });
+
         updateDataListInterface();
 
         window.triggerDashboardSearch = function() {
@@ -1667,17 +1693,20 @@
             if(!data) {
                 fetchedChallans = {};
                 globalStockBreakdownItems = [];
+                window.customerAutocompleteMap = {};
                 document.getElementById('dbTableBody').innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No System Records Linked in Core Architecture.</td></tr>`;
                 document.getElementById('stockSummaryTableBody').innerHTML = `<tr><td colspan="9" class="text-center py-3 text-muted">No item records available.</td></tr>`;
                 document.getElementById('metricTotalChallans').innerText = "0";
                 document.getElementById('summaryReceivedUnits').innerText = "0";
                 document.getElementById('summaryDispatchedUnits').innerText = "0";
                 document.getElementById('summaryNetUnits').innerText = "0";
+                updateDataListInterface();
                 return;
             }
 
             fetchedChallans = data;
             globalStockBreakdownItems = [];
+            window.customerAutocompleteMap = {};
             let totalRecordsCount = 0;
             let totalReceived = 0;
             let totalDispatched = 0;
@@ -1687,6 +1716,14 @@
                 totalRecordsCount++;
                 const currentChallanType = (item.type === 'delivery' || item.challanNo.includes('STL/DC/')) ? 'delivery' : 'receipt';
                 let currentItemQty = 0;
+                
+                // Extracting Customer Meta dynamically for autocomplete lookup engine
+                if(item.customerName && item.customerName.trim() !== '') {
+                    window.customerAutocompleteMap[item.customerName.trim()] = {
+                        address: item.address || '',
+                        gstNumber: item.gstNumber || ''
+                    };
+                }
 
                 if(item.items && Array.isArray(item.items)) {
                     item.items.forEach(p => { 
@@ -1724,6 +1761,7 @@
 
             renderTableRows();
             updateStockSummaryTable('all');
+            updateDataListInterface();
             
             if(document.getElementById('masterToolModule').style.display === 'block') {
                 renderMasterTableRows();
