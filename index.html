@@ -473,16 +473,16 @@
                 <p class="text-muted small">Enterprise Resource Gate Authorization</p>
             </div>
             
-            <form onsubmit="verifySystemCredentials(event)">
+            <form id="loginFormEl" onsubmit="verifySystemCredentials(event)">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="loginUser" required placeholder="Username" autocomplete="off">
-                    <label for="loginUser">System Username</label>
+                    <input type="email" class="form-control" id="loginUser" required placeholder="Email" autocomplete="off">
+                    <label for="loginUser">System Email</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="loginPass" required placeholder="Password">
                     <label for="loginPass">Access Security Key</label>
                 </div>
-                <button type="submit" class="w-100 login-btn btn mt-2">Verify</button>
+                <button type="submit" class="w-100 login-btn btn mt-2" id="loginSubmitBtn">Verify</button>
                 <div class="alert alert-danger mt-3 py-2 small text-center" id="loginErrorMsg" style="display:none;">
                     <i class="fa-solid fa-triangle-exclamation me-1"></i> Authentication Failed. Key Rejected.
                 </div>
@@ -559,7 +559,7 @@
                             <i class="fa-solid fa-chevron-down text-muted small"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
-                            <li><a class="dropdown-menu-item dropdown-item small py-2" href="javascript:window.location.reload()"><i class="fa-solid fa-power-off text-danger me-2"></i>Lock Workspace</a></li>
+                            <li><a class="dropdown-menu-item dropdown-item small py-2" href="javascript:window.logoutSystem()"><i class="fa-solid fa-power-off text-danger me-2"></i>Lock Workspace</a></li>
                         </ul>
                     </div>
                 </div>
@@ -1261,7 +1261,8 @@
             }
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD_uUBIp1c3rWgyQNYVc22D7JZ1UlhskoI",
@@ -1276,6 +1277,25 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Real, backend-verified session check. Firebase confirms the
+        // user's identity against its own servers -- nothing about who is
+        // "logged in" is decided by client-side JS anymore.
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('erpSystemWrapper').style.display = 'block';
+                switchTab('dashboard');
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                document.getElementById('erpSystemWrapper').style.display = 'none';
+            }
+        });
+
+        window.logoutSystem = function() {
+            signOut(auth);
+        };
 
         let fetchedChallans = {};
         let currentFilterMode = "all"; 
@@ -1309,18 +1329,27 @@
 
         window.verifySystemCredentials = function(event) {
             event.preventDefault();
-            const u = document.getElementById('loginUser').value;
+            const u = document.getElementById('loginUser').value.trim();
             const p = document.getElementById('loginPass').value;
             const errMsg = document.getElementById('loginErrorMsg');
+            const btn = document.getElementById('loginSubmitBtn');
 
-            if(u === "Sanchar" && p === "Sanchar@2026") {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('erpSystemWrapper').style.display = 'block';
-                switchTab('dashboard');
-            } else {
-                errMsg.style.display = 'block';
-                document.getElementById('loginPass').value = "";
-            }
+            errMsg.style.display = 'none';
+            btn.disabled = true;
+            btn.innerText = "Verifying...";
+
+            // The password is checked by Firebase's own servers, not by
+            // this JS file. No credential is ever stored or compared here,
+            // so there is nothing for view-source to expose.
+            signInWithEmailAndPassword(auth, u, p)
+                .catch(() => {
+                    errMsg.style.display = 'block';
+                    document.getElementById('loginPass').value = "";
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Verify";
+                });
         }
 
         window.toggleSidebar = function() {
@@ -1445,19 +1474,34 @@
             }
         };
 
-        window.openMasterTool = function() {
+        window.openMasterTool = async function() {
             if (isMasterAuthenticated) {
                 switchTab('master');
                 renderMasterTableRows();
-            } else {
-                const pass = prompt("Please enter secure Master Password to open control gateway:");
-                if (pass === "Pardeep@1999") {
+                return;
+            }
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Please sign in first.");
+                return;
+            }
+            // No password is hardcoded anywhere in this file anymore.
+            // Whether this account is an admin is decided by a database
+            // record that only Firebase Security Rules (server-side) let
+            // this specific user read -- it cannot be guessed or edited
+            // from view-source. See the "admins/<uid>" path + rules
+            // sent alongside this file.
+            try {
+                const snap = await get(ref(db, 'admins/' + user.uid));
+                if (snap.exists() && snap.val() === true) {
                     isMasterAuthenticated = true;
                     switchTab('master');
                     renderMasterTableRows();
-                } else if(pass !== null) {
-                    alert("Access Denied! Incorrect Master Security Key.");
+                } else {
+                    alert("Access Denied! This account does not have Master Tool access.");
                 }
+            } catch (e) {
+                alert("Access Denied! This account does not have Master Tool access.");
             }
         }
 
