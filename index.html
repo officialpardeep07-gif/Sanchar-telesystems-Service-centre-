@@ -229,6 +229,11 @@
 
         .challan-view-section { display: none; margin-top: 20px; }
 
+        .challan-print-box, .challan-print-box * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
         .challan-print-box {
             --challan-navy: #0f1e3d;
             background: #fff !important;
@@ -351,9 +356,10 @@
             border: 1.5px solid var(--challan-navy);
             border-radius: 6px;
             margin: 8px 12px;
-            padding: 8px 14px;
+            overflow: hidden;
             font-size: 12px;
         }
+        .challan-dispatch-box .dispatch-box-body { padding: 10px 14px; }
         .dispatch-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
         .dispatch-row:last-child { margin-bottom: 0; }
         .dispatch-field { display: flex; align-items: baseline; gap: 6px; flex: 1 1 45%; min-width: 220px; }
@@ -368,12 +374,15 @@
             border: 1.5px solid var(--challan-navy);
             border-radius: 6px;
             margin: 0 12px 8px;
-            padding: 8px;
+            overflow: hidden;
             text-align: center;
         }
+        .challan-signatory-box .sig-body { padding: 14px 8px 12px; }
         .challan-signatory-box .sig-title {
             font-weight: 800; font-size: 12.5px; text-transform: uppercase;
-            letter-spacing: 0.3px; margin-bottom: 14px; color: var(--challan-navy) !important;
+            letter-spacing: 0.3px; margin: 0; color: var(--challan-navy) !important;
+            background: #f4f6fb; border-bottom: 1.5px solid var(--challan-navy);
+            padding: 4px 10px; text-align: left;
         }
         .challan-signatory-box .sig-title i { margin-right: 6px; color: var(--challan-navy) !important; }
         .challan-signatory-box .sig-line { border-bottom: 1px dotted #555; width: 220px; margin: 0 auto 6px; height: 10px; }
@@ -407,8 +416,18 @@
         }
 
       @media print {
+        html, body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
         body * { visibility: hidden; }
-        #challanPrintContainer, #challanPrintContainer * { visibility: visible; }
+        #challanPrintContainer, #challanPrintContainer * {
+            visibility: visible;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
         
         #challanPrintContainer {
             position: absolute;
@@ -418,6 +437,12 @@
             padding: 0 !important;
             margin: 0 !important;
             color: #333 !important; 
+            box-shadow: none !important;
+        }
+
+        .challan-bar-title, .challan-goods-table th, .challan-contact-footer, .challan-thankyou-bar {
+            background: #0f1e3d !important;
+            color: #ffffff !important;
         }
 
         .challan-goods-table, .challan-goods-table th, .challan-goods-table td {
@@ -491,6 +516,11 @@
                     <li id="sideTabOutward">
                         <a href="javascript:void(0)" onclick="switchTab('outward')">
                             <i class="fa-solid fa-file-export"></i><span>Delivery Register</span>
+                        </a>
+                    </li>
+                    <li id="sideTabDraft">
+                        <a href="javascript:void(0)" onclick="switchTab('draft')">
+                            <i class="fa-solid fa-file-circle-exclamation"></i><span>Draft Challan</span>
                         </a>
                     </li>
                     <li id="sideTabChallan">
@@ -837,6 +867,30 @@
                     </form>
                 </div>
 
+                <div id="draftChallanModule" class="panel-card" style="display: none;">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <div class="panel-title mb-0"><i class="fa-solid fa-file-circle-exclamation text-warning"></i> Draft Challans (Pending Finalization)</div>
+                    </div>
+                    <p class="text-muted small">Newly created challans first appear here as Drafts. You can edit them from here. Once you click <strong>"Make Permanent"</strong>, the challan becomes Permanent and can no longer be edited.</p>
+                    <div class="table-responsive-wrapper">
+                        <table class="custom-table" id="draftTableContainer">
+                            <thead>
+                                <tr>
+                                    <th>Challan Index</th>
+                                    <th>Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Type</th>
+                                    <th>GST No.</th>
+                                    <th style="width: 18%; text-align:center;">Controls</th>
+                                </tr>
+                            </thead>
+                            <tbody id="draftTableBody">
+                                <tr><td colspan="6" class="text-center py-4 text-muted">Loading drafts...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div id="challanListModule" class="panel-card" style="display: none;">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                         <div class="panel-title mb-0"><i class="fa-solid fa-server text-info"></i> Cloud Inventory Database Logs (<span id="filterScopeLabel">All Ledger Logs</span>)</div>
@@ -883,7 +937,7 @@
 
                 <div id="serialTrackerModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-success"><i class="fa-solid fa-clock-rotate-left"></i> Advance Serial Number Lifecycle Tracker</div>
-                    <p class="text-muted small">System database history se kisi bhi hardware serial number ka trace logs automatic check karein.</p>
+                    <p class="text-muted small">Automatically check the trace logs of any hardware serial number from the system database history.</p>
                     
                     <div class="row g-3 mb-4">
                         <div class="col-md-8">
@@ -1110,13 +1164,84 @@
         </div>
     </div>
 
+    <div class="modal fade" id="draftEditModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-warning bg-opacity-25">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Draft Challan <span id="draftEditChallanNoLabel" class="text-primary ms-1"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="draftEditRecordKey">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Date</label>
+                            <input type="date" class="form-control" id="draftEditDate" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Customer Name</label>
+                            <input type="text" class="form-control" id="draftEditCustName" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Address</label>
+                            <input type="text" class="form-control" id="draftEditAddress" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">GST Number</label>
+                            <input type="text" class="form-control" id="draftEditGstNo" required>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-3 p-3 mt-4 bg-light bg-opacity-50">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 small text-uppercase tracking-wider"><i class="fa-solid fa-list-check text-secondary me-1"></i> Product Details</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary px-3" onclick="addDraftEditRow()"><i class="fa-solid fa-plus me-1"></i>Add Row</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle bg-white mb-0">
+                                <thead class="table-light">
+                                    <tr class="small text-uppercase">
+                                        <th style="width: 38%;">Product Description *</th>
+                                        <th style="width: 22%;">Serial Number *</th>
+                                        <th style="width: 12%;">Qty *</th>
+                                        <th style="width: 22%;">Issue Faced / Remarks</th>
+                                        <th style="width: 6%; text-align:center;">Drop</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="draftEditItemTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Remarks / Dispatch Meta</label>
+                            <input type="text" class="form-control" id="draftEditRemarks">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Declaration Clause</label>
+                            <input type="text" class="form-control" id="draftEditDeclaration">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-success btn-sm px-3" onclick="finalizeDraftChallan()"><i class="fa-solid fa-lock me-1"></i>Make Permanent (Lock Editing)</button>
+                    <div>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary btn-sm px-3" onclick="saveDraftEditedData()">Save Draft Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script type="module">
-        // Right-click disable karne ke liye
+        // Disable right-click context menu
         document.addEventListener('contextmenu', event => event.preventDefault());
 
-        // Short-keys (F12, Ctrl+Shift+I, etc.) block karne ke liye
+        // Block shortcut keys (F12, Ctrl+Shift+I, etc.)
         document.onkeydown = function(e) {
             // F12 key
             if (e.keyCode == 123) {
@@ -1216,6 +1341,7 @@
             document.getElementById('sideTabDash').classList.remove('active');
             document.getElementById('sideTabIssue').classList.remove('active');
             document.getElementById('sideTabOutward').classList.remove('active');
+            document.getElementById('sideTabDraft').classList.remove('active');
             document.getElementById('sideTabChallan').classList.remove('active');
             document.getElementById('sideTabSerialTracker').classList.remove('active');
             document.getElementById('sideTabMaster').classList.remove('active');
@@ -1223,6 +1349,7 @@
             document.getElementById('dashboardHudModule').style.display = 'none';
             document.getElementById('issueModule').style.display = 'none';
             document.getElementById('outwardModule').style.display = 'none';
+            document.getElementById('draftChallanModule').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('serialTrackerModule').style.display = 'none';
             document.getElementById('masterToolModule').style.display = 'none';
@@ -1243,6 +1370,11 @@
                 document.getElementById('sideTabOutward').classList.add('active');
                 document.getElementById('outwardModule').style.display = 'block';
                 contextTitle.innerText = "Delivery Register Form";
+            } else if(mode === 'draft') {
+                document.getElementById('sideTabDraft').classList.add('active');
+                document.getElementById('draftChallanModule').style.display = 'block';
+                contextTitle.innerText = "Draft Challan Workspace";
+                renderDraftTableRows();
             } else if(mode === 'challan') {
                 document.getElementById('sideTabChallan').classList.add('active');
                 document.getElementById('challanListModule').style.display = 'block';
@@ -1516,14 +1648,15 @@
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
                 receivedBy: document.getElementById('formReceivedBy').value || 'Inward Receipt',
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                status: 'draft'
             };
 
             cacheFieldInputs(issueDataPayload.address, itemsArray);
 
             push(ref(db, "sanchar_receipt_register_v1"), issueDataPayload)
                 .then(() => {
-                    alert(`Receipt Saved Successfully! Challan Generated: ${dynamicChallanNumber}`);
+                    alert(`Receipt Saved as Draft! Challan Generated: ${dynamicChallanNumber}\nPlease review it in Draft Challan and click "Make Permanent" once confirmed.`);
                     document.getElementById('issueForm').reset();
                     document.getElementById('itemTableBody').innerHTML = `
                         <tr>
@@ -1537,8 +1670,7 @@
                     document.getElementById('formDate').valueAsDate = new Date();
                     procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Challan`;
                     procBtn.disabled = false;
-                    currentFilterMode = "receipt";
-                    switchTab('challan');
+                    switchTab('draft');
                 })
                 .catch(err => {
                     console.error(err);
@@ -1595,13 +1727,14 @@
                 declaration: document.getElementById('outwardFormDeclaration').value || 'NA',
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                status: 'draft'
             };
             cacheFieldInputs(outwardDataPayload.address, itemsArray);
 
             push(ref(db, "sanchar_receipt_register_v1"), outwardDataPayload)
                 .then(() => {
-                    alert(`Outward Saved Successfully! Delivery Challan Generated: ${dynamicChallanNumber}`);
+                    alert(`Delivery Challan Saved as Draft! Challan Generated: ${dynamicChallanNumber}\nPlease review it in Draft Challan and click "Make Permanent" once confirmed.`);
                     document.getElementById('outwardForm').reset();
                     document.getElementById('outwardItemTableBody').innerHTML = `
                         <tr>
@@ -1615,8 +1748,7 @@
                     document.getElementById('outwardFormDate').valueAsDate = new Date();
                     procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Outward Challan`;
                     procBtn.disabled = false;
-                    currentFilterMode = "delivery";
-                    switchTab('challan');
+                    switchTab('draft');
                 })
                 .catch(err => {
                     console.error(err);
@@ -1707,6 +1839,11 @@
 
             let filteredKeys = Object.keys(fetchedChallans).filter(key => {
                 const item = fetchedChallans[key];
+
+                // Draft challans stay out of the Permanent ledger until finalized.
+                // Legacy records without a status field are treated as permanent.
+                if (item.status === 'draft') return false;
+
                 let typeMatch = true;
                 if(currentFilterMode === 'receipt') {
                     typeMatch = (item.type === 'receipt' || (!item.type && item.challanNo.includes('STL/RC/')));
@@ -1821,6 +1958,189 @@
             }
         }
 
+        // ===================== DRAFT CHALLAN WORKFLOW =====================
+
+        window.renderDraftTableRows = function() {
+            const tbody = document.getElementById('draftTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            const keys = Object.keys(fetchedChallans).filter(key => fetchedChallans[key].status === 'draft').reverse();
+
+            if(keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No draft challans pending. New challans will appear here as soon as they are created.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(key => {
+                const item = fetchedChallans[key];
+                const typeBadge = (item.type === 'delivery' || item.challanNo.includes('STL/DC/')) ?
+                    `<span class="badge bg-info text-dark">Delivery</span>` : `<span class="badge bg-primary">Receipt</span>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold text-primary">${item.challanNo}</td>
+                    <td>${item.receivingDate}</td>
+                    <td class="fw-semibold">${item.customerName}</td>
+                    <td>${typeBadge}</td>
+                    <td><code>${item.gstNumber}</code></td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" title="Edit Draft" onclick="triggerDraftEditDirect('${key}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-outline-success" title="Make Permanent" onclick="finalizeDraftChallan('${key}')"><i class="fa-solid fa-lock"></i></button>
+                            <button class="btn btn-outline-danger" title="Delete Draft" onclick="triggerMasterDeleteDirect('${key}')"><i class="fa-regular fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.addDraftEditRow = function() {
+            const tbody = document.getElementById('draftEditItemTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm de-row-desc" required list="cachedItemDescriptions"></td>
+                <td><input type="text" class="form-control form-control-sm de-row-serial" required></td>
+                <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="1"></td>
+                <td><input type="text" class="form-control form-control-sm de-row-faced" value="NA"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function ddmmyyyyToInputDate(str) {
+            // converts "DD - MM - YYYY" formatted string to yyyy-mm-dd for <input type="date">
+            if(!str) return "";
+            const parts = str.split("-").map(p => p.trim());
+            if(parts.length !== 3) return "";
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+
+        window.triggerDraftEditDirect = function(key) {
+            const record = fetchedChallans[key];
+            if(!record) return;
+            if(record.status !== 'draft') {
+                alert("This challan has already been made Permanent and cannot be edited.");
+                return;
+            }
+
+            document.getElementById('draftEditRecordKey').value = key;
+            document.getElementById('draftEditChallanNoLabel').innerText = `(${record.challanNo})`;
+            document.getElementById('draftEditDate').value = ddmmyyyyToInputDate(record.receivingDate);
+            document.getElementById('draftEditCustName').value = record.customerName || '';
+            document.getElementById('draftEditAddress').value = record.address || '';
+            document.getElementById('draftEditGstNo').value = record.gstNumber || '';
+            document.getElementById('draftEditRemarks').value = record.remarks || '';
+            document.getElementById('draftEditDeclaration').value = record.declaration || '';
+
+            const itemsBody = document.getElementById('draftEditItemTableBody');
+            itemsBody.innerHTML = "";
+            (record.items || []).forEach(prod => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" class="form-control form-control-sm de-row-desc" required list="cachedItemDescriptions" value="${prod.description || ''}"></td>
+                    <td><input type="text" class="form-control form-control-sm de-row-serial" required value="${prod.serialNo || ''}"></td>
+                    <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="${parseFloat(prod.quantity) || 1}"></td>
+                    <td><input type="text" class="form-control form-control-sm de-row-faced" value="${prod.issueFaced || 'NA'}"></td>
+                    <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+                `;
+                itemsBody.appendChild(row);
+            });
+            if(itemsBody.children.length === 0) addDraftEditRow();
+
+            const modalObj = new bootstrap.Modal(document.getElementById('draftEditModal'));
+            modalObj.show();
+        }
+
+        function collectDraftEditPayload() {
+            const dateVal = document.getElementById('draftEditDate').value;
+            let formattedDateString = document.getElementById('draftEditRecordKey').dataset.origDate || '';
+            if(dateVal) {
+                const dateObj = new Date(dateVal);
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const yyyy = dateObj.getFullYear();
+                formattedDateString = `${dd} - ${mm} - ${yyyy}`;
+            }
+
+            const itemRows = document.querySelectorAll('#draftEditItemTableBody tr');
+            let itemsArray = [];
+            let calculatedTotalQty = 0;
+            itemRows.forEach(row => {
+                const itemQty = parseFloat(row.querySelector('.de-row-qty').value) || 1;
+                calculatedTotalQty += itemQty;
+                itemsArray.push({
+                    itemModel: "NA",
+                    description: row.querySelector('.de-row-desc').value,
+                    serialNo: row.querySelector('.de-row-serial').value,
+                    quantity: itemQty.toFixed(2),
+                    issueFaced: row.querySelector('.de-row-faced').value || 'NA'
+                });
+            });
+
+            return {
+                receivingDate: formattedDateString,
+                customerName: document.getElementById('draftEditCustName').value,
+                address: document.getElementById('draftEditAddress').value,
+                gstNumber: document.getElementById('draftEditGstNo').value,
+                remarks: document.getElementById('draftEditRemarks').value,
+                declaration: document.getElementById('draftEditDeclaration').value,
+                items: itemsArray,
+                totalUnitsCount: calculatedTotalQty
+            };
+        }
+
+        window.saveDraftEditedData = function() {
+            const key = document.getElementById('draftEditRecordKey').value;
+            if(!key) return;
+            const record = fetchedChallans[key];
+            if(!record || record.status !== 'draft') {
+                alert("This challan is no longer a draft, editing is not possible.");
+                return;
+            }
+
+            const updatedObj = collectDraftEditPayload();
+
+            update(ref(db, `sanchar_receipt_register_v1/${key}`), updatedObj)
+                .then(() => {
+                    alert("Draft changes saved successfully.");
+                    bootstrap.Modal.getInstance(document.getElementById('draftEditModal')).hide();
+                }).catch(err => alert("Error saving draft: " + err.message));
+        }
+
+        window.finalizeDraftChallan = function(directKey) {
+            const key = directKey || document.getElementById('draftEditRecordKey').value;
+            if(!key) return;
+            const record = fetchedChallans[key];
+            if(!record || record.status !== 'draft') {
+                alert("This challan is already Permanent.");
+                return;
+            }
+
+            if(!confirm(`Do you want to make challan ${record.challanNo} Permanent?\nOnce Permanent, this challan can no longer be edited.`)) {
+                return;
+            }
+
+            // If invoked from inside the edit modal, persist any pending field edits first.
+            let updatedObj = { status: 'permanent' };
+            const modalKeyField = document.getElementById('draftEditRecordKey');
+            if(modalKeyField && modalKeyField.value === key && document.getElementById('draftEditModal').classList.contains('show')) {
+                updatedObj = Object.assign(collectDraftEditPayload(), { status: 'permanent' });
+            }
+
+            update(ref(db, `sanchar_receipt_register_v1/${key}`), updatedObj)
+                .then(() => {
+                    alert(`Challan ${record.challanNo} is now Permanent. It can no longer be edited.`);
+                    const modalEl = document.getElementById('draftEditModal');
+                    if(modalEl && modalEl.classList.contains('show')) {
+                        bootstrap.Modal.getInstance(modalEl).hide();
+                    }
+                }).catch(err => alert("Error finalizing challan: " + err.message));
+        }
+
+        // ===================== END DRAFT CHALLAN WORKFLOW =====================
+
         onValue(ref(db, "sanchar_receipt_register_v1"), (snapshot) => {
             const data = snapshot.val();
             if(!data) {
@@ -1899,6 +2219,9 @@
             if(document.getElementById('masterToolModule').style.display === 'block') {
                 renderMasterTableRows();
             }
+            if(document.getElementById('draftChallanModule').style.display === 'block') {
+                renderDraftTableRows();
+            }
             if(!document.getElementById('searchResultLogContainer').classList.contains('d-none')) {
                 triggerDashboardSearch();
             }
@@ -1947,33 +2270,36 @@
 
                 bottomGrid.innerHTML = `
                     <div class="challan-dispatch-box">
-                        <div class="dispatch-row">
-                            <div class="dispatch-field">
-                                <span class="dispatch-label">MODE OF DISPATCH&nbsp;:</span>
-                                <span class="field-line-long">${modeOfDispatchStr}</span>
+                        <div class="challan-box-title"><i class="fa-solid fa-truck-fast"></i>Dispatch Details</div>
+                        <div class="dispatch-box-body">
+                            <div class="dispatch-row">
+                                <div class="dispatch-field">
+                                    <span class="dispatch-label">MODE OF DISPATCH&nbsp;:</span>
+                                    <span class="field-line-long">${modeOfDispatchStr}</span>
+                                </div>
+                                <div class="dispatch-field">
+                                    <span class="dispatch-label">RR / LR / DOCKET NO.&nbsp;:</span>
+                                    <span class="field-line-long"></span>
+                                </div>
                             </div>
-                            <div class="dispatch-field">
-                                <span class="dispatch-label">RR / LR / DOCKET NO.&nbsp;:</span>
-                                <span class="field-line-long"></span>
+                            <div class="dispatch-row">
+                                <div class="dispatch-field">
+                                    <span class="dispatch-label">FREIGHT&nbsp;:</span>
+                                    <span class="dispatch-checkbox-group">
+                                        <label><input type="checkbox">Prepaid</label>
+                                        <label><input type="checkbox">To Pay</label>
+                                    </span>
+                                </div>
+                                <div class="dispatch-field">
+                                    <span class="dispatch-label">DATE&nbsp;:</span>
+                                    <span class="field-line-long"></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="dispatch-row">
-                            <div class="dispatch-field">
-                                <span class="dispatch-label">FREIGHT&nbsp;:</span>
-                                <span class="dispatch-checkbox-group">
-                                    <label><input type="checkbox">Prepaid</label>
-                                    <label><input type="checkbox">To Pay</label>
-                                </span>
-                            </div>
-                            <div class="dispatch-field">
-                                <span class="dispatch-label">DATE&nbsp;:</span>
-                                <span class="field-line-long"></span>
-                            </div>
-                        </div>
-                        <div class="dispatch-row">
-                            <div class="dispatch-field full-width">
-                                <span class="dispatch-label">MATERIAL DISPATCH TYPE&nbsp;:</span>
-                                <span class="field-line-long">${materialTypeStr}</span>
+                            <div class="dispatch-row">
+                                <div class="dispatch-field full-width">
+                                    <span class="dispatch-label">MATERIAL DISPATCH TYPE&nbsp;:</span>
+                                    <span class="field-line-long">${materialTypeStr}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1982,8 +2308,10 @@
                 footerSection.innerHTML = `
                     <div class="challan-signatory-box" style="width:100%;">
                         <div class="sig-title"><i class="fa-solid fa-building"></i>For Sanchar Telesystems Limited</div>
-                        <div class="sig-line"></div>
-                        <div class="sig-caption">Authorised Signatory</div>
+                        <div class="sig-body">
+                            <div class="sig-line"></div>
+                            <div class="sig-caption">Authorised Signatory</div>
+                        </div>
                     </div>
                 `;
             } else {
@@ -2062,6 +2390,10 @@
             } else if (document.getElementById('sideTabSerialTracker').classList.contains('active')) {
                 document.getElementById('serialTrackerModule').style.display = 'block';
                 document.getElementById('pageTitleContext').innerText = "Advance Serial Lifecyle Tracker";
+            } else if (document.getElementById('sideTabDraft').classList.contains('active')) {
+                document.getElementById('draftChallanModule').style.display = 'block';
+                document.getElementById('pageTitleContext').innerText = "Draft Challan Workspace";
+                renderDraftTableRows();
             } else {
                 document.getElementById('challanListModule').style.display = 'block';
                 document.getElementById('pageTitleContext').innerText = "Challan Operations";
