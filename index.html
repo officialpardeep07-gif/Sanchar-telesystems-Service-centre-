@@ -252,8 +252,7 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.08);
             position: relative;
             padding: 0;
-            overflow: hidden;
-            page-break-inside: avoid;
+            overflow: visible;
         }
         .challan-print-box * { color: #1a1a1a; }
         .challan-flex-spacer { flex: 1 1 auto; }
@@ -442,6 +441,9 @@
             margin: 0 !important;
             color: #333 !important; 
             box-shadow: none !important;
+            overflow: visible !important;
+            min-height: 0 !important;
+            height: auto !important;
         }
 
         .challan-bar-title, .challan-goods-table th, .challan-contact-footer, .challan-thankyou-bar {
@@ -452,6 +454,18 @@
         .challan-goods-table, .challan-goods-table th, .challan-goods-table td {
             border: 0.75px solid #0f1e3d !important;
             padding: 4px !important;
+        }
+
+        /* Prevent rows/boxes from being sliced in half across a page break,
+           and repeat the table header on every printed page */
+        .challan-goods-table thead { display: table-header-group; }
+        .challan-goods-table tr,
+        .challan-bottom-grid, .challan-bottom-left, .challan-bottom-right,
+        .challan-dispatch-box, .challan-signatory-box,
+        .challan-footer-declaration, .challan-transit-bar,
+        .challan-top-header, .challan-split-meta {
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         h1, h2, h3, h4, strong { font-weight: 700 !important; }
@@ -722,10 +736,11 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="itemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 40%;">Product Description *</th>
-                                            <th style="width: 25%;">Serial Number *</th>
-                                            <th style="width: 15%;">Qty *</th>
+                                            <th style="width: 32%;">Product Description *</th>
+                                            <th style="width: 20%;">Serial Number *</th>
+                                            <th style="width: 10%;">Qty *</th>
                                             <th style="width: 15%;">Issue Faced *</th>
+                                            <th style="width: 18%;">Remarks</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
                                     </thead>
@@ -735,6 +750,7 @@
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                                             <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>
                                     </tbody>
@@ -745,7 +761,7 @@
                             <div class="col-12">
                                 <div class="form-floating">
                                     <textarea class="form-control" id="formRemarks" style="height: 60px" placeholder="Remarks"></textarea>
-                                    <label for="formRemarks">Remarks</label>
+                                    <label for="formRemarks">General Remarks (Header)</label>
                                 </div>
                             </div>
                         </div>
@@ -815,11 +831,47 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating">
-                                    <select class="form-select" id="outwardFormModeOfDispatch" required>
-                                        <option value="By Hand" selected>By Hand</option>
-                                        <option value="By Courier">By Courier</option>
-                                    </select>
-                                    <label for="outwardFormModeOfDispatch">Mode Of Dispatch *</label>
+                                    <input type="text" class="form-control" id="outwardFormModeOfDispatch" required placeholder="Mode Of Dispatch" list="modeOfDispatchOptions" value="By Hand">
+                                    <label for="outwardFormModeOfDispatch">Mode Of Dispatch * <span class="text-muted" style="font-weight:400;">(type to enter your own)</span></label>
+                                    <datalist id="modeOfDispatchOptions">
+                                        <option value="By Hand">
+                                        <option value="By Courier">
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="outwardFormRRNo" placeholder="RR / LR / Docket No.">
+                                    <label for="outwardFormRRNo">RR / LR / Docket No.</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="outwardFormTransitAmount" placeholder="Transit Amount">
+                                    <label for="outwardFormTransitAmount">Transit Amount</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" id="outwardFormDispatchDate" placeholder="Dispatch Date">
+                                    <label for="outwardFormDispatchDate">Dispatch Date</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold d-block mb-2">Freight</label>
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="outwardFormFreight" id="outwardFormFreightPrepaid" value="Prepaid" checked>
+                                        <label class="form-check-label" for="outwardFormFreightPrepaid">Prepaid</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="outwardFormFreight" id="outwardFormFreightToPay" value="To Pay">
+                                        <label class="form-check-label" for="outwardFormFreightToPay">To Pay</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="outwardFormFreight" id="outwardFormFreightNone" value="" >
+                                        <label class="form-check-label" for="outwardFormFreightNone">Not Applicable</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1075,7 +1127,7 @@
 
                         <div class="challan-transit-bar" id="lblTransitAmountBar" style="display:none;">
                             <span class="dispatch-label">TRANSIT AMOUNT&nbsp;:</span>
-                            <span class="field-line-long"></span>
+                            <span class="field-line-long" id="lblTransitAmountValue"></span>
                         </div>
 
                         <div class="challan-bottom-grid" id="lblChallanBottomSection">
@@ -1212,10 +1264,11 @@
                             <table class="table table-bordered table-hover align-middle bg-white mb-0">
                                 <thead class="table-light">
                                     <tr class="small text-uppercase">
-                                        <th style="width: 38%;">Product Description *</th>
-                                        <th style="width: 22%;">Serial Number *</th>
-                                        <th style="width: 12%;">Qty *</th>
-                                        <th style="width: 22%;">Issue Faced / Remarks</th>
+                                        <th style="width: 30%;">Product Description *</th>
+                                        <th style="width: 18%;">Serial Number *</th>
+                                        <th style="width: 10%;">Qty *</th>
+                                        <th style="width: 18%;">Issue Faced / Remarks</th>
+                                        <th style="width: 18%;">Remarks (Receipt only)</th>
                                         <th style="width: 6%; text-align:center;">Drop</th>
                                     </tr>
                                 </thead>
@@ -1232,6 +1285,33 @@
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Declaration Clause</label>
                             <input type="text" class="form-control" id="draftEditDeclaration">
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-1" id="draftEditDeliveryFieldsRow">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">RR / LR / Docket No.</label>
+                            <input type="text" class="form-control" id="draftEditRRNo">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Transit Amount</label>
+                            <input type="text" class="form-control" id="draftEditTransitAmount">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Dispatch Date</label>
+                            <input type="date" class="form-control" id="draftEditDispatchDate">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold d-block">Freight</label>
+                            <div class="d-flex gap-3 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="draftEditFreight" id="draftEditFreightPrepaid" value="Prepaid">
+                                    <label class="form-check-label small" for="draftEditFreightPrepaid">Prepaid</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="draftEditFreight" id="draftEditFreightToPay" value="To Pay">
+                                    <label class="form-check-label small" for="draftEditFreightToPay">To Pay</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1516,6 +1596,7 @@
                 <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                 <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                 <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
+                <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
             tbody.appendChild(row);
@@ -1642,7 +1723,8 @@
                     description: row.querySelector('.row-desc').value,
                     serialNo: row.querySelector('.row-serial').value,
                     quantity: itemQty.toFixed(2),
-                    issueFaced: row.querySelector('.row-faced').value
+                    issueFaced: row.querySelector('.row-faced').value,
+                    remarks: row.querySelector('.row-remarks').value || ''
                 });
             });
 
@@ -1675,6 +1757,7 @@
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                             <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
+                            <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
                     `;
@@ -1725,6 +1808,16 @@
             });
             const matType = document.getElementById('outwardFormMaterialType').value;
             const dispMode = document.getElementById('outwardFormModeOfDispatch').value;
+            const rrNo = document.getElementById('outwardFormRRNo').value || '';
+            const transitAmount = document.getElementById('outwardFormTransitAmount').value || '';
+            const freightRadio = document.querySelector('input[name="outwardFormFreight"]:checked');
+            const freight = freightRadio ? freightRadio.value : '';
+            const dispatchDateVal = document.getElementById('outwardFormDispatchDate').value;
+            let formattedDispatchDate = '';
+            if(dispatchDateVal) {
+                const dObj = new Date(dispatchDateVal);
+                formattedDispatchDate = `${String(dObj.getDate()).padStart(2,'0')} - ${String(dObj.getMonth()+1).padStart(2,'0')} - ${dObj.getFullYear()}`;
+            }
 
             const outwardDataPayload = {
                 type: 'delivery',
@@ -1735,6 +1828,10 @@
                 customerType: "Private",
                 address: document.getElementById('outwardFormAddress').value,
                 remarks: `${matType} | ${dispMode}`,
+                rrNo: rrNo,
+                transitAmount: transitAmount,
+                freight: freight,
+                dispatchDate: formattedDispatchDate,
                 declaration: document.getElementById('outwardFormDeclaration').value || 'NA',
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
@@ -2015,6 +2112,7 @@
                 <td><input type="text" class="form-control form-control-sm de-row-serial" required></td>
                 <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="1"></td>
                 <td><input type="text" class="form-control form-control-sm de-row-faced" value="NA"></td>
+                <td><input type="text" class="form-control form-control-sm de-row-remarks" placeholder="Remarks"></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
             tbody.appendChild(row);
@@ -2045,6 +2143,14 @@
             document.getElementById('draftEditRemarks').value = record.remarks || '';
             document.getElementById('draftEditDeclaration').value = record.declaration || '';
 
+            const isDeliveryDraft = record.type === 'delivery' || (record.challanNo && record.challanNo.includes('STL/DC/'));
+            document.getElementById('draftEditDeliveryFieldsRow').style.display = isDeliveryDraft ? 'flex' : 'none';
+            document.getElementById('draftEditRRNo').value = record.rrNo || '';
+            document.getElementById('draftEditTransitAmount').value = record.transitAmount || '';
+            document.getElementById('draftEditDispatchDate').value = ddmmyyyyToInputDate(record.dispatchDate || '');
+            document.getElementById('draftEditFreightPrepaid').checked = record.freight === 'Prepaid';
+            document.getElementById('draftEditFreightToPay').checked = record.freight === 'To Pay';
+
             const itemsBody = document.getElementById('draftEditItemTableBody');
             itemsBody.innerHTML = "";
             (record.items || []).forEach(prod => {
@@ -2054,6 +2160,7 @@
                     <td><input type="text" class="form-control form-control-sm de-row-serial" required value="${prod.serialNo || ''}"></td>
                     <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="${parseFloat(prod.quantity) || 1}"></td>
                     <td><input type="text" class="form-control form-control-sm de-row-faced" value="${prod.issueFaced || 'NA'}"></td>
+                    <td><input type="text" class="form-control form-control-sm de-row-remarks" placeholder="Remarks" value="${prod.remarks || ''}"></td>
                     <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                 `;
                 itemsBody.appendChild(row);
@@ -2086,9 +2193,18 @@
                     description: row.querySelector('.de-row-desc').value,
                     serialNo: row.querySelector('.de-row-serial').value,
                     quantity: itemQty.toFixed(2),
-                    issueFaced: row.querySelector('.de-row-faced').value || 'NA'
+                    issueFaced: row.querySelector('.de-row-faced').value || 'NA',
+                    remarks: row.querySelector('.de-row-remarks') ? (row.querySelector('.de-row-remarks').value || '') : ''
                 });
             });
+
+            const freightRadio = document.querySelector('input[name="draftEditFreight"]:checked');
+            const dispatchDateVal = document.getElementById('draftEditDispatchDate').value;
+            let formattedDispatchDate = '';
+            if(dispatchDateVal) {
+                const dObj = new Date(dispatchDateVal);
+                formattedDispatchDate = `${String(dObj.getDate()).padStart(2,'0')} - ${String(dObj.getMonth()+1).padStart(2,'0')} - ${dObj.getFullYear()}`;
+            }
 
             return {
                 receivingDate: formattedDateString,
@@ -2097,6 +2213,10 @@
                 gstNumber: document.getElementById('draftEditGstNo').value,
                 remarks: document.getElementById('draftEditRemarks').value,
                 declaration: document.getElementById('draftEditDeclaration').value,
+                rrNo: document.getElementById('draftEditRRNo').value || '',
+                transitAmount: document.getElementById('draftEditTransitAmount').value || '',
+                freight: freightRadio ? freightRadio.value : '',
+                dispatchDate: formattedDispatchDate,
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty
             };
@@ -2280,6 +2400,10 @@
                 document.getElementById('lblMaterialDispatchType').style.display = "none";
 
                 document.getElementById('lblTransitAmountBar').style.display = "flex";
+                document.getElementById('lblTransitAmountValue').innerText = targetData.transitAmount || '';
+
+                const isPrepaid = targetData.freight === 'Prepaid';
+                const isToPay = targetData.freight === 'To Pay';
 
                 bottomGrid.innerHTML = `
                     <div class="challan-dispatch-box" style="flex:1; margin:0;">
@@ -2292,20 +2416,20 @@
                                 </div>
                                 <div class="dispatch-field">
                                     <span class="dispatch-label">RR / LR / DOCKET NO.&nbsp;:</span>
-                                    <span class="field-line-long"></span>
+                                    <span class="field-line-long">${targetData.rrNo || ''}</span>
                                 </div>
                             </div>
                             <div class="dispatch-row">
                                 <div class="dispatch-field">
                                     <span class="dispatch-label">FREIGHT&nbsp;:</span>
                                     <span class="dispatch-checkbox-group">
-                                        <label><input type="checkbox">Prepaid</label>
-                                        <label><input type="checkbox">To Pay</label>
+                                        <label><input type="checkbox" ${isPrepaid ? 'checked' : ''} disabled>Prepaid</label>
+                                        <label><input type="checkbox" ${isToPay ? 'checked' : ''} disabled>To Pay</label>
                                     </span>
                                 </div>
                                 <div class="dispatch-field">
                                     <span class="dispatch-label">DATE&nbsp;:</span>
-                                    <span class="field-line-long"></span>
+                                    <span class="field-line-long">${targetData.dispatchDate || ''}</span>
                                 </div>
                             </div>
                             <div class="dispatch-row">
@@ -2420,7 +2544,8 @@
                 filename: 'Challan.pdf',
                 image: { type: 'jpeg', quality: 0.8 },
                 html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
             html2pdf().set(opt).from(element).save();
         }
