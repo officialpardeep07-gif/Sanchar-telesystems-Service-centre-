@@ -244,6 +244,9 @@
             width: 100%;
             max-width: 195mm;
             height: auto;
+            min-height: 277mm;
+            display: flex;
+            flex-direction: column;
             box-sizing: border-box;
             margin: 0 auto;
             box-shadow: 0 0 15px rgba(0,0,0,0.08);
@@ -253,11 +256,13 @@
             page-break-inside: avoid;
         }
         .challan-print-box * { color: #1a1a1a; }
+        .challan-flex-spacer { flex: 1 1 auto; }
 
         /* Header bar with diagonal stripe decoration */
         .challan-bar-title {
             position: relative;
-            background: var(--challan-navy) !important;
+            background: #ffffff !important;
+            border-bottom: 1.5px solid var(--challan-navy);
             text-align: center;
             font-weight: 800;
             font-size: 19px;
@@ -266,17 +271,7 @@
             padding: 14px 0;
             overflow: hidden;
         }
-        .challan-bar-title, .challan-bar-title * { color: #ffffff !important; }
-        .challan-bar-title::before, .challan-bar-title::after {
-            content: "";
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 90px;
-            background: repeating-linear-gradient(55deg, transparent, transparent 7px, rgba(255,255,255,0.22) 7px, rgba(255,255,255,0.22) 14px);
-            pointer-events: none;
-        }
-        .challan-bar-title::before { left: 0; }
-        .challan-bar-title::after { right: 0; }
+        .challan-bar-title, .challan-bar-title * { color: var(--challan-navy) !important; }
 
         /* Company info block */
         .challan-top-header { text-align: center; padding: 14px 20px 10px; background: #fff; }
@@ -311,8 +306,8 @@
 
         .challan-goods-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }
         .challan-goods-table th, .challan-goods-table td { border: 1px solid var(--challan-navy); padding: 5px 8px; text-align: center; vertical-align: middle; }
-        .challan-goods-table th { background-color: var(--challan-navy) !important; font-weight: bold; text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.3px; }
-        .challan-goods-table th, .challan-goods-table th * { color: #ffffff !important; }
+        .challan-goods-table th { background-color: #ffffff !important; font-weight: bold; text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.3px; }
+        .challan-goods-table th, .challan-goods-table th * { color: var(--challan-navy) !important; }
         .challan-goods-table td:nth-child(2), .challan-goods-table th:nth-child(2) { text-align: left; }
         .challan-goods-table tbody tr td { height: 22px; padding: 5px 8px; }
 
@@ -320,6 +315,15 @@
             border-top: 1px solid var(--challan-navy); border-bottom: 1px solid var(--challan-navy);
             padding: 8px 16px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
         }
+
+        /* Full-width Transit Amount bar (delivery challan): sits between item list and Dispatch Details */
+        .challan-transit-bar {
+            display: flex; align-items: baseline; gap: 6px;
+            border-top: 1px solid var(--challan-navy); border-bottom: 1px solid var(--challan-navy);
+            padding: 8px 16px; font-size: 13px;
+        }
+        .challan-transit-bar .dispatch-label { font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .challan-transit-bar .field-line-long { flex-grow: 1; border-bottom: 1px solid #888; min-height: 14px; margin-left: 4px; }
 
         /* Bottom acknowledgement boxes (Received By / For Sanchar Telesystems) */
         .challan-bottom-grid { display: flex; gap: 12px; width: 100%; padding: 8px 12px; box-sizing: border-box; }
@@ -391,15 +395,15 @@
         /* Contact + thank-you footer bar */
         .challan-contact-footer {
             display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
-            background: var(--challan-navy) !important; padding: 10px 15px; font-size: 12px; gap: 10px;
+            background: #ffffff !important; border-top: 1.5px solid var(--challan-navy); padding: 10px 15px; font-size: 12px; gap: 10px;
         }
-        .challan-contact-footer, .challan-contact-footer * { color: #ffffff !important; }
+        .challan-contact-footer, .challan-contact-footer * { color: var(--challan-navy) !important; }
         .challan-contact-footer i { margin-right: 6px; }
         .challan-thankyou-bar {
-            background: #0a1730 !important; text-align: center; padding: 6px 0;
+            background: #ffffff !important; border-top: 1px solid var(--challan-navy); text-align: center; padding: 6px 0;
             font-size: 12px; font-weight: 700; letter-spacing: 1px;
         }
-        .challan-thankyou-bar, .challan-thankyou-bar * { color: #ffffff !important; }
+        .challan-thankyou-bar, .challan-thankyou-bar * { color: var(--challan-navy) !important; }
 
         .erp-footer {
             margin-top: auto;
@@ -441,8 +445,8 @@
         }
 
         .challan-bar-title, .challan-goods-table th, .challan-contact-footer, .challan-thankyou-bar {
-            background: #0f1e3d !important;
-            color: #ffffff !important;
+            background: #ffffff !important;
+            color: #0f1e3d !important;
         }
 
         .challan-goods-table, .challan-goods-table th, .challan-goods-table td {
@@ -1066,6 +1070,13 @@
                             </thead>
                             <tbody id="lblGoodsTableBody" style="min-height: 250px;"></tbody>
                         </table>
+
+                        <div class="challan-flex-spacer"></div>
+
+                        <div class="challan-transit-bar" id="lblTransitAmountBar" style="display:none;">
+                            <span class="dispatch-label">TRANSIT AMOUNT&nbsp;:</span>
+                            <span class="field-line-long"></span>
+                        </div>
 
                         <div class="challan-bottom-grid" id="lblChallanBottomSection">
                         </div>
@@ -2268,8 +2279,10 @@
 
                 document.getElementById('lblMaterialDispatchType').style.display = "none";
 
+                document.getElementById('lblTransitAmountBar').style.display = "flex";
+
                 bottomGrid.innerHTML = `
-                    <div class="challan-dispatch-box">
+                    <div class="challan-dispatch-box" style="flex:1; margin:0;">
                         <div class="challan-box-title"><i class="fa-solid fa-truck-fast"></i>Dispatch Details</div>
                         <div class="dispatch-box-body">
                             <div class="dispatch-row">
@@ -2303,10 +2316,7 @@
                             </div>
                         </div>
                     </div>
-                `;
-
-                footerSection.innerHTML = `
-                    <div class="challan-signatory-box" style="width:100%;">
+                    <div class="challan-signatory-box" style="flex:1; margin:0;">
                         <div class="sig-title"><i class="fa-solid fa-building"></i>For Sanchar Telesystems Limited</div>
                         <div class="sig-body">
                             <div class="sig-line"></div>
@@ -2314,6 +2324,8 @@
                         </div>
                     </div>
                 `;
+
+                footerSection.innerHTML = "";
             } else {
                 document.getElementById('lblColDescHeader').innerText = "PRODUCT DESCRIPTION";
                 document.getElementById('lblColRemarksHeader').innerText = "ISSUE FACED";
@@ -2324,6 +2336,7 @@
                 qtyHeader.style.width = "10%";
                 remarksHeader.style.width = "15%";
                 document.getElementById('lblMaterialDispatchType').style.display = "none";
+                document.getElementById('lblTransitAmountBar').style.display = "none";
 
                 bottomGrid.innerHTML = `
                     <div class="challan-bottom-left">
