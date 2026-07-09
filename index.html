@@ -300,8 +300,10 @@
         }
         .challan-meta-box-title i { margin-right: 8px; color: var(--challan-navy) !important; }
         .challan-meta-left .meta-box-body, .challan-meta-right .meta-box-body { padding: 6px 12px; font-size: 12px; line-height: 1.6; }
-        .challan-meta-left .meta-label, .challan-meta-right .meta-label { font-weight: 700; display: inline-block; min-width: 105px; }
-        .challan-meta-left .meta-colon, .challan-meta-right .meta-colon { display: inline-block; width: 12px; }
+        .challan-meta-left .meta-box-body > div, .challan-meta-right .meta-box-body > div { display: flex; align-items: baseline; }
+        .challan-meta-left .meta-label, .challan-meta-right .meta-label { font-weight: 700; flex: 0 0 105px; }
+        .challan-meta-left .meta-colon, .challan-meta-right .meta-colon { flex: 0 0 12px; }
+        .challan-meta-left .meta-box-body > div > span:last-child, .challan-meta-right .meta-box-body > div > span:last-child { flex: 1 1 auto; min-width: 0; word-break: break-word; overflow-wrap: break-word; white-space: normal; }
 
         .challan-goods-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }
         .challan-goods-table th, .challan-goods-table td { border: 1px solid var(--challan-navy); padding: 5px 8px; text-align: center; vertical-align: middle; }
@@ -372,6 +374,18 @@
         .dispatch-checkbox-group { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
         .dispatch-checkbox-group label { display: flex; align-items: center; gap: 5px; font-weight: 700; white-space: nowrap; }
         .dispatch-checkbox-group input[type="checkbox"] { width: 12px; height: 12px; accent-color: var(--challan-navy); margin: 0; }
+        /* Custom checkbox box for Freight (Prepaid / To Pay) on the printed challan.
+           A plain bordered box + explicit tick glyph is used instead of a native
+           checkbox so the tick always shows up solid black on screen, in print,
+           and in the generated PDF (native checkbox rendering is unreliable there). */
+        .challan-checkbox-item { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; white-space: nowrap; }
+        .challan-checkbox-box {
+            width: 13px; height: 13px; min-width: 13px;
+            border: 1.5px solid #000;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 900; line-height: 1;
+            color: #000; background: #fff; box-sizing: border-box;
+        }
 
         .challan-signatory-box {
             border: 1.5px solid var(--challan-navy);
@@ -444,6 +458,10 @@
             overflow: visible !important;
             min-height: 277mm !important;
             height: auto !important;
+        }
+
+        .challan-contact-footer .challan-website-line {
+            display: none !important;
         }
 
         .challan-bar-title, .challan-goods-table th, .challan-contact-footer, .challan-thankyou-bar {
@@ -736,10 +754,10 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="itemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 32%;">Product Description *</th>
+                                            <th style="width: 30%;">Product Description *</th>
+                                            <th style="width: 17%;">Accessories</th>
                                             <th style="width: 20%;">Serial Number *</th>
                                             <th style="width: 10%;">Qty *</th>
-                                            <th style="width: 15%;">Issue Faced *</th>
                                             <th style="width: 18%;">Remarks</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
@@ -747,9 +765,9 @@
                                     <tbody id="itemTableBody">
                                         <tr>
                                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
-                                            <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
                                             <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>
@@ -768,13 +786,7 @@
                         <input type="hidden" id="formDeclaration" value="This is only a receipt of goods,it however does not automatically reflect the acceptance there of">
 
                         <div class="row mt-4 bg-light p-3 rounded align-items-center border">
-                            <div class="col-md-6 d-flex gap-2">
-                                <div class="form-floating flex-grow-1">
-                                    <input type="text" class="form-control border-secondary" id="formReceivedBy" placeholder="Received By" value="     ">
-                                    <label for="formReceivedBy">Received By</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6 text-md-end text-center mt-3 mt-md-0">
+                            <div class="col-12 text-center">
                                 <div class="d-inline-block text-center px-4 py-2 border border-secondary rounded bg-white shadow-sm" style="min-width: 250px;">
                                     <span class="fw-bold text-dark d-block mb-4 pb-2">For Sanchar Telesystems Limited</span>
                                     <span class="border-top border-dark px-3 pt-1 small text-muted">Sign. / Authorised Signatory</span>
@@ -884,9 +896,10 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="outwardItemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 35%;">Product Description *</th>
-                                            <th style="width: 25%;">Serial Number *</th>
-                                            <th style="width: 15%;">Qty *</th>
+                                            <th style="width: 28%;">Product Description *</th>
+                                            <th style="width: 15%;">Accessories</th>
+                                            <th style="width: 20%;">Serial Number *</th>
+                                            <th style="width: 12%;">Qty *</th>
                                             <th style="width: 20%;">Remarks *</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
@@ -894,6 +907,7 @@
                                     <tbody id="outwardItemTableBody">
                                         <tr>
                                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
+                                            <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                                             <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
@@ -1079,17 +1093,17 @@
 
                         <div class="challan-top-header">
                             <h2>Sanchar Telesystems Limited</h2>
-                            <p><i class="fa-solid fa-location-dot"></i>A-78, Ground Floor, Okhla Industrial Area, Phase II, New Delhi - 110020</p>
+                            <p>A-78, Ground Floor, Okhla Industrial Area, Phase II, New Delhi - 110020</p>
                             <p class="gst-line">
-                                <span><i class="fa-solid fa-id-card"></i>GSTIN/UIN: 07AAKCS3561K1ZZ</span>
+                                <span>GSTIN/UIN: 07AAKCS3561K1ZZ</span>
                                 <span class="sep">|</span>
-                                <span><i class="fa-solid fa-building"></i>State Name: Delhi</span>
+                                <span>State Name: Delhi</span>
                             </p>
                         </div>
 
                         <div class="challan-split-meta">
                             <div class="challan-meta-left">
-                                <div class="challan-meta-box-title"><i class="fa-solid fa-user"></i>Customer Details</div>
+                                <div class="challan-meta-box-title">Customer Details</div>
                                 <div class="meta-box-body">
                                     <div><span class="meta-label">Customer Name</span><span class="meta-colon">:</span> <span id="lblCustNameText">-</span></div>
                                     <div><span class="meta-label">Address</span><span class="meta-colon">:</span> <span id="lblAddressText">-</span></div>
@@ -1097,7 +1111,7 @@
                                 </div>
                             </div>
                             <div class="challan-meta-right">
-                                <div class="challan-meta-box-title"><i class="fa-solid fa-user"></i>Challan Details</div>
+                                <div class="challan-meta-box-title">Challan Details</div>
                                 <div class="meta-box-body">
                                     <div><span class="meta-label">Challan No.</span><span class="meta-colon">:</span> <span id="lblChallanNo">-</span></div>
                                     <div><span class="meta-label">Date</span><span class="meta-colon">:</span> <span id="lblDate">-</span></div>
@@ -1113,9 +1127,10 @@
                             <thead id="lblGoodsTableHead">
                                 <tr>
                                     <th style="width: 7%;" id="lblColSnoHeader">S.No.</th>
-                                    <th style="width: 33%;" id="lblColDescHeader">Product Description</th>
-                                    <th style="width: 20%;" id="lblColSerialHeader">Serial No.</th>
-                                    <th style="width: 10%;" id="lblColQtyHeader">Quantity</th>
+                                    <th style="width: 26%;" id="lblColDescHeader">Product Description</th>
+                                    <th style="width: 15%;" id="lblColAccessoriesHeader">Accessories</th>
+                                    <th style="width: 18%;" id="lblColSerialHeader">Serial No.</th>
+                                    <th style="width: 9%;" id="lblColQtyHeader">Quantity</th>
                                     <th style="width: 15%;" id="lblColRemarksHeader">Issue Faced</th>
                                     <th style="width: 15%;" id="lblColExtraRemarksHeader">Remarks</th>
                                 </tr>
@@ -1137,9 +1152,9 @@
                         </div>
 
                         <div class="challan-contact-footer">
-                            <span><i class="fa-solid fa-phone"></i>Ph : +91-(11)-46528894-97</span>
-                            <span><i class="fa-solid fa-envelope"></i>info@sanchartelesystems.com</span>
-                            <span><i class="fa-solid fa-globe"></i>www.sanchartelesystems.com</span>
+                            <span>Ph : +91-(11)-46528894-97</span>
+                            <span>service@sanchartelesystems.com</span>
+                            <span class="challan-website-line">www.sanchartelesystems.com</span>
                         </div>
                         <div class="challan-thankyou-bar">Thank you</div>
                     </div>
@@ -1264,11 +1279,12 @@
                             <table class="table table-bordered table-hover align-middle bg-white mb-0">
                                 <thead class="table-light">
                                     <tr class="small text-uppercase">
-                                        <th style="width: 30%;">Product Description *</th>
-                                        <th style="width: 18%;">Serial Number *</th>
-                                        <th style="width: 10%;">Qty *</th>
-                                        <th style="width: 18%;">Issue Faced / Remarks</th>
-                                        <th style="width: 18%;">Remarks (Receipt only)</th>
+                                        <th style="width: 24%;">Product Description *</th>
+                                        <th style="width: 14%;">Accessories</th>
+                                        <th style="width: 16%;">Serial Number *</th>
+                                        <th style="width: 8%;">Qty *</th>
+                                        <th style="width: 15%;" id="draftEditFacedHeader">Issue Faced / Remarks</th>
+                                        <th style="width: 15%;">Remarks (Receipt only)</th>
                                         <th style="width: 6%; text-align:center;">Drop</th>
                                     </tr>
                                 </thead>
@@ -1593,9 +1609,9 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
+                <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                 <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
-                <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
                 <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
@@ -1607,6 +1623,7 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
+                <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                 <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                 <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
@@ -1623,6 +1640,85 @@
                 alert("Minimum 1 item transactional line is mandatory.");
             }
         }
+
+        // ---- Serial No. auto-fill ----
+        // Jab Delivery Register (ya Draft edit) ke kisi item row me Serial Number
+        // dala jata hai, us serial ko sirf Receipt Register (Inward) ke items me
+        // dhoonda jata hai - kyunki Receipt Register hi master source hai jaha
+        // item pehli baar Description/Accessories/Qty ke saath entry hota hai.
+        // Match milne par PRODUCT DESCRIPTION, ACCESSORIES aur Qty us row me
+        // automatically bhar diye jate hain.
+        window.findItemDetailsBySerial = function(serial) {
+            if (!serial) return null;
+            const query = serial.trim().toLowerCase();
+            if (!query) return null;
+
+            let bestMatch = null;
+            let bestTimestamp = "";
+
+            Object.keys(fetchedChallans).forEach(key => {
+                const challan = fetchedChallans[key];
+                if (!challan || !challan.items || !Array.isArray(challan.items)) return;
+
+                // Only Receipt Register (Inward) entries count as the source of truth.
+                const isReceipt = challan.type === 'receipt' || (challan.challanNo && challan.challanNo.includes('STL/RC/'));
+                if (!isReceipt) return;
+
+                challan.items.forEach(prod => {
+                    if (!prod.serialNo || prod.serialNo.trim().toLowerCase() !== query) return;
+
+                    const ts = challan.timestamp || '';
+                    // If the same serial no. was received more than once, use the latest receipt.
+                    if (!bestMatch || ts > bestTimestamp) {
+                        bestMatch = {
+                            description: prod.description || '',
+                            accessories: prod.accessories || '',
+                            quantity: prod.quantity || ''
+                        };
+                        bestTimestamp = ts;
+                    }
+                });
+            });
+
+            return bestMatch;
+        }
+
+        window.autoFillRowFromSerial = function(serialInput) {
+            const match = window.findItemDetailsBySerial(serialInput.value);
+            const row = serialInput.closest('tr');
+            if (!row) return;
+
+            const descInput = row.querySelector('.row-desc, .de-row-desc');
+            const accInput = row.querySelector('.row-accessories, .de-row-accessories');
+            const qtyInput = row.querySelector('.row-qty, .de-row-qty');
+
+            if (!match) {
+                serialInput.classList.remove('is-valid');
+                if (serialInput.value.trim()) {
+                    // Serial no. was typed but not found in Receipt Register - flag it, don't touch other fields.
+                    serialInput.classList.add('is-invalid');
+                    setTimeout(() => serialInput.classList.remove('is-invalid'), 1500);
+                }
+                return;
+            }
+            serialInput.classList.remove('is-invalid');
+
+            if (descInput) descInput.value = match.description;
+            if (accInput) accInput.value = match.accessories;
+            if (qtyInput && match.quantity) qtyInput.value = parseFloat(match.quantity) || 1;
+
+            // Quick visual confirmation that details were auto-filled.
+            serialInput.classList.add('is-valid');
+            setTimeout(() => serialInput.classList.remove('is-valid'), 1200);
+        }
+
+        // Event delegation so this also works for rows added later (Add Alternate Row) automatically.
+        document.addEventListener('focusout', function(e) {
+            const t = e.target;
+            if (t && t.classList && (t.classList.contains('row-serial') || t.classList.contains('de-row-serial'))) {
+                window.autoFillRowFromSerial(t);
+            }
+        });
 
         document.getElementById('formDate').valueAsDate = new Date();
         document.getElementById('outwardFormDate').valueAsDate = new Date();
@@ -1721,9 +1817,10 @@
                 itemsArray.push({
                     itemModel: "NA",
                     description: row.querySelector('.row-desc').value,
+                    accessories: row.querySelector('.row-accessories') ? row.querySelector('.row-accessories').value : '',
                     serialNo: row.querySelector('.row-serial').value,
                     quantity: itemQty.toFixed(2),
-                    issueFaced: row.querySelector('.row-faced').value,
+                    issueFaced: 'NA',
                     remarks: row.querySelector('.row-remarks').value || ''
                 });
             });
@@ -1740,7 +1837,7 @@
                 declaration: document.getElementById('formDeclaration').value,
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty,
-                receivedBy: document.getElementById('formReceivedBy').value || 'Inward Receipt',
+                receivedBy: 'Inward Receipt',
                 timestamp: new Date().toISOString(),
                 status: 'draft'
             };
@@ -1754,9 +1851,9 @@
                     document.getElementById('itemTableBody').innerHTML = `
                         <tr>
                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
+                            <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
-                            <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
                             <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
@@ -1801,6 +1898,7 @@
                 itemsArray.push({
                     itemModel: "NA",
                     description: row.querySelector('.row-desc').value,
+                    accessories: row.querySelector('.row-accessories') ? row.querySelector('.row-accessories').value : '',
                     serialNo: row.querySelector('.row-serial').value,
                     quantity: itemQty.toFixed(2),
                     issueFaced: row.querySelector('.row-faced').value
@@ -1847,6 +1945,7 @@
                     document.getElementById('outwardItemTableBody').innerHTML = `
                         <tr>
                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
+                            <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
                             <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
                             <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
@@ -2104,14 +2203,17 @@
             });
         }
 
+        let draftEditIsDeliveryType = true;
+
         window.addDraftEditRow = function() {
             const tbody = document.getElementById('draftEditItemTableBody');
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><input type="text" class="form-control form-control-sm de-row-desc" required list="cachedItemDescriptions"></td>
+                <td><input type="text" class="form-control form-control-sm de-row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm de-row-serial" required></td>
                 <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="1"></td>
-                <td><input type="text" class="form-control form-control-sm de-row-faced" value="NA"></td>
+                ${draftEditIsDeliveryType ? `<td><input type="text" class="form-control form-control-sm de-row-faced" value="NA"></td>` : ''}
                 <td><input type="text" class="form-control form-control-sm de-row-remarks" placeholder="Remarks"></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
@@ -2144,6 +2246,8 @@
             document.getElementById('draftEditDeclaration').value = record.declaration || '';
 
             const isDeliveryDraft = record.type === 'delivery' || (record.challanNo && record.challanNo.includes('STL/DC/'));
+            draftEditIsDeliveryType = isDeliveryDraft;
+            document.getElementById('draftEditFacedHeader').style.display = isDeliveryDraft ? '' : 'none';
             document.getElementById('draftEditDeliveryFieldsRow').style.display = isDeliveryDraft ? 'flex' : 'none';
             document.getElementById('draftEditRRNo').value = record.rrNo || '';
             document.getElementById('draftEditTransitAmount').value = record.transitAmount || '';
@@ -2157,9 +2261,10 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><input type="text" class="form-control form-control-sm de-row-desc" required list="cachedItemDescriptions" value="${prod.description || ''}"></td>
+                    <td><input type="text" class="form-control form-control-sm de-row-accessories" placeholder="Accessories" value="${prod.accessories || ''}"></td>
                     <td><input type="text" class="form-control form-control-sm de-row-serial" required value="${prod.serialNo || ''}"></td>
                     <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="${parseFloat(prod.quantity) || 1}"></td>
-                    <td><input type="text" class="form-control form-control-sm de-row-faced" value="${prod.issueFaced || 'NA'}"></td>
+                    ${isDeliveryDraft ? `<td><input type="text" class="form-control form-control-sm de-row-faced" value="${prod.issueFaced || 'NA'}"></td>` : ''}
                     <td><input type="text" class="form-control form-control-sm de-row-remarks" placeholder="Remarks" value="${prod.remarks || ''}"></td>
                     <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                 `;
@@ -2191,9 +2296,10 @@
                 itemsArray.push({
                     itemModel: "NA",
                     description: row.querySelector('.de-row-desc').value,
+                    accessories: row.querySelector('.de-row-accessories') ? (row.querySelector('.de-row-accessories').value || '') : '',
                     serialNo: row.querySelector('.de-row-serial').value,
                     quantity: itemQty.toFixed(2),
-                    issueFaced: row.querySelector('.de-row-faced').value || 'NA',
+                    issueFaced: row.querySelector('.de-row-faced') ? (row.querySelector('.de-row-faced').value || 'NA') : 'NA',
                     remarks: row.querySelector('.de-row-remarks') ? (row.querySelector('.de-row-remarks').value || '') : ''
                 });
             });
@@ -2375,15 +2481,19 @@
             const descHeader = document.getElementById('lblColDescHeader');
             const remarksHeader = document.getElementById('lblColRemarksHeader');
 
+            const accessoriesHeader = document.getElementById('lblColAccessoriesHeader');
+
             if (isDelivery) {
                 document.getElementById('lblColDescHeader').innerText = "Product Description";
                 document.getElementById('lblColRemarksHeader').innerText = "Remarks";
+                remarksHeader.style.display = "";
                 extraRemarksHeader.style.display = "none";
-                snoHeader.style.width = "8%";
-                descHeader.style.width = "40%";
-                serialHeader.style.width = "24%";
-                qtyHeader.style.width = "13%";
-                remarksHeader.style.width = "15%";
+                snoHeader.style.width = "7%";
+                descHeader.style.width = "28%";
+                accessoriesHeader.style.width = "15%";
+                serialHeader.style.width = "20%";
+                qtyHeader.style.width = "10%";
+                remarksHeader.style.width = "20%";
 
                 let metadata = targetData.remarks || "";
                 let materialTypeStr = "";
@@ -2407,7 +2517,7 @@
 
                 bottomGrid.innerHTML = `
                     <div class="challan-dispatch-box" style="flex:1; margin:0;">
-                        <div class="challan-box-title"><i class="fa-solid fa-truck-fast"></i>Dispatch Details</div>
+                        <div class="challan-box-title">Dispatch Details</div>
                         <div class="dispatch-box-body">
                             <div class="dispatch-row">
                                 <div class="dispatch-field">
@@ -2423,8 +2533,8 @@
                                 <div class="dispatch-field">
                                     <span class="dispatch-label">FREIGHT&nbsp;:</span>
                                     <span class="dispatch-checkbox-group">
-                                        <label><input type="checkbox" ${isPrepaid ? 'checked' : ''} disabled>Prepaid</label>
-                                        <label><input type="checkbox" ${isToPay ? 'checked' : ''} disabled>To Pay</label>
+                                        <span class="challan-checkbox-item"><span class="challan-checkbox-box">${isPrepaid ? '&#10003;' : ''}</span>Prepaid</span>
+                                        <span class="challan-checkbox-item"><span class="challan-checkbox-box">${isToPay ? '&#10003;' : ''}</span>To Pay</span>
                                     </span>
                                 </div>
                                 <div class="dispatch-field">
@@ -2441,7 +2551,7 @@
                         </div>
                     </div>
                     <div class="challan-signatory-box" style="flex:1; margin:0;">
-                        <div class="sig-title"><i class="fa-solid fa-building"></i>For Sanchar Telesystems Limited</div>
+                        <div class="sig-title">For Sanchar Telesystems Limited</div>
                         <div class="sig-body">
                             <div class="sig-line"></div>
                             <div class="sig-caption">Authorised Signatory</div>
@@ -2452,26 +2562,21 @@
                 footerSection.innerHTML = "";
             } else {
                 document.getElementById('lblColDescHeader').innerText = "PRODUCT DESCRIPTION";
-                document.getElementById('lblColRemarksHeader').innerText = "ISSUE FACED";
+                remarksHeader.style.display = "none";
                 extraRemarksHeader.style.display = "";
+                extraRemarksHeader.innerText = "REMARKS";
                 snoHeader.style.width = "7%";
-                descHeader.style.width = "33%";
+                descHeader.style.width = "28%";
+                accessoriesHeader.style.width = "15%";
                 serialHeader.style.width = "20%";
                 qtyHeader.style.width = "10%";
-                remarksHeader.style.width = "15%";
+                extraRemarksHeader.style.width = "20%";
                 document.getElementById('lblMaterialDispatchType').style.display = "none";
                 document.getElementById('lblTransitAmountBar').style.display = "none";
 
                 bottomGrid.innerHTML = `
-                    <div class="challan-bottom-left">
-                        <div class="challan-box-title"><i class="fa-solid fa-file-lines"></i>Received By</div>
-                        <div class="challan-box-body">
-                            <div>Name <span class="field-line">${targetData.receivedBy || ''}</span></div>
-                            <div style="margin-top:16px;">Date <span class="field-line"></span></div>
-                        </div>
-                    </div>
-                    <div class="challan-bottom-right">
-                        <div class="challan-box-title"><i class="fa-solid fa-building"></i>For Sanchar Telesystems Limited</div>
+                    <div class="challan-bottom-right" style="flex:1;">
+                        <div class="challan-box-title">For Sanchar Telesystems Limited</div>
                         <div class="challan-box-body sign-body">
                             <div></div>
                             <div class="challan-sign-authority-text">Authorised Signatory</div>
@@ -2499,9 +2604,10 @@
                     tr.innerHTML = `
                         <td>${index + 1}</td>
                         <td style="font-weight:600;">${mainDescText}</td>
+                        <td>${prod.accessories || ''}</td>
                         <td>${prod.serialNo}</td>
                         <td>${parseInt(prod.quantity)}</td>
-                        <td>${secondaryColVal}</td>
+                        ${isDelivery ? `<td>${secondaryColVal}</td>` : ''}
                         ${!isDelivery ? `<td>${prod.remarks || ''}</td>` : ''}
                     `;
                     itemsTableBody.appendChild(tr);
@@ -2539,6 +2645,9 @@
 
         window.downloadSingleChallanPDF = function() {
             const element = document.getElementById('challanPrintContainer');
+            const websiteLine = document.querySelector('.challan-website-line');
+            const prevDisplay = websiteLine ? websiteLine.style.display : null;
+            if (websiteLine) websiteLine.style.display = 'none';
             const opt = {
                 margin: 5,
                 filename: 'Challan.pdf',
@@ -2547,7 +2656,9 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
-            html2pdf().set(opt).from(element).save();
+            html2pdf().set(opt).from(element).save().then(function() {
+                if (websiteLine) websiteLine.style.display = prevDisplay || '';
+            });
         }
 
         window.downloadTablePDF = function() {
