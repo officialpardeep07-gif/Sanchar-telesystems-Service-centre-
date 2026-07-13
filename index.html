@@ -1501,6 +1501,17 @@
             }, 100);
         }
 
+        // Refresh par login session bani rahe (localStorage me check)
+        if (localStorage.getItem('sanchar_logged_in') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('erpSystemWrapper').style.display = 'block';
+        }
+
+        window.logoutSystem = function() {
+            localStorage.removeItem('sanchar_logged_in');
+            location.reload();
+        };
+
         window.verifySystemCredentials = function(event) {
             event.preventDefault();
             const u = document.getElementById('loginUser').value;
@@ -1508,6 +1519,7 @@
             const errMsg = document.getElementById('loginErrorMsg');
 
             if(u === "Sanchar" && p === "Sanchar@2026") {
+                localStorage.setItem('sanchar_logged_in', 'true');
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('erpSystemWrapper').style.display = 'block';
                 switchTab('dashboard');
@@ -1845,16 +1857,97 @@
             setTimeout(() => serialInput.classList.remove('is-valid'), 1200);
         }
 
+        // ---- Auto-correct (spelling) for data-entry fields ----
+        // Compares what the user typed against previously saved correct
+        // values (item descriptions, addresses, customer names) and fixes
+        // small typos automatically once the field loses focus.
+        function levenshteinDistance(a, b) {
+            a = (a || '').toLowerCase();
+            b = (b || '').toLowerCase();
+            const m = a.length, n = b.length;
+            if (m === 0) return n;
+            if (n === 0) return m;
+            const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+            for (let i = 0; i <= m; i++) dp[i][0] = i;
+            for (let j = 0; j <= n; j++) dp[0][j] = j;
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                    dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+                }
+            }
+            return dp[m][n];
+        }
+
+        function flashAutoCorrected(inputEl) {
+            inputEl.classList.add('is-valid');
+            setTimeout(() => inputEl.classList.remove('is-valid'), 1200);
+        }
+
+        // Checks the typed value against a list of known-correct values and
+        // fixes it if there is exactly one close match. Ambiguous cases
+        // (two equally-close known values) are left untouched on purpose,
+        // so we never silently swap in the wrong customer/item.
+        window.autoCorrectAgainstList = function(inputEl, knownList) {
+            const val = (inputEl.value || '').trim();
+            if (!val || !knownList || knownList.length === 0) return;
+
+            const exact = knownList.find(k => k.toLowerCase() === val.toLowerCase());
+            if (exact) {
+                if (exact !== val) { inputEl.value = exact; flashAutoCorrected(inputEl); }
+                return;
+            }
+
+            let best = null, bestDist = Infinity, secondBestDist = Infinity;
+            knownList.forEach(k => {
+                const d = levenshteinDistance(val, k);
+                if (d < bestDist) { secondBestDist = bestDist; best = k; bestDist = d; }
+                else if (d < secondBestDist) { secondBestDist = d; }
+            });
+
+            const threshold = val.length <= 4 ? 1 : (val.length <= 8 ? 2 : 3);
+            if (best && bestDist > 0 && bestDist <= threshold && bestDist < secondBestDist) {
+                inputEl.value = best;
+                flashAutoCorrected(inputEl);
+            }
+        };
+
+        window.getKnownDescriptions = () => JSON.parse(localStorage.getItem('sanchar_cached_descs') || '[]');
+        window.getKnownAddresses = () => JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
+        window.getKnownCustomerNames = () => Object.keys(window.customerAutocompleteMap || {});
+
         // Event delegation so this also works for rows added later (Add Alternate Row) automatically.
         document.addEventListener('focusout', function(e) {
             const t = e.target;
-            if (t && t.classList && (t.classList.contains('row-serial') || t.classList.contains('de-row-serial'))) {
+            if (!t || !t.tagName) return;
+
+            if (t.classList && (t.classList.contains('row-serial') || t.classList.contains('de-row-serial'))) {
                 window.autoFillRowFromSerial(t);
+            }
+            if (t.classList && (t.classList.contains('row-desc') || t.classList.contains('de-row-desc') || t.classList.contains('me-row-desc'))) {
+                window.autoCorrectAgainstList(t, window.getKnownDescriptions());
+            }
+            if (t.id === 'formAddress' || t.id === 'outwardFormAddress') {
+                window.autoCorrectAgainstList(t, window.getKnownAddresses());
+            }
+            if (t.id === 'formCustomerName' || t.id === 'outwardFormCustomerName') {
+                window.autoCorrectAgainstList(t, window.getKnownCustomerNames());
             }
         });
 
-        document.getElementById('formDate').valueAsDate = new Date();
-        document.getElementById('outwardFormDate').valueAsDate = new Date();
+        // Returns today's date as YYYY-MM-DD using LOCAL time (avoids the
+        // valueAsDate UTC-conversion bug that shows "yesterday" in IST during
+        // early morning hours).
+        window.getLocalTodayString = function() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        document.getElementById('formDate').value = window.getLocalTodayString();
+        document.getElementById('outwardFormDate').value = window.getLocalTodayString();
         
         // Auto fill setup listeners for input operations
         document.getElementById('formCustomerName').addEventListener('input', function(e) {
@@ -1991,7 +2084,7 @@
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
                     `;
-                    document.getElementById('formDate').valueAsDate = new Date();
+                    document.getElementById('formDate').value = window.getLocalTodayString();
                     procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Challan`;
                     procBtn.disabled = false;
                     switchTab('draft');
@@ -2085,7 +2178,7 @@
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
                     `;
-                    document.getElementById('outwardFormDate').valueAsDate = new Date();
+                    document.getElementById('outwardFormDate').value = window.getLocalTodayString();
                     procBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up me-2"></i>Save & Generate Outward Challan`;
                     procBtn.disabled = false;
                     switchTab('draft');
