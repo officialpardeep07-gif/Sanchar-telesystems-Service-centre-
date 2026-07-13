@@ -252,7 +252,7 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.08);
             position: relative;
             padding: 0;
-            overflow: visible;
+            overflow: hidden;
         }
         .challan-print-box * { color: #1a1a1a; }
         .challan-flex-spacer { flex: 1 1 auto; min-height: 40px; }
@@ -337,7 +337,7 @@
             border: 1.5px solid var(--challan-navy);
             border-radius: 6px;
             overflow: hidden;
-            min-height: 62px;
+            min-height: 90px;
             display: flex;
             flex-direction: column;
         }
@@ -1085,7 +1085,7 @@
 
                 <div id="challanViewSection" class="challan-view-section">
                     <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded-3 mb-4">
-                        <button class="btn btn-sm btn-light" onclick="closeChallanView()"><i class="fa-solid fa-arrow-left me-1"></i>Return to Cloud Explorer</button>
+                        <button class="btn btn-sm btn-light" id="challanViewBackBtn" onclick="closeChallanView()"><i class="fa-solid fa-arrow-left me-1"></i>Return to Cloud Explorer</button>
                         <div class="d-flex gap-2">
                             <button class="btn btn-sm btn-warning fw-semibold" onclick="downloadSingleChallanPDF()"><i class="fa-solid fa-download me-1"></i>Secure Download PDF</button>
                             <button class="btn btn-sm btn-primary fw-semibold" onclick="window.print()"><i class="fa-solid fa-print me-1"></i>Print Hardware Receipt</button>
@@ -1201,6 +1201,31 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="masterPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-lock me-2"></i>Master Control Gateway</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <label class="form-label small fw-bold text-muted">Enter secure Master Password to continue</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="masterPasswordInput" placeholder="Master Password" autocomplete="off">
+                        <button class="btn btn-outline-secondary" type="button" onclick="toggleMasterPasswordVisibility()" id="masterPasswordToggleBtn">
+                            <i class="fa-solid fa-eye" id="masterPasswordToggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="small text-danger mt-2 d-none" id="masterPasswordError">Access Denied! Incorrect Master Security Key.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitMasterPassword()"><i class="fa-solid fa-unlock me-1"></i>Unlock</button>
                 </div>
             </div>
         </div>
@@ -1396,12 +1421,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-success btn-sm px-3" onclick="finalizeDraftChallan()"><i class="fa-solid fa-lock me-1"></i>Make Permanent (Lock Editing)</button>
-                    <div>
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary btn-sm px-3" onclick="saveDraftEditedData()">Save Draft Changes</button>
-                    </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm px-3" onclick="saveDraftEditedData()">Save Draft Changes</button>
                 </div>
             </div>
         </div>
@@ -1622,16 +1644,62 @@
                 switchTab('master');
                 renderMasterTableRows();
             } else {
-                const pass = prompt("Please enter secure Master Password to open control gateway:");
-                if (pass === "Pardeep@1999") {
-                    isMasterAuthenticated = true;
-                    switchTab('master');
-                    renderMasterTableRows();
-                } else if(pass !== null) {
-                    alert("Access Denied! Incorrect Master Security Key.");
-                }
+                const errorDiv = document.getElementById('masterPasswordError');
+                const input = document.getElementById('masterPasswordInput');
+                errorDiv.classList.add('d-none');
+                input.value = "";
+                input.type = "password";
+                document.getElementById('masterPasswordToggleIcon').className = "fa-solid fa-eye";
+                const modalEl = document.getElementById('masterPasswordModal');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+                modalEl.addEventListener('shown.bs.modal', function onShown() {
+                    input.focus();
+                    modalEl.removeEventListener('shown.bs.modal', onShown);
+                });
             }
         }
+
+        window.submitMasterPassword = function() {
+            const input = document.getElementById('masterPasswordInput');
+            const errorDiv = document.getElementById('masterPasswordError');
+            const pass = input.value;
+            if (pass === "Pardeep@1999") {
+                isMasterAuthenticated = true;
+                const modalEl = document.getElementById('masterPasswordModal');
+                bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+                switchTab('master');
+                renderMasterTableRows();
+            } else {
+                errorDiv.classList.remove('d-none');
+                input.value = "";
+                input.focus();
+            }
+        }
+
+        window.toggleMasterPasswordVisibility = function() {
+            const input = document.getElementById('masterPasswordInput');
+            const icon = document.getElementById('masterPasswordToggleIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const masterPassInput = document.getElementById('masterPasswordInput');
+            if (masterPassInput) {
+                masterPassInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        submitMasterPassword();
+                    }
+                });
+            }
+        });
 
         function updateDataListInterface() {
             const savedAddresses = JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
@@ -2350,6 +2418,7 @@
                     <td class="text-center">
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-primary" title="Edit Draft" onclick="triggerDraftEditDirect('${key}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-outline-secondary" title="Preview" onclick="previewDraftChallan('${key}')"><i class="fa-solid fa-eye"></i></button>
                             <button class="btn btn-outline-success" title="Make Permanent" onclick="finalizeDraftChallan('${key}')"><i class="fa-solid fa-lock"></i></button>
                             <button class="btn btn-outline-danger" title="Delete Draft" onclick="triggerMasterDeleteDirect('${key}')"><i class="fa-regular fa-trash-can"></i></button>
                         </div>
@@ -2482,6 +2551,15 @@
                 items: itemsArray,
                 totalUnitsCount: calculatedTotalQty
             };
+        }
+
+        window.previewDraftChallan = function(key) {
+            if(!key) return;
+            const record = fetchedChallans[key];
+            if(!record) return;
+
+            renderChallanDocument(key);
+            document.getElementById('pageTitleContext').innerText = `Preview: ${record.challanNo}`;
         }
 
         window.saveDraftEditedData = function() {
@@ -2620,8 +2698,8 @@
             }
         });
 
-        window.renderChallanDocument = function(recordKey) {
-            const targetData = fetchedChallans[recordKey];
+        window.renderChallanDocument = function(recordKeyOrData) {
+            const targetData = (recordKeyOrData && typeof recordKeyOrData === 'object') ? recordKeyOrData : fetchedChallans[recordKeyOrData];
             if(!targetData) return;
 
             const isDelivery = targetData.type === 'delivery' || targetData.challanNo.includes('STL/DC/');
@@ -2731,9 +2809,13 @@
                 document.getElementById('lblTransitAmountBar').style.display = "none";
 
                 bottomGrid.innerHTML = `
-                    <div class="challan-bottom-right" style="flex:1;">
+                    <div class="challan-bottom-left" style="flex: 1 1 48%; margin:0;">
+                        <div class="challan-box-title">Other Details</div>
+                        <div class="challan-box-body">${targetData.remarks || ''}</div>
+                    </div>
+                    <div class="challan-bottom-right" style="flex: 1 1 48%; margin:0; min-height: 110px;">
                         <div class="challan-box-title">For Sanchar Telesystems Limited</div>
-                        <div class="challan-box-body sign-body">
+                        <div class="challan-box-body sign-body" style="padding-top: 14px;">
                             <div></div>
                             <div class="challan-sign-authority-text">Authorised Signatory</div>
                         </div>
@@ -2780,6 +2862,7 @@
 
         window.closeChallanView = function() {
             document.getElementById('challanViewSection').style.display = 'none';
+
             if (isMasterAuthenticated && document.getElementById('sideTabMaster').classList.contains('active')) {
                 document.getElementById('masterToolModule').style.display = 'block';
                 document.getElementById('pageTitleContext').innerText = "Master Tool Panel";
