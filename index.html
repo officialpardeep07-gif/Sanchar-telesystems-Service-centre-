@@ -320,8 +320,12 @@
         /* Full-width Transit Amount bar (delivery challan): sits between item list and Dispatch Details */
         .challan-transit-bar {
             display: flex; align-items: baseline; gap: 6px;
-            border-top: 1px solid var(--challan-navy); border-bottom: 1px solid var(--challan-navy);
+            border: 1px solid var(--challan-navy);
+            border-radius: 6px;
+            background: #f8fafc;
+            margin: 10px 12px 0;
             padding: 8px 16px; font-size: 13px;
+            box-sizing: border-box;
         }
         .challan-transit-bar .dispatch-label { font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
         .challan-transit-bar .field-line-long { flex-grow: 1; border-bottom: 1px solid #888; min-height: 14px; margin-left: 4px; }
@@ -1203,20 +1207,28 @@
     </div>
 
     <div class="modal fade" id="masterEditModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Ledger Record</h5>
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Ledger Record <span id="masterEditChallanNoLabel" class="text-info ms-1"></span></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <input type="hidden" id="editRecordKey">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Challan No.</label>
+                            <input type="text" class="form-control" id="editChallanNo" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Date</label>
+                            <input type="date" class="form-control" id="editDate" required>
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label small fw-bold">Customer Name</label>
                             <input type="text" class="form-control" id="editCustName" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label small fw-bold">GST Number</label>
                             <input type="text" class="form-control" id="editGstNo" required>
                         </div>
@@ -1224,13 +1236,66 @@
                             <label class="form-label small fw-bold">Address</label>
                             <input type="text" class="form-control" id="editAddress" required>
                         </div>
+                    </div>
+
+                    <div class="border rounded-3 p-3 mt-4 bg-light bg-opacity-50">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 small text-uppercase tracking-wider"><i class="fa-solid fa-list-check text-secondary me-1"></i> Product Details</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary px-3" onclick="addMasterEditRow()"><i class="fa-solid fa-plus me-1"></i>Add Row</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle bg-white mb-0">
+                                <thead class="table-light">
+                                    <tr class="small text-uppercase">
+                                        <th style="width: 24%;">Product Description *</th>
+                                        <th style="width: 14%;">Accessories</th>
+                                        <th style="width: 16%;">Serial Number *</th>
+                                        <th style="width: 8%;">Qty *</th>
+                                        <th style="width: 15%;" id="masterEditFacedHeader">Issue Faced / Remarks</th>
+                                        <th style="width: 15%;">Remarks (Receipt only)</th>
+                                        <th style="width: 6%; text-align:center;">Drop</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="masterEditItemTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Remarks Meta</label>
+                            <label class="form-label small fw-bold">Remarks / Dispatch Meta</label>
                             <input type="text" class="form-control" id="editRemarks">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Declaration Clause</label>
-                            <textarea class="form-control" id="editDeclaration" rows="2"></textarea>
+                            <input type="text" class="form-control" id="editDeclaration">
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-1" id="masterEditDeliveryFieldsRow">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">RR / LR / Docket No.</label>
+                            <input type="text" class="form-control" id="editRRNo">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Transit Amount</label>
+                            <input type="text" class="form-control" id="editTransitAmount">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Dispatch Date</label>
+                            <input type="date" class="form-control" id="editDispatchDate">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold d-block">Freight</label>
+                            <div class="d-flex gap-3 mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="editFreight" id="editFreightPrepaid" value="Prepaid">
+                                    <label class="form-check-label small" for="editFreightPrepaid">Prepaid</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="editFreight" id="editFreightToPay" value="To Pay">
+                                    <label class="form-check-label small" for="editFreightToPay">To Pay</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2123,16 +2188,64 @@
             });
         }
 
+        let masterEditIsDeliveryType = true;
+
+        window.addMasterEditRow = function() {
+            const tbody = document.getElementById('masterEditItemTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm me-row-desc" required list="cachedItemDescriptions"></td>
+                <td><input type="text" class="form-control form-control-sm me-row-accessories" placeholder="Accessories"></td>
+                <td><input type="text" class="form-control form-control-sm me-row-serial" required></td>
+                <td><input type="number" class="form-control form-control-sm me-row-qty" min="1" step="1" required value="1"></td>
+                ${masterEditIsDeliveryType ? `<td><input type="text" class="form-control form-control-sm me-row-faced" value="NA"></td>` : ''}
+                <td><input type="text" class="form-control form-control-sm me-row-remarks" placeholder="Remarks"></td>
+                <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
         window.triggerMasterEditDirect = function(key) {
             const record = fetchedChallans[key];
             if(!record) return;
             document.getElementById('editRecordKey').value = key;
+            document.getElementById('editRecordKey').dataset.origDate = record.receivingDate || '';
+            document.getElementById('masterEditChallanNoLabel').innerText = `(${record.challanNo || ''})`;
+            document.getElementById('editChallanNo').value = record.challanNo || '';
+            document.getElementById('editDate').value = ddmmyyyyToInputDate(record.receivingDate);
             document.getElementById('editCustName').value = record.customerName || '';
             document.getElementById('editGstNo').value = record.gstNumber || '';
             document.getElementById('editAddress').value = record.address || '';
             document.getElementById('editRemarks').value = record.remarks || '';
             document.getElementById('editDeclaration').value = record.declaration || '';
-            
+
+            const isDeliveryRecord = record.type === 'delivery' || (record.challanNo && record.challanNo.includes('STL/DC/'));
+            masterEditIsDeliveryType = isDeliveryRecord;
+            document.getElementById('masterEditFacedHeader').style.display = isDeliveryRecord ? '' : 'none';
+            document.getElementById('masterEditDeliveryFieldsRow').style.display = isDeliveryRecord ? 'flex' : 'none';
+            document.getElementById('editRRNo').value = record.rrNo || '';
+            document.getElementById('editTransitAmount').value = record.transitAmount || '';
+            document.getElementById('editDispatchDate').value = ddmmyyyyToInputDate(record.dispatchDate || '');
+            document.getElementById('editFreightPrepaid').checked = record.freight === 'Prepaid';
+            document.getElementById('editFreightToPay').checked = record.freight === 'To Pay';
+
+            const itemsBody = document.getElementById('masterEditItemTableBody');
+            itemsBody.innerHTML = "";
+            (record.items || []).forEach(prod => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="text" class="form-control form-control-sm me-row-desc" required list="cachedItemDescriptions" value="${prod.description || ''}"></td>
+                    <td><input type="text" class="form-control form-control-sm me-row-accessories" placeholder="Accessories" value="${prod.accessories || ''}"></td>
+                    <td><input type="text" class="form-control form-control-sm me-row-serial" required value="${prod.serialNo || ''}"></td>
+                    <td><input type="number" class="form-control form-control-sm me-row-qty" min="1" step="1" required value="${parseFloat(prod.quantity) || 1}"></td>
+                    ${isDeliveryRecord ? `<td><input type="text" class="form-control form-control-sm me-row-faced" value="${prod.issueFaced || 'NA'}"></td>` : ''}
+                    <td><input type="text" class="form-control form-control-sm me-row-remarks" placeholder="Remarks" value="${prod.remarks || ''}"></td>
+                    <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
+                `;
+                itemsBody.appendChild(row);
+            });
+            if(itemsBody.children.length === 0) addMasterEditRow();
+
             const modalObj = new bootstrap.Modal(document.getElementById('masterEditModal'));
             modalObj.show();
         }
@@ -2141,12 +2254,55 @@
             const key = document.getElementById('editRecordKey').value;
             if(!key) return;
 
+            const dateVal = document.getElementById('editDate').value;
+            let formattedDateString = document.getElementById('editRecordKey').dataset.origDate || '';
+            if(dateVal) {
+                const dateObj = new Date(dateVal);
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const yyyy = dateObj.getFullYear();
+                formattedDateString = `${dd} - ${mm} - ${yyyy}`;
+            }
+
+            const itemRows = document.querySelectorAll('#masterEditItemTableBody tr');
+            let itemsArray = [];
+            let calculatedTotalQty = 0;
+            itemRows.forEach(row => {
+                const itemQty = parseFloat(row.querySelector('.me-row-qty').value) || 1;
+                calculatedTotalQty += itemQty;
+                itemsArray.push({
+                    itemModel: "NA",
+                    description: row.querySelector('.me-row-desc').value,
+                    accessories: row.querySelector('.me-row-accessories') ? (row.querySelector('.me-row-accessories').value || '') : '',
+                    serialNo: row.querySelector('.me-row-serial').value,
+                    quantity: itemQty.toFixed(2),
+                    issueFaced: row.querySelector('.me-row-faced') ? (row.querySelector('.me-row-faced').value || 'NA') : 'NA',
+                    remarks: row.querySelector('.me-row-remarks') ? (row.querySelector('.me-row-remarks').value || '') : ''
+                });
+            });
+
+            const freightRadio = document.querySelector('input[name="editFreight"]:checked');
+            const dispatchDateVal = document.getElementById('editDispatchDate').value;
+            let formattedDispatchDate = '';
+            if(dispatchDateVal) {
+                const dObj = new Date(dispatchDateVal);
+                formattedDispatchDate = `${String(dObj.getDate()).padStart(2,'0')} - ${String(dObj.getMonth()+1).padStart(2,'0')} - ${dObj.getFullYear()}`;
+            }
+
             const updatedObj = {
+                challanNo: document.getElementById('editChallanNo').value,
+                receivingDate: formattedDateString,
                 customerName: document.getElementById('editCustName').value,
                 gstNumber: document.getElementById('editGstNo').value,
                 address: document.getElementById('editAddress').value,
                 remarks: document.getElementById('editRemarks').value,
-                declaration: document.getElementById('editDeclaration').value
+                declaration: document.getElementById('editDeclaration').value,
+                rrNo: document.getElementById('editRRNo').value || '',
+                transitAmount: document.getElementById('editTransitAmount').value || '',
+                freight: freightRadio ? freightRadio.value : '',
+                dispatchDate: formattedDispatchDate,
+                items: itemsArray,
+                totalUnitsCount: calculatedTotalQty
             };
 
             update(ref(db, `sanchar_receipt_register_v1/${key}`), updatedObj)
