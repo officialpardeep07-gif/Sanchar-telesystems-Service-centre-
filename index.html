@@ -1512,6 +1512,41 @@
             location.reload();
         };
 
+        // ---- Auto logout after 10 minutes of inactivity ----
+        (function() {
+            const AUTO_LOGOUT_MINUTES = 10;
+            const AUTO_LOGOUT_MS = AUTO_LOGOUT_MINUTES * 60 * 1000;
+            let inactivityTimer = null;
+
+            function isUserLoggedIn() {
+                return localStorage.getItem('sanchar_logged_in') === 'true';
+            }
+
+            function triggerAutoLogout() {
+                if (isUserLoggedIn()) {
+                    alert('Aap 10 minutes tak inactive rahe, isliye aapko surakshit tarike se logout kar diya gaya hai.');
+                    window.logoutSystem();
+                }
+            }
+
+            function resetInactivityTimer() {
+                if (!isUserLoggedIn()) return;
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(triggerAutoLogout, AUTO_LOGOUT_MS);
+            }
+
+            // Track common user activity events
+            ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function(evt) {
+                document.addEventListener(evt, resetInactivityTimer, true);
+            });
+
+            // Start the timer on load if already logged in (e.g. after refresh)
+            resetInactivityTimer();
+
+            // Expose so other parts (like successful login) can (re)start the timer
+            window.resetAutoLogoutTimer = resetInactivityTimer;
+        })();
+
         window.verifySystemCredentials = function(event) {
             event.preventDefault();
             const u = document.getElementById('loginUser').value;
@@ -1523,6 +1558,7 @@
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('erpSystemWrapper').style.display = 'block';
                 switchTab('dashboard');
+                if (window.resetAutoLogoutTimer) window.resetAutoLogoutTimer();
             } else {
                 errMsg.style.display = 'block';
                 document.getElementById('loginPass').value = "";
