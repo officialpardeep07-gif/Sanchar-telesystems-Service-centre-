@@ -3,8 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sanchar Telesystems Limited - Service Centre</title>
-    
+    <title>Sanchar Telesystems Service Centre | Sanchar Telesystems Limited</title>
+    <meta name="description" content="Sanchar Telesystems Service Centre - official portal of Sanchar Telesystems Limited for delivery challans, receipt challans, inward/outward registers and logistics management.">
+    <meta name="keywords" content="Sanchar Telesystems, Sanchar Telesystems Service Centre, Sanchar Telesystems Limited, Sanchar Tele Systems, challan management, service centre">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Sanchar Telesystems Limited">
+    <link rel="canonical" href="https://www.sanchartelesystems.com/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Sanchar Telesystems Service Centre">
+    <meta property="og:description" content="Official portal of Sanchar Telesystems Limited for challan and inventory management.">
+    <meta property="og:site_name" content="Sanchar Telesystems Limited">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Sanchar Telesystems Limited",
+        "alternateName": "Sanchar Telesystems Service Centre",
+        "url": "https://www.sanchartelesystems.com/",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "A-78, Ground Floor, Okhla Industrial Area, Phase II",
+            "addressLocality": "New Delhi",
+            "postalCode": "110020",
+            "addressCountry": "IN"
+        }
+    }
+    </script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1083,6 +1110,7 @@
                     </div>
                     
                     <div class="challan-print-box" id="challanPrintContainer">
+                        <div id="lblPreviewWatermark" style="display:none; text-align:center; background:#ffffff; color:#000 !important; font-weight:700; letter-spacing:2px; font-size:14px; padding:5px 0;">Preview</div>
                         <div class="challan-bar-title" id="lblChallanTitle">RECEIPT CHALLAN</div>
 
                         <div class="challan-top-header">
@@ -1505,21 +1533,39 @@
             }, 100);
         }
 
-        // Refresh par login session bani rahe (localStorage me check)
-        if (localStorage.getItem('sanchar_logged_in') === 'true') {
+        // ---- Session validity check (10 min inactivity window, even across refresh/reopen) ----
+        const AUTO_LOGOUT_MINUTES = 10;
+        const AUTO_LOGOUT_MS = AUTO_LOGOUT_MINUTES * 60 * 1000;
+
+        function isSessionStillValid() {
+            if (localStorage.getItem('sanchar_logged_in') !== 'true') return false;
+            const lastActivity = parseInt(localStorage.getItem('sanchar_last_activity') || '0', 10);
+            if (!lastActivity) return false;
+            return (Date.now() - lastActivity) < AUTO_LOGOUT_MS;
+        }
+
+        function clearSanchaSession() {
+            localStorage.removeItem('sanchar_logged_in');
+            localStorage.removeItem('sanchar_last_activity');
+        }
+
+        // Refresh/reopen par login session sirf tab bani rahe jab 10 min ke andar activity ho
+        if (isSessionStillValid()) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('erpSystemWrapper').style.display = 'block';
+        } else {
+            clearSanchaSession();
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('erpSystemWrapper').style.display = 'none';
         }
 
         window.logoutSystem = function() {
-            localStorage.removeItem('sanchar_logged_in');
+            clearSanchaSession();
             location.reload();
         };
 
         // ---- Auto logout after 10 minutes of inactivity ----
         (function() {
-            const AUTO_LOGOUT_MINUTES = 10;
-            const AUTO_LOGOUT_MS = AUTO_LOGOUT_MINUTES * 60 * 1000;
             let inactivityTimer = null;
 
             function isUserLoggedIn() {
@@ -1535,6 +1581,7 @@
 
             function resetInactivityTimer() {
                 if (!isUserLoggedIn()) return;
+                localStorage.setItem('sanchar_last_activity', Date.now().toString());
                 if (inactivityTimer) clearTimeout(inactivityTimer);
                 inactivityTimer = setTimeout(triggerAutoLogout, AUTO_LOGOUT_MS);
             }
@@ -1559,6 +1606,7 @@
 
             if(u === "Sanchar" && p === "Sanchar@2026") {
                 localStorage.setItem('sanchar_logged_in', 'true');
+                localStorage.setItem('sanchar_last_activity', Date.now().toString());
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('erpSystemWrapper').style.display = 'block';
                 switchTab('dashboard');
@@ -2218,6 +2266,10 @@
             }
 
             body.innerHTML = `
+                <div class="input-group shadow-sm border-0 mb-3">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" class="form-control border-start-0" id="partyWiseSearchInput" placeholder="Search by party name or challan no..." oninput="filterPartyWiseModal()" autocomplete="off">
+                </div>
                 <div class="table-responsive-wrapper">
                     <table class="custom-table">
                         <thead>
@@ -2227,14 +2279,17 @@
                                 <th class="text-center">Delivery Challans</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="partyWiseSummaryTableBody">
                             ${names.map(name => {
                                 const c = map[name];
                                 const safeName = encodeURIComponent(name);
                                 const receiptClickable = c.receipt > 0;
                                 const deliveryClickable = c.delivery > 0;
+                                const challanNos = [...(c.receiptKeys || []), ...(c.deliveryKeys || [])]
+                                    .map(k => (fetchedChallans[k] && fetchedChallans[k].challanNo) ? fetchedChallans[k].challanNo.toLowerCase() : '')
+                                    .join(' ');
                                 return `
-                                    <tr>
+                                    <tr data-party-name="${name.toLowerCase()}" data-challan-nos="${challanNos}">
                                         <td class="fw-semibold">${name}</td>
                                         <td class="text-center">
                                             <span class="badge bg-success ${receiptClickable ? '' : 'bg-opacity-50'}" style="${receiptClickable ? 'cursor:pointer;' : ''}" ${receiptClickable ? `onclick="showPartyChallanList('${safeName}','receipt')"` : ''}>${c.receipt}</span>
@@ -2248,7 +2303,25 @@
                         </tbody>
                     </table>
                 </div>
+                <div id="partyWiseNoResults" class="text-center py-3 text-muted d-none">No matching records found.</div>
             `;
+        }
+
+        window.filterPartyWiseModal = function() {
+            const input = document.getElementById('partyWiseSearchInput');
+            const noResultsEl = document.getElementById('partyWiseNoResults');
+            if (!input) return;
+            const query = input.value.trim().toLowerCase();
+            const rows = document.querySelectorAll('#partyWiseSummaryTableBody tr');
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const name = row.dataset.partyName || '';
+                const challanNos = row.dataset.challanNos || '';
+                const isMatch = !query || name.includes(query) || challanNos.includes(query);
+                row.style.display = isMatch ? '' : 'none';
+                if (isMatch) visibleCount++;
+            });
+            if (noResultsEl) noResultsEl.classList.toggle('d-none', visibleCount > 0);
         }
 
         window.showPartyChallanList = function(encodedName, type) {
@@ -2742,6 +2815,8 @@
 
             renderChallanDocument(key);
             document.getElementById('pageTitleContext').innerText = `Preview: ${record.challanNo}`;
+            const previewBanner = document.getElementById('lblPreviewWatermark');
+            if (previewBanner) previewBanner.style.display = 'block';
         }
 
         window.saveDraftEditedData = function() {
@@ -2911,6 +2986,9 @@
         window.renderChallanDocument = function(recordKeyOrData) {
             const targetData = (recordKeyOrData && typeof recordKeyOrData === 'object') ? recordKeyOrData : fetchedChallans[recordKeyOrData];
             if(!targetData) return;
+
+            const previewBanner = document.getElementById('lblPreviewWatermark');
+            if (previewBanner) previewBanner.style.display = 'none';
 
             const isDelivery = targetData.type === 'delivery' || targetData.challanNo.includes('STL/DC/');
             document.getElementById('lblChallanTitle').innerText = isDelivery ? "DELIVERY CHALLAN" : "RECEIPT CHALLAN";
