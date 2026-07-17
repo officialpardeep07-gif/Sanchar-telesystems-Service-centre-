@@ -2004,6 +2004,7 @@
 
             Object.keys(fetchedChallans).forEach(key => {
                 const item = fetchedChallans[key];
+                if (item.status === 'draft') return; // Drafts stay out of Dashboard search until confirmed
                 const matchChallanNo = item.challanNo ? item.challanNo.toLowerCase().includes(query) : false;
                 const matchDate = item.receivingDate ? item.receivingDate.toLowerCase().includes(query) : false;
                 const matchCustomer = item.customerName ? item.customerName.toLowerCase().includes(query) : false;
@@ -2904,6 +2905,19 @@
                 const currentChallanType = (item.type === 'delivery' || item.challanNo.includes('STL/DC/')) ? 'delivery' : 'receipt';
                 let currentItemQty = 0;
 
+                // Extracting Customer Meta dynamically for autocomplete lookup engine
+                // (kept for drafts too, so in-progress entries still benefit from autofill)
+                if(item.customerName && item.customerName.trim() !== '') {
+                    window.customerAutocompleteMap[item.customerName.trim()] = {
+                        address: item.address || '',
+                        gstNumber: item.gstNumber || ''
+                    };
+                }
+
+                // Draft challans stay out of the Dashboard Hub (counts, stock ledger,
+                // party-wise summary, search) until they are made Permanent.
+                if(item.status === 'draft') return;
+
                 if(currentChallanType === 'delivery') {
                     deliveryChallanCount++;
                 } else {
@@ -2920,14 +2934,6 @@
                 } else {
                     partyWiseMap[partyKey].receipt++;
                     partyWiseMap[partyKey].receiptKeys.push(key);
-                }
-                
-                // Extracting Customer Meta dynamically for autocomplete lookup engine
-                if(item.customerName && item.customerName.trim() !== '') {
-                    window.customerAutocompleteMap[item.customerName.trim()] = {
-                        address: item.address || '',
-                        gstNumber: item.gstNumber || ''
-                    };
                 }
 
                 if(item.items && Array.isArray(item.items)) {
