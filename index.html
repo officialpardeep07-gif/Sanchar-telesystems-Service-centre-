@@ -769,6 +769,12 @@
                                     <label for="formGst">GST No. *</label>
                                 </div>
                             </div>
+                            <div class="col-md-3 offset-md-9">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="formCustomerChallanNo" placeholder="Challan No.">
+                                    <label for="formCustomerChallanNo">Challan No.</label>
+                                </div>
+                            </div>
                             <input type="hidden" id="formCustomerType" value="Private">
                         </div>
 
@@ -857,6 +863,12 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="outwardFormGst" required placeholder="GST No.">
                                     <label for="outwardFormGst">GST *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 offset-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="outwardFormCustomerChallanNo" placeholder="Challan No.">
+                                    <label for="outwardFormCustomerChallanNo">Challan No.</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1203,6 +1215,7 @@
                                     <div><span class="meta-label">Customer Name</span><span class="meta-colon">:</span> <span id="lblCustNameText">-</span></div>
                                     <div><span class="meta-label">Address</span><span class="meta-colon">:</span> <span id="lblAddressText">-</span></div>
                                     <div><span class="meta-label">GST No.</span><span class="meta-colon">:</span> <span id="lblGstNoText">-</span></div>
+                                    <div><span class="meta-label">Challan No.</span><span class="meta-colon">:</span> <span id="lblCustomerChallanNoText">-</span></div>
                                 </div>
                             </div>
                             <div class="challan-meta-right">
@@ -1348,6 +1361,10 @@
                             <label class="form-label small fw-bold">GST Number</label>
                             <input type="text" class="form-control" id="editGstNo" required>
                         </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Challan No.</label>
+                            <input type="text" class="form-control" id="editCustomerChallanNo">
+                        </div>
                         <div class="col-12">
                             <label class="form-label small fw-bold">Address</label>
                             <input type="text" class="form-control" id="editAddress" required>
@@ -1448,6 +1465,10 @@
                         <div class="col-md-3">
                             <label class="form-label small fw-bold">GST Number</label>
                             <input type="text" class="form-control" id="draftEditGstNo" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Challan No.</label>
+                            <input type="text" class="form-control" id="draftEditCustomerChallanNo">
                         </div>
                     </div>
 
@@ -2380,6 +2401,7 @@
                 receivingDate: formattedDateString,
                 customerName: document.getElementById('formCustomerName').value,
                 gstNumber: document.getElementById('formGst').value,
+                customerChallanNo: document.getElementById('formCustomerChallanNo').value || '',
                 customerType: document.getElementById('formCustomerType').value,
                 address: document.getElementById('formAddress').value,
                 remarks: document.getElementById('formRemarks').value || 'NA',
@@ -2472,6 +2494,7 @@
                 receivingDate: formattedDateString,
                 customerName: document.getElementById('outwardFormCustomerName').value,
                 gstNumber: document.getElementById('outwardFormGst').value,
+                customerChallanNo: document.getElementById('outwardFormCustomerChallanNo').value || '',
                 customerType: "Private",
                 address: document.getElementById('outwardFormAddress').value,
                 remarks: `${matType} | ${dispMode}`,
@@ -2841,6 +2864,7 @@
             document.getElementById('editDate').value = ddmmyyyyToInputDate(record.receivingDate);
             document.getElementById('editCustName').value = record.customerName || '';
             document.getElementById('editGstNo').value = record.gstNumber || '';
+            document.getElementById('editCustomerChallanNo').value = record.customerChallanNo || '';
             document.getElementById('editAddress').value = record.address || '';
             document.getElementById('editRemarks').value = record.remarks || '';
             document.getElementById('editDeclaration').value = record.declaration || '';
@@ -2920,6 +2944,7 @@
                 receivingDate: formattedDateString,
                 customerName: document.getElementById('editCustName').value,
                 gstNumber: document.getElementById('editGstNo').value,
+                customerChallanNo: document.getElementById('editCustomerChallanNo').value || '',
                 address: document.getElementById('editAddress').value,
                 remarks: document.getElementById('editRemarks').value,
                 declaration: document.getElementById('editDeclaration').value,
@@ -3025,6 +3050,7 @@
             document.getElementById('draftEditCustName').value = record.customerName || '';
             document.getElementById('draftEditAddress').value = record.address || '';
             document.getElementById('draftEditGstNo').value = record.gstNumber || '';
+            document.getElementById('draftEditCustomerChallanNo').value = record.customerChallanNo || '';
             document.getElementById('draftEditRemarks').value = record.remarks || '';
             document.getElementById('draftEditDeclaration').value = record.declaration || '';
 
@@ -3100,6 +3126,7 @@
                 customerName: document.getElementById('draftEditCustName').value,
                 address: document.getElementById('draftEditAddress').value,
                 gstNumber: document.getElementById('draftEditGstNo').value,
+                customerChallanNo: document.getElementById('draftEditCustomerChallanNo').value || '',
                 remarks: document.getElementById('draftEditRemarks').value,
                 declaration: document.getElementById('draftEditDeclaration').value,
                 rrNo: document.getElementById('draftEditRRNo').value || '',
@@ -3426,6 +3453,7 @@
             document.getElementById('lblCustNameText').innerText = targetData.customerName;
             document.getElementById('lblAddressText').innerText = targetData.address;
             document.getElementById('lblGstNoText').innerText = targetData.gstNumber;
+            document.getElementById('lblCustomerChallanNoText').innerText = targetData.customerChallanNo || '-';
 
             const itemsTableBody = document.getElementById('lblGoodsTableBody');
             itemsTableBody.innerHTML = "";
