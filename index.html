@@ -2837,6 +2837,8 @@
                 const typeBadge = (item.type === 'delivery' || item.challanNo.includes('STL/DC/')) ? 
                     `<span class="badge bg-info text-dark">Outward</span>` : `<span class="badge bg-primary">Receipt</span>`;
                 
+                const isPermanentRecord = item.status !== 'draft';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="fw-bold">${item.challanNo}</td>
@@ -2846,6 +2848,7 @@
                     <td class="text-center">
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-success" onclick="triggerMasterEditDirect('${key}')"><i class="fa-solid fa-user-pen"></i></button>
+                            ${isPermanentRecord ? `<button class="btn btn-outline-warning" title="Revert to Draft" onclick="revertChallanToDraft('${key}')"><i class="fa-solid fa-rotate-left"></i></button>` : ''}
                             <button class="btn btn-outline-danger" onclick="triggerMasterDeleteDirect('${key}')"><i class="fa-regular fa-trash-can"></i></button>
                         </div>
                     </td>
@@ -3212,6 +3215,25 @@
                         bootstrap.Modal.getInstance(modalEl).hide();
                     }
                 }).catch(err => alert("Error finalizing challan: " + err.message));
+        }
+
+        window.revertChallanToDraft = function(key) {
+            const record = fetchedChallans[key];
+            if(!record) return;
+            if(record.status === 'draft') {
+                alert("This challan is already a Draft.");
+                return;
+            }
+
+            if(!confirm(`Do you want to revert challan ${record.challanNo} back to Draft?\nIt will move back to the Draft Challan section and become editable again.`)) {
+                return;
+            }
+
+            update(ref(db, `sanchar_receipt_register_v1/${key}`), { status: 'draft' })
+                .then(() => {
+                    alert(`Challan ${record.challanNo} has been reverted back to Draft.`);
+                    renderMasterTableRows();
+                }).catch(err => alert("Error reverting challan: " + err.message));
         }
 
         // ===================== END DRAFT CHALLAN WORKFLOW =====================
