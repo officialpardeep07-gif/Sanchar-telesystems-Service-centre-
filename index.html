@@ -846,10 +846,11 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="itemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 30%;">Product Description *</th>
-                                            <th style="width: 17%;">Accessories</th>
-                                            <th style="width: 20%;">Serial Number *</th>
-                                            <th style="width: 10%;">Qty *</th>
+                                            <th style="width: 25%;">Product Description *</th>
+                                            <th style="width: 14%;">Accessories</th>
+                                            <th style="width: 17%;">Serial Number *</th>
+                                            <th style="width: 14%;">IMEI Number</th>
+                                            <th style="width: 8%;">Qty *</th>
                                             <th style="width: 18%;">Remarks</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
@@ -859,7 +860,8 @@
                                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                                             <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
-                                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                                            <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm row-imei" placeholder="IMEI Number" style="display:none;"></td>
+                                            <td><input type="number" class="form-control form-control-sm row-qty" min="0" step="1" required value="0"></td>
                                             <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>
@@ -994,10 +996,11 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="outwardItemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 28%;">Product Description *</th>
-                                            <th style="width: 15%;">Accessories</th>
-                                            <th style="width: 20%;">Serial Number *</th>
-                                            <th style="width: 12%;">Qty *</th>
+                                            <th style="width: 22%;">Product Description *</th>
+                                            <th style="width: 13%;">Accessories</th>
+                                            <th style="width: 17%;">Serial Number *</th>
+                                            <th style="width: 14%;">IMEI Number</th>
+                                            <th style="width: 10%;">Qty *</th>
                                             <th style="width: 20%;">Remarks *</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
@@ -1007,7 +1010,8 @@
                                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                                             <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
-                                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                                            <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm row-imei" placeholder="IMEI Number" style="display:none;"></td>
+                                            <td><input type="number" class="form-control form-control-sm row-qty" min="0" step="1" required value="0"></td>
                                             <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
                                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>
@@ -1297,6 +1301,7 @@
                                     <th style="width: 26%;" id="lblColDescHeader">Product Description</th>
                                     <th style="width: 15%;" id="lblColAccessoriesHeader">Accessories</th>
                                     <th style="width: 18%;" id="lblColSerialHeader">Serial No.</th>
+                                    <th style="width: 14%;" id="lblColImeiHeader">IMEI No.</th>
                                     <th style="width: 9%;" id="lblColQtyHeader">Quantity</th>
                                     <th style="width: 15%;" id="lblColRemarksHeader">Issue Faced</th>
                                     <th style="width: 15%;" id="lblColExtraRemarksHeader">Remarks</th>
@@ -1439,10 +1444,11 @@
                             <table class="table table-bordered table-hover align-middle bg-white mb-0">
                                 <thead class="table-light">
                                     <tr class="small text-uppercase">
-                                        <th style="width: 24%;">Product Description *</th>
-                                        <th style="width: 14%;">Accessories</th>
-                                        <th style="width: 16%;">Serial Number *</th>
-                                        <th style="width: 8%;">Qty *</th>
+                                        <th style="width: 20%;">Product Description *</th>
+                                        <th style="width: 11%;">Accessories</th>
+                                        <th style="width: 14%;">Serial Number *</th>
+                                        <th style="width: 12%;">IMEI Number</th>
+                                        <th style="width: 7%;">Qty *</th>
                                         <th style="width: 15%;" id="masterEditFacedHeader">Issue Faced / Remarks</th>
                                         <th style="width: 15%;">Remarks (Receipt only)</th>
                                         <th style="width: 6%; text-align:center;">Drop</th>
@@ -1540,10 +1546,11 @@
                             <table class="table table-bordered table-hover align-middle bg-white mb-0">
                                 <thead class="table-light">
                                     <tr class="small text-uppercase">
-                                        <th style="width: 24%;">Product Description *</th>
-                                        <th style="width: 14%;">Accessories</th>
-                                        <th style="width: 16%;">Serial Number *</th>
-                                        <th style="width: 8%;">Qty *</th>
+                                        <th style="width: 20%;">Product Description *</th>
+                                        <th style="width: 11%;">Accessories</th>
+                                        <th style="width: 14%;">Serial Number *</th>
+                                        <th style="width: 12%;">IMEI Number</th>
+                                        <th style="width: 7%;">Qty *</th>
                                         <th style="width: 15%;" id="draftEditFacedHeader">Issue Faced / Remarks</th>
                                         <th style="width: 15%;">Remarks (Receipt only)</th>
                                         <th style="width: 6%; text-align:center;">Drop</th>
@@ -2177,6 +2184,18 @@
             updateDataListInterface();
         }
 
+        // Click karne par hi IMEI input field khulta hai; usse pehle sirf button dikhta hai.
+        window.toggleImeiEntry = function(btn) {
+            const td = btn.closest('td');
+            if (!td) return;
+            const input = td.querySelector('input');
+            if (!input) return;
+            btn.style.display = 'none';
+            input.style.display = '';
+            input.classList.remove('d-none');
+            input.focus();
+        }
+
         window.addNewReceiptRow = function() {
             const tbody = document.getElementById('itemTableBody');
             const row = document.createElement('tr');
@@ -2184,7 +2203,8 @@
                 <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                 <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm row-serial" required></td>
-                <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm row-imei" placeholder="IMEI Number" style="display:none;"></td>
+                <td><input type="number" class="form-control form-control-sm row-qty" min="0" step="1" required value="0"></td>
                 <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
@@ -2198,7 +2218,8 @@
                 <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                 <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm row-serial" required></td>
-                <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm row-imei" placeholder="IMEI Number" style="display:none;"></td>
+                <td><input type="number" class="form-control form-control-sm row-qty" min="0" step="1" required value="0"></td>
                 <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
                 <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
             `;
@@ -2406,6 +2427,7 @@
                     description: row.querySelector('.row-desc').value,
                     accessories: row.querySelector('.row-accessories') ? row.querySelector('.row-accessories').value : '',
                     serialNo: row.querySelector('.row-serial').value,
+                    imei: row.querySelector('.row-imei') ? (row.querySelector('.row-imei').value || '') : '',
                     quantity: itemQty.toFixed(2),
                     issueFaced: 'NA',
                     remarks: row.querySelector('.row-remarks').value || ''
@@ -2441,7 +2463,8 @@
                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                             <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
-                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                            <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm row-imei" placeholder="IMEI Number" style="display:none;"></td>
+                            <td><input type="number" class="form-control form-control-sm row-qty" min="0" step="1" required value="0"></td>
                             <td><input type="text" class="form-control form-control-sm row-remarks" placeholder="Remarks"></td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
@@ -2488,6 +2511,7 @@
                     description: row.querySelector('.row-desc').value,
                     accessories: row.querySelector('.row-accessories') ? row.querySelector('.row-accessories').value : '',
                     serialNo: row.querySelector('.row-serial').value,
+                    imei: row.querySelector('.row-imei') ? (row.querySelector('.row-imei').value || '') : '',
                     quantity: itemQty.toFixed(2),
                     issueFaced: row.querySelector('.row-faced').value
                 });
@@ -2536,7 +2560,8 @@
                             <td><input type="text" class="form-control form-control-sm row-desc" required list="cachedItemDescriptions"></td>
                             <td><input type="text" class="form-control form-control-sm row-accessories" placeholder="Accessories"></td>
                             <td><input type="text" class="form-control form-control-sm row-serial" required></td>
-                            <td><input type="number" class="form-control form-control-sm row-qty" min="1" step="1" required value="1"></td>
+                            <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm row-imei" placeholder="IMEI Number" style="display:none;"></td>
+                            <td><input type="number" class="form-control form-control-sm row-qty" min="0" step="1" required value="0"></td>
                             <td><input type="text" class="form-control form-control-sm row-faced" required value="NA"></td>
                             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="removeRow(this)"><i class="fa-regular fa-trash-can"></i></button></td>
                         </tr>
@@ -2866,6 +2891,7 @@
                 <td><input type="text" class="form-control form-control-sm me-row-desc" required list="cachedItemDescriptions"></td>
                 <td><input type="text" class="form-control form-control-sm me-row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm me-row-serial" required></td>
+                <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm me-row-imei" placeholder="IMEI Number" style="display:none;"></td>
                 <td><input type="number" class="form-control form-control-sm me-row-qty" min="1" step="1" required value="1"></td>
                 ${masterEditIsDeliveryType ? `<td><input type="text" class="form-control form-control-sm me-row-faced" value="NA"></td>` : ''}
                 <td><input type="text" class="form-control form-control-sm me-row-remarks" placeholder="Remarks"></td>
@@ -2907,6 +2933,7 @@
                     <td><input type="text" class="form-control form-control-sm me-row-desc" required list="cachedItemDescriptions" value="${prod.description || ''}"></td>
                     <td><input type="text" class="form-control form-control-sm me-row-accessories" placeholder="Accessories" value="${prod.accessories || ''}"></td>
                     <td><input type="text" class="form-control form-control-sm me-row-serial" required value="${prod.serialNo || ''}"></td>
+                    <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" style="${prod.imei ? 'display:none;' : ''}" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm me-row-imei" placeholder="IMEI Number" value="${prod.imei || ''}" style="${prod.imei ? '' : 'display:none;'}"></td>
                     <td><input type="number" class="form-control form-control-sm me-row-qty" min="1" step="1" required value="${parseFloat(prod.quantity) || 1}"></td>
                     ${isDeliveryRecord ? `<td><input type="text" class="form-control form-control-sm me-row-faced" value="${prod.issueFaced || 'NA'}"></td>` : ''}
                     <td><input type="text" class="form-control form-control-sm me-row-remarks" placeholder="Remarks" value="${prod.remarks || ''}"></td>
@@ -2945,6 +2972,7 @@
                     description: row.querySelector('.me-row-desc').value,
                     accessories: row.querySelector('.me-row-accessories') ? (row.querySelector('.me-row-accessories').value || '') : '',
                     serialNo: row.querySelector('.me-row-serial').value,
+                    imei: row.querySelector('.me-row-imei') ? (row.querySelector('.me-row-imei').value || '') : '',
                     quantity: itemQty.toFixed(2),
                     issueFaced: row.querySelector('.me-row-faced') ? (row.querySelector('.me-row-faced').value || 'NA') : 'NA',
                     remarks: row.querySelector('.me-row-remarks') ? (row.querySelector('.me-row-remarks').value || '') : ''
@@ -3040,6 +3068,7 @@
                 <td><input type="text" class="form-control form-control-sm de-row-desc" required list="cachedItemDescriptions"></td>
                 <td><input type="text" class="form-control form-control-sm de-row-accessories" placeholder="Accessories"></td>
                 <td><input type="text" class="form-control form-control-sm de-row-serial" required></td>
+                <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm de-row-imei" placeholder="IMEI Number" style="display:none;"></td>
                 <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="1"></td>
                 ${draftEditIsDeliveryType ? `<td><input type="text" class="form-control form-control-sm de-row-faced" value="NA"></td>` : ''}
                 <td><input type="text" class="form-control form-control-sm de-row-remarks" placeholder="Remarks"></td>
@@ -3092,6 +3121,7 @@
                     <td><input type="text" class="form-control form-control-sm de-row-desc" required list="cachedItemDescriptions" value="${prod.description || ''}"></td>
                     <td><input type="text" class="form-control form-control-sm de-row-accessories" placeholder="Accessories" value="${prod.accessories || ''}"></td>
                     <td><input type="text" class="form-control form-control-sm de-row-serial" required value="${prod.serialNo || ''}"></td>
+                    <td class="text-center imei-cell"><button type="button" class="btn btn-sm btn-outline-secondary imei-add-btn" onclick="toggleImeiEntry(this)" style="${prod.imei ? 'display:none;' : ''}" title="Click to enter IMEI Number"><i class="fa-solid fa-barcode"></i></button><input type="text" class="form-control form-control-sm de-row-imei" placeholder="IMEI Number" value="${prod.imei || ''}" style="${prod.imei ? '' : 'display:none;'}"></td>
                     <td><input type="number" class="form-control form-control-sm de-row-qty" min="1" step="1" required value="${parseFloat(prod.quantity) || 1}"></td>
                     ${isDeliveryDraft ? `<td><input type="text" class="form-control form-control-sm de-row-faced" value="${prod.issueFaced || 'NA'}"></td>` : ''}
                     <td><input type="text" class="form-control form-control-sm de-row-remarks" placeholder="Remarks" value="${prod.remarks || ''}"></td>
@@ -3127,6 +3157,7 @@
                     description: row.querySelector('.de-row-desc').value,
                     accessories: row.querySelector('.de-row-accessories') ? (row.querySelector('.de-row-accessories').value || '') : '',
                     serialNo: row.querySelector('.de-row-serial').value,
+                    imei: row.querySelector('.de-row-imei') ? (row.querySelector('.de-row-imei').value || '') : '',
                     quantity: itemQty.toFixed(2),
                     issueFaced: row.querySelector('.de-row-faced') ? (row.querySelector('.de-row-faced').value || 'NA') : 'NA',
                     remarks: row.querySelector('.de-row-remarks') ? (row.querySelector('.de-row-remarks').value || '') : ''
@@ -3373,23 +3404,38 @@
             const extraRemarksHeader = document.getElementById('lblColExtraRemarksHeader');
             const snoHeader = document.getElementById('lblColSnoHeader');
             const serialHeader = document.getElementById('lblColSerialHeader');
+            const imeiHeader = document.getElementById('lblColImeiHeader');
             const qtyHeader = document.getElementById('lblColQtyHeader');
             const descHeader = document.getElementById('lblColDescHeader');
             const remarksHeader = document.getElementById('lblColRemarksHeader');
 
             const accessoriesHeader = document.getElementById('lblColAccessoriesHeader');
 
+            // IMEI column sirf tab dikhega jab kisi bhi item me IMEI number click karke bhara gaya ho.
+            const hasAnyImei = Array.isArray(targetData.items) && targetData.items.some(p => p && p.imei && String(p.imei).trim() !== '');
+            imeiHeader.style.display = hasAnyImei ? '' : 'none';
+
             if (isDelivery) {
                 document.getElementById('lblColDescHeader').innerText = "Product Description";
                 document.getElementById('lblColRemarksHeader').innerText = "Remarks";
                 remarksHeader.style.display = "";
                 extraRemarksHeader.style.display = "none";
-                snoHeader.style.width = "7%";
-                descHeader.style.width = "28%";
-                accessoriesHeader.style.width = "15%";
-                serialHeader.style.width = "20%";
-                qtyHeader.style.width = "10%";
-                remarksHeader.style.width = "20%";
+                if (hasAnyImei) {
+                    snoHeader.style.width = "6%";
+                    descHeader.style.width = "23%";
+                    accessoriesHeader.style.width = "12%";
+                    serialHeader.style.width = "14%";
+                    imeiHeader.style.width = "14%";
+                    qtyHeader.style.width = "8%";
+                    remarksHeader.style.width = "23%";
+                } else {
+                    snoHeader.style.width = "7%";
+                    descHeader.style.width = "28%";
+                    accessoriesHeader.style.width = "15%";
+                    serialHeader.style.width = "20%";
+                    qtyHeader.style.width = "10%";
+                    remarksHeader.style.width = "20%";
+                }
 
                 let metadata = targetData.remarks || "";
                 let materialTypeStr = "";
@@ -3461,12 +3507,22 @@
                 remarksHeader.style.display = "none";
                 extraRemarksHeader.style.display = "";
                 extraRemarksHeader.innerText = "REMARKS";
-                snoHeader.style.width = "7%";
-                descHeader.style.width = "28%";
-                accessoriesHeader.style.width = "15%";
-                serialHeader.style.width = "20%";
-                qtyHeader.style.width = "10%";
-                extraRemarksHeader.style.width = "20%";
+                if (hasAnyImei) {
+                    snoHeader.style.width = "6%";
+                    descHeader.style.width = "23%";
+                    accessoriesHeader.style.width = "12%";
+                    serialHeader.style.width = "14%";
+                    imeiHeader.style.width = "14%";
+                    qtyHeader.style.width = "8%";
+                    extraRemarksHeader.style.width = "23%";
+                } else {
+                    snoHeader.style.width = "7%";
+                    descHeader.style.width = "28%";
+                    accessoriesHeader.style.width = "15%";
+                    serialHeader.style.width = "20%";
+                    qtyHeader.style.width = "10%";
+                    extraRemarksHeader.style.width = "20%";
+                }
                 document.getElementById('lblMaterialDispatchType').style.display = "none";
                 document.getElementById('lblTransitAmountBar').style.display = "none";
 
@@ -3507,6 +3563,7 @@
                         <td style="font-weight:600;">${mainDescText}</td>
                         <td>${prod.accessories || ''}</td>
                         <td>${prod.serialNo}</td>
+                        ${hasAnyImei ? `<td>${prod.imei || ''}</td>` : ''}
                         <td>${parseInt(prod.quantity)}</td>
                         ${isDelivery ? `<td>${secondaryColVal}</td>` : ''}
                         ${!isDelivery ? `<td>${prod.remarks || ''}</td>` : ''}
