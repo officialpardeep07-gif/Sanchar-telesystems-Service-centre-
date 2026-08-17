@@ -38,6 +38,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
+        /* Fix: Qty column inputs were too narrow to read/enter comfortably during data entry */
+        input.row-qty,
+        input.me-row-qty,
+        input.de-row-qty {
+            min-width: 70px;
+            text-align: center;
+            font-weight: 600;
+        }
         :root {
             --primary-color: #6366F1;
             --primary-dark: #4F46E5;
@@ -846,12 +854,12 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="itemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 25%;">Product Description *</th>
-                                            <th style="width: 14%;">Accessories</th>
-                                            <th style="width: 17%;">Serial Number *</th>
-                                            <th style="width: 14%;">IMEI Number</th>
-                                            <th style="width: 8%;">Qty *</th>
-                                            <th style="width: 18%;">Remarks</th>
+                                            <th style="width: 23%;">Product Description *</th>
+                                            <th style="width: 12%;">Accessories</th>
+                                            <th style="width: 16%;">Serial Number *</th>
+                                            <th style="width: 12%;">IMEI Number</th>
+                                            <th style="width: 12%;">Qty *</th>
+                                            <th style="width: 16%;">Remarks</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
                                     </thead>
@@ -996,12 +1004,12 @@
                                 <table class="table table-bordered table-hover align-middle bg-white mb-0" id="outwardItemAdditionTable">
                                     <thead class="table-light">
                                         <tr class="small text-uppercase">
-                                            <th style="width: 22%;">Product Description *</th>
-                                            <th style="width: 13%;">Accessories</th>
-                                            <th style="width: 17%;">Serial Number *</th>
-                                            <th style="width: 14%;">IMEI Number</th>
-                                            <th style="width: 10%;">Qty *</th>
-                                            <th style="width: 20%;">Remarks *</th>
+                                            <th style="width: 20%;">Product Description *</th>
+                                            <th style="width: 11%;">Accessories</th>
+                                            <th style="width: 16%;">Serial Number *</th>
+                                            <th style="width: 12%;">IMEI Number</th>
+                                            <th style="width: 13%;">Qty *</th>
+                                            <th style="width: 18%;">Remarks *</th>
                                             <th style="width: 5%; text-align:center;">Drop</th>
                                         </tr>
                                     </thead>
