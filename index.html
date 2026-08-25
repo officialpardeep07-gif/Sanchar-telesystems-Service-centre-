@@ -764,6 +764,11 @@
                             <i class="fa-solid fa-user-gear"></i><span>Master Tool</span>
                         </a>
                     </li>
+                    <li id="sideTabRecycle">
+                        <a href="javascript:void(0)" onclick="openRecycleBin()">
+                            <i class="fa-solid fa-trash-can-arrow-up"></i><span>Recycle Bin</span>
+                        </a>
+                    </li>
                     <li id="sideTabUsers" style="display:none;">
                         <a href="javascript:void(0)" onclick="openUserManagement()">
                             <i class="fa-solid fa-users-gear"></i><span>User Management</span>
@@ -1288,6 +1293,31 @@
                     </div>
                 </div>
 
+                <div id="recycleBinModule" class="panel-card" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                        <div>
+                            <div class="panel-title text-danger"><i class="fa-solid fa-trash-can-arrow-up"></i> Recycle Bin</div>
+                            <p class="text-muted small mb-0">Deleted ledger entries land here first. Restore them back into the system, or permanently erase them for good.</p>
+                        </div>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="emptyRecycleBin()"><i class="fa-solid fa-fire-burner me-1"></i>Empty Recycle Bin</button>
+                    </div>
+                    <div class="table-responsive-wrapper mt-3">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Challan No</th>
+                                    <th>Date</th>
+                                    <th>Customer Name</th>
+                                    <th>Type</th>
+                                    <th>Deleted On</th>
+                                    <th style="width: 15%; text-align: center;">Controls</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recycleBinTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div id="userManagementModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-danger"><i class="fa-solid fa-users-gear"></i> User Management</div>
                     <p class="text-muted small">Create a new user and select which functions that user will be able to use. The user will only see the functions that are selected.</p>
@@ -1754,7 +1784,7 @@
             }
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, update, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD_uUBIp1c3rWgyQNYVc22D7JZ1UlhskoI",
@@ -1773,6 +1803,7 @@
         let fetchedChallans = {};
         let currentFilterMode = "all"; 
         let isMasterAuthenticated = false;
+        let pendingMasterDestination = 'master';
         let globalStockBreakdownItems = [];
         let sancharUsersCache = {};
 
@@ -1985,6 +2016,7 @@
             document.getElementById('sideTabChallan').classList.remove('active');
             document.getElementById('sideTabSerialTracker').classList.remove('active');
             document.getElementById('sideTabMaster').classList.remove('active');
+            document.getElementById('sideTabRecycle').classList.remove('active');
             document.getElementById('sideTabUsers').classList.remove('active');
             
             document.getElementById('dashboardHudModule').style.display = 'none';
@@ -1994,6 +2026,7 @@
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('serialTrackerModule').style.display = 'none';
             document.getElementById('masterToolModule').style.display = 'none';
+            document.getElementById('recycleBinModule').style.display = 'none';
             document.getElementById('userManagementModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'none';
 
@@ -2035,6 +2068,11 @@
                 document.getElementById('sideTabMaster').classList.add('active');
                 document.getElementById('masterToolModule').style.display = 'block';
                 contextTitle.innerText = "Master Tool Panel";
+            } else if(mode === 'recycle') {
+                document.getElementById('sideTabRecycle').classList.add('active');
+                document.getElementById('recycleBinModule').style.display = 'block';
+                contextTitle.innerText = "Recycle Bin";
+                renderRecycleBinTableRows();
             }
         }
 
@@ -2224,9 +2262,32 @@
         }
 
         window.openMasterTool = function() {
+            pendingMasterDestination = 'master';
             if (isMasterAuthenticated) {
                 switchTab('master');
                 renderMasterTableRows();
+            } else {
+                const errorDiv = document.getElementById('masterPasswordError');
+                const input = document.getElementById('masterPasswordInput');
+                errorDiv.classList.add('d-none');
+                input.value = "";
+                input.type = "password";
+                document.getElementById('masterPasswordToggleIcon').className = "fa-solid fa-eye";
+                const modalEl = document.getElementById('masterPasswordModal');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+                modalEl.addEventListener('shown.bs.modal', function onShown() {
+                    input.focus();
+                    modalEl.removeEventListener('shown.bs.modal', onShown);
+                });
+            }
+        }
+
+        window.openRecycleBin = function() {
+            pendingMasterDestination = 'recycle';
+            if (isMasterAuthenticated) {
+                switchTab('recycle');
+                renderRecycleBinTableRows();
             } else {
                 const errorDiv = document.getElementById('masterPasswordError');
                 const input = document.getElementById('masterPasswordInput');
@@ -2252,8 +2313,13 @@
                 isMasterAuthenticated = true;
                 const modalEl = document.getElementById('masterPasswordModal');
                 bootstrap.Modal.getOrCreateInstance(modalEl).hide();
-                switchTab('master');
-                renderMasterTableRows();
+                if (pendingMasterDestination === 'recycle') {
+                    switchTab('recycle');
+                    renderRecycleBinTableRows();
+                } else {
+                    switchTab('master');
+                    renderMasterTableRows();
+                }
             } else {
                 errorDiv.classList.remove('d-none');
                 input.value = "";
@@ -3149,13 +3215,118 @@
         }
 
         window.triggerMasterDeleteDirect = function(key) {
-            if(confirm("Warning! Are you absolutely sure you want to permanently wipe this ledger entry from cloud history? This action cannot be reversed.")) {
-                remove(ref(db, `sanchar_receipt_register_v1/${key}`))
+            const record = fetchedChallans[key];
+            if(!record) return;
+            if(confirm(`Move ledger entry "${record.challanNo || key}" to the Recycle Bin? You can restore it later from there.`)) {
+                const binRecord = Object.assign({}, record, { deletedAt: new Date().toISOString() });
+                set(ref(db, `sanchar_recycle_bin_v1/${key}`), binRecord)
                     .then(() => {
-                        alert("Entry cleared successfully.");
+                        return remove(ref(db, `sanchar_receipt_register_v1/${key}`));
+                    })
+                    .then(() => {
+                        alert("Entry moved to Recycle Bin.");
                     }).catch(err => alert("Error dropping record: " + err.message));
             }
         }
+
+        // ===================== RECYCLE BIN WORKFLOW =====================
+
+        let fetchedRecycleBin = {};
+
+        onValue(ref(db, "sanchar_recycle_bin_v1"), (snapshot) => {
+            const data = snapshot.val();
+            fetchedRecycleBin = data || {};
+            if (document.getElementById('sideTabRecycle') && document.getElementById('sideTabRecycle').classList.contains('active')) {
+                renderRecycleBinTableRows();
+            }
+        });
+
+        function formatRecycleBinDeletedOn(isoString) {
+            if(!isoString) return 'NA';
+            const d = new Date(isoString);
+            if (isNaN(d.getTime())) return 'NA';
+            return `${String(d.getDate()).padStart(2,'0')} - ${String(d.getMonth()+1).padStart(2,'0')} - ${d.getFullYear()}`;
+        }
+
+        window.renderRecycleBinTableRows = function() {
+            const rBody = document.getElementById('recycleBinTableBody');
+            if(!rBody) return;
+            rBody.innerHTML = "";
+            const keys = Object.keys(fetchedRecycleBin).reverse();
+
+            if(keys.length === 0) {
+                rBody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">Recycle Bin is empty.</td></tr>`;
+                return;
+            }
+
+            keys.forEach(key => {
+                const item = fetchedRecycleBin[key];
+                const typeBadge = (item.type === 'delivery' || (item.challanNo || '').includes('STL/DC/')) ?
+                    `<span class="badge bg-info text-dark">Outward</span>` : `<span class="badge bg-primary">Receipt</span>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold">${item.challanNo || 'NA'}</td>
+                    <td>${item.receivingDate || 'NA'}</td>
+                    <td>${item.customerName || 'NA'}</td>
+                    <td>${typeBadge}</td>
+                    <td class="text-muted small">${formatRecycleBinDeletedOn(item.deletedAt)}</td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success" title="Restore" onclick="restoreRecycleBinItem('${key}')"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button class="btn btn-outline-danger" title="Delete Permanently" onclick="permanentlyDeleteRecycleBinItem('${key}')"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                rBody.appendChild(tr);
+            });
+        }
+
+        window.restoreRecycleBinItem = function(key) {
+            const record = fetchedRecycleBin[key];
+            if(!record) return;
+            if(confirm(`Restore ledger entry "${record.challanNo || key}" back into the system?`)) {
+                const restoredRecord = Object.assign({}, record);
+                delete restoredRecord.deletedAt;
+                set(ref(db, `sanchar_receipt_register_v1/${key}`), restoredRecord)
+                    .then(() => {
+                        return remove(ref(db, `sanchar_recycle_bin_v1/${key}`));
+                    })
+                    .then(() => {
+                        alert("Entry restored successfully.");
+                        renderRecycleBinTableRows();
+                    }).catch(err => alert("Error restoring record: " + err.message));
+            }
+        }
+
+        window.permanentlyDeleteRecycleBinItem = function(key) {
+            const record = fetchedRecycleBin[key];
+            if(!record) return;
+            if(confirm(`Warning! Permanently delete "${record.challanNo || key}" from the Recycle Bin? This action cannot be reversed.`)) {
+                remove(ref(db, `sanchar_recycle_bin_v1/${key}`))
+                    .then(() => {
+                        alert("Entry permanently deleted.");
+                        renderRecycleBinTableRows();
+                    }).catch(err => alert("Error deleting record: " + err.message));
+            }
+        }
+
+        window.emptyRecycleBin = function() {
+            const keys = Object.keys(fetchedRecycleBin);
+            if(keys.length === 0) {
+                alert("Recycle Bin is already empty.");
+                return;
+            }
+            if(confirm(`Warning! Permanently delete all ${keys.length} entries in the Recycle Bin? This action cannot be reversed.`)) {
+                remove(ref(db, "sanchar_recycle_bin_v1"))
+                    .then(() => {
+                        alert("Recycle Bin emptied successfully.");
+                        renderRecycleBinTableRows();
+                    }).catch(err => alert("Error emptying Recycle Bin: " + err.message));
+            }
+        }
+
+        // ===================== END RECYCLE BIN WORKFLOW =====================
 
         // ===================== DRAFT CHALLAN WORKFLOW =====================
 
