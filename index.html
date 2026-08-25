@@ -1362,6 +1362,10 @@
                                 <input class="form-check-input" type="checkbox" value="master" id="permMaster">
                                 <label class="form-check-label small" for="permMaster">Master Tool</label>
                             </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="recycle" id="permRecycle">
+                                <label class="form-check-label small" for="permRecycle">Recycle Bin</label>
+                            </div>
                         </div>
                     </div>
                     <button class="btn btn-primary mt-3" id="createUserBtn" onclick="saveUser()"><i class="fa-solid fa-user-plus me-1"></i>Create User</button>
@@ -1807,7 +1811,7 @@
         let globalStockBreakdownItems = [];
         let sancharUsersCache = {};
 
-        const ALL_TAB_KEYS = ['dashboard', 'issue', 'outward', 'draft', 'challan', 'serialTracker', 'master'];
+        const ALL_TAB_KEYS = ['dashboard', 'issue', 'outward', 'draft', 'challan', 'serialTracker', 'master', 'recycle'];
         const TAB_LABELS = {
             dashboard: "Dashboard Hub", issue: "Receipt Register", outward: "Delivery Register",
             draft: "Draft Challan", challan: "Challan Operations", serialTracker: "Serial History Tracker", master: "Master Tool"
@@ -1939,7 +1943,8 @@
             if (labelEl) labelEl.innerText = localStorage.getItem('sanchar_current_user') || 'Sanchar Admin';
             const sideTabMap = {
                 dashboard: 'sideTabDash', issue: 'sideTabIssue', outward: 'sideTabOutward',
-                draft: 'sideTabDraft', challan: 'sideTabChallan', serialTracker: 'sideTabSerialTracker', master: 'sideTabMaster'
+                draft: 'sideTabDraft', challan: 'sideTabChallan', serialTracker: 'sideTabSerialTracker', master: 'sideTabMaster',
+                recycle: 'sideTabRecycle'
             };
             if (isAdmin) {
                 Object.values(sideTabMap).forEach(id => { document.getElementById(id).style.display = ''; });
@@ -3263,13 +3268,14 @@
                 const item = fetchedRecycleBin[key];
                 const typeBadge = (item.type === 'delivery' || (item.challanNo || '').includes('STL/DC/')) ?
                     `<span class="badge bg-info text-dark">Outward</span>` : `<span class="badge bg-primary">Receipt</span>`;
+                const draftBadge = item.status === 'draft' ? ` <span class="badge bg-warning text-dark">Draft</span>` : '';
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="fw-bold">${item.challanNo || 'NA'}</td>
                     <td>${item.receivingDate || 'NA'}</td>
                     <td>${item.customerName || 'NA'}</td>
-                    <td>${typeBadge}</td>
+                    <td>${typeBadge}${draftBadge}</td>
                     <td class="text-muted small">${formatRecycleBinDeletedOn(item.deletedAt)}</td>
                     <td class="text-center">
                         <div class="btn-group btn-group-sm">
