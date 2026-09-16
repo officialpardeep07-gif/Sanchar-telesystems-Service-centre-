@@ -1839,6 +1839,33 @@
         // Global customer data storage for auto-fill mapping
         window.customerAutocompleteMap = {};
 
+        // ---- Product/Address suggestion cache (Firebase-synced) ----
+        // Pehle yeh sirf localStorage me save hota tha, isliye ek browser/device
+        // me typed item dusre browser/device pe show nahi hota tha. Ab yeh
+        // Firebase Realtime Database ("sanchar_cached_fields") me save hota hai
+        // taaki koi bhi item ek baar kahin se bhi entry ho, woh sabhi
+        // browsers/devices ki suggestion list me turant aa jaye.
+        window.cachedAddressesMap = {};
+        window.cachedModelsMap = {};
+        window.cachedDescsMap = {};
+
+        function sanitizeCacheKey(str) {
+            return str.trim().toLowerCase().replace(/[.#$\[\]\/]/g, '_').slice(0, 300);
+        }
+
+        onValue(ref(db, "sanchar_cached_fields/addresses"), (snapshot) => {
+            window.cachedAddressesMap = snapshot.val() || {};
+            updateDataListInterface();
+        });
+        onValue(ref(db, "sanchar_cached_fields/models"), (snapshot) => {
+            window.cachedModelsMap = snapshot.val() || {};
+            updateDataListInterface();
+        });
+        onValue(ref(db, "sanchar_cached_fields/descs"), (snapshot) => {
+            window.cachedDescsMap = snapshot.val() || {};
+            updateDataListInterface();
+        });
+
         window.toggleSystemTheme = function() {
             const htmlNode = document.documentElement;
             const btnIcon = document.querySelector('#themeToggleButton i');
@@ -2357,9 +2384,9 @@
         });
 
         function updateDataListInterface() {
-            const savedAddresses = JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
-            const savedModels = JSON.parse(localStorage.getItem('sanchar_cached_models') || '[]');
-            const savedDescs = JSON.parse(localStorage.getItem('sanchar_cached_descs') || '[]');
+            const savedAddresses = Object.values(window.cachedAddressesMap || {});
+            const savedModels = Object.values(window.cachedModelsMap || {});
+            const savedDescs = Object.values(window.cachedDescsMap || {});
 
             document.getElementById('cachedAddresses').innerHTML = savedAddresses.map(a => `<option value="${a}">`).join('');
             document.getElementById('cachedItemModels').innerHTML = savedModels.map(m => `<option value="${m}">`).join('');
@@ -2371,25 +2398,37 @@
         }
 
         function cacheFieldInputs(address, itemsArray) {
-            if(address) {
-                let savedAddresses = JSON.parse(localStorage.getItem('sanchar_cached_addresses') || '[]');
-                if(!savedAddresses.includes(address.trim())) {
-                    savedAddresses.push(address.trim());
-                    localStorage.setItem('sanchar_cached_addresses', JSON.stringify(savedAddresses));
+            const updates = {};
+
+            if(address && address.trim()) {
+                const key = sanitizeCacheKey(address);
+                if(key && !window.cachedAddressesMap[key]) {
+                    updates["sanchar_cached_fields/addresses/" + key] = address.trim();
                 }
             }
             if(itemsArray && itemsArray.length > 0) {
-                let savedModels = JSON.parse(localStorage.getItem('sanchar_cached_models') || '[]');
-                let savedDescs = JSON.parse(localStorage.getItem('sanchar_cached_descs') || '[]');
-
                 itemsArray.forEach(item => {
-                    if(item.itemModel && !savedModels.includes(item.itemModel.trim())) savedModels.push(item.itemModel.trim());
-                    if(item.description && !savedDescs.includes(item.description.trim())) savedDescs.push(item.description.trim());
+                    if(item.itemModel && item.itemModel.trim()) {
+                        const mKey = sanitizeCacheKey(item.itemModel);
+                        if(mKey && !window.cachedModelsMap[mKey]) {
+                            updates["sanchar_cached_fields/models/" + mKey] = item.itemModel.trim();
+                        }
+                    }
+                    if(item.description && item.description.trim()) {
+                        const dKey = sanitizeCacheKey(item.description);
+                        if(dKey && !window.cachedDescsMap[dKey]) {
+                            updates["sanchar_cached_fields/descs/" + dKey] = item.description.trim();
+                        }
+                    }
                 });
-                localStorage.setItem('sanchar_cached_models', JSON.stringify(savedModels));
-                localStorage.setItem('sanchar_cached_descs', JSON.stringify(savedDescs));
             }
-            updateDataListInterface();
+
+            if(Object.keys(updates).length > 0) {
+                // Fire-and-forget: the onValue listeners above will refresh the
+                // suggestion lists (on this browser and every other open one)
+                // once Firebase confirms the write.
+                update(ref(db), updates).catch(err => console.error("Cache sync failed:", err));
+            }
         }
 
         // Click karne par hi IMEI input field khulta hai; usse pehle sirf button dikhta hai.
@@ -2519,7 +2558,14 @@
             const t = e.target;
             if (!t || !t.tagName) return;
 
-            if (t.classList && (t.classList.contains('row-serial') || t.classList.contains('de-row-serial'))) {
+            // Fix: row-serial class is shared by BOTH the Receipt Register (Inward,
+            // where items are entered for the first time) and the Delivery/Outward
+            // Register. Auto-fill must only run for the Outward/Delivery side and
+            // for Draft edits of it - otherwise typing a serial that already exists
+            // in an old receipt silently overwrites the new item you're entering
+            // in the Receipt Register with the OLD item's description/accessories/qty.
+            const isOutwardRowSerial = t.classList && t.classList.contains('row-serial') && t.closest('#outwardItemTableBody');
+            if (isOutwardRowSerial || (t.classList && t.classList.contains('de-row-serial'))) {
                 window.autoFillRowFromSerial(t);
             }
         });
