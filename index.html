@@ -759,6 +759,11 @@
                             <i class="fa-solid fa-clock-rotate-left"></i><span>Serial History Tracker</span>
                         </a>
                     </li>
+                    <li id="sideTabSummary">
+                        <a href="javascript:void(0)" onclick="switchTab('summary')">
+                            <i class="fa-solid fa-people-arrows"></i><span>Receive-Dispatch Summary</span>
+                        </a>
+                    </li>
                     <li id="sideTabMaster">
                         <a href="javascript:void(0)" onclick="openMasterTool()">
                             <i class="fa-solid fa-user-gear"></i><span>Master Tool</span>
@@ -1274,6 +1279,34 @@
                     </div>
                 </div>
 
+                <div id="summaryModule" class="panel-card" style="display: none;">
+                    <div class="panel-title text-primary"><i class="fa-solid fa-people-arrows"></i> Party-Wise Receive &amp; Dispatch Summary</div>
+                    <p class="text-muted small">For every party, see the Receipt Challan (goods in) matched against the Delivery Challan (goods out) — with a clear Pending / Dispatch OK status. Click any challan number to see exactly which items came in or went out.</p>
+
+                    <div class="input-group shadow-sm border-0 mb-3">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" class="form-control border-start-0" id="summarySearchInput" placeholder="Search anything - party name, challan no, date, pending, dispatch ok..." oninput="filterChallanSummaryTable()" autocomplete="off">
+                    </div>
+
+                    <div class="table-responsive-wrapper">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Party Name</th>
+                                    <th>Receive Challan No.</th>
+                                    <th>Received On</th>
+                                    <th>Dispatch Challan No.</th>
+                                    <th>Dispatched On</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summaryTableBody">
+                                <tr><td colspan="6" class="text-center py-3 text-muted">No records available.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div id="masterToolModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-danger"><i class="fa-solid fa-screwdriver-wrench"></i> Master Architecture Configuration Hub</div>
                     <p class="text-muted small">From here you can edit or permanently delete any ledger entry from the system history database.</p>
@@ -1357,6 +1390,10 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="serialTracker" id="permSerialTracker">
                                 <label class="form-check-label small" for="permSerialTracker">Serial History Tracker</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="summary" id="permSummary">
+                                <label class="form-check-label small" for="permSummary">Receive-Dispatch Summary</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="master" id="permMaster">
@@ -1762,6 +1799,19 @@
         </div>
     </div>
 
+    <div class="modal fade" id="summaryPendingReasonModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fa-solid fa-circle-info text-warning me-2"></i>Why is this Pending?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3" id="summaryPendingReasonBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script type="module">
@@ -1811,10 +1861,11 @@
         let globalStockBreakdownItems = [];
         let sancharUsersCache = {};
 
-        const ALL_TAB_KEYS = ['dashboard', 'issue', 'outward', 'draft', 'challan', 'serialTracker', 'master', 'recycle'];
+        const ALL_TAB_KEYS = ['dashboard', 'issue', 'outward', 'draft', 'challan', 'serialTracker', 'summary', 'master', 'recycle'];
         const TAB_LABELS = {
             dashboard: "Dashboard Hub", issue: "Receipt Register", outward: "Delivery Register",
-            draft: "Draft Challan", challan: "Challan Operations", serialTracker: "Serial History Tracker", master: "Master Tool"
+            draft: "Draft Challan", challan: "Challan Operations", serialTracker: "Serial History Tracker",
+            summary: "Receive-Dispatch Summary", master: "Master Tool"
         };
 
         const ADMIN_USER_KEY = "sanchar_admin_root";
@@ -1971,7 +2022,7 @@
             const sideTabMap = {
                 dashboard: 'sideTabDash', issue: 'sideTabIssue', outward: 'sideTabOutward',
                 draft: 'sideTabDraft', challan: 'sideTabChallan', serialTracker: 'sideTabSerialTracker', master: 'sideTabMaster',
-                recycle: 'sideTabRecycle'
+                summary: 'sideTabSummary', recycle: 'sideTabRecycle'
             };
             if (isAdmin) {
                 Object.values(sideTabMap).forEach(id => { document.getElementById(id).style.display = ''; });
@@ -2047,6 +2098,7 @@
             document.getElementById('sideTabDraft').classList.remove('active');
             document.getElementById('sideTabChallan').classList.remove('active');
             document.getElementById('sideTabSerialTracker').classList.remove('active');
+            document.getElementById('sideTabSummary').classList.remove('active');
             document.getElementById('sideTabMaster').classList.remove('active');
             document.getElementById('sideTabRecycle').classList.remove('active');
             document.getElementById('sideTabUsers').classList.remove('active');
@@ -2057,6 +2109,7 @@
             document.getElementById('draftChallanModule').style.display = 'none';
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('serialTrackerModule').style.display = 'none';
+            document.getElementById('summaryModule').style.display = 'none';
             document.getElementById('masterToolModule').style.display = 'none';
             document.getElementById('recycleBinModule').style.display = 'none';
             document.getElementById('userManagementModule').style.display = 'none';
@@ -2096,6 +2149,11 @@
                 document.getElementById('sideTabSerialTracker').classList.add('active');
                 document.getElementById('serialTrackerModule').style.display = 'block';
                 contextTitle.innerText = "Advance Serial Lifecyle Tracker";
+            } else if(mode === 'summary') {
+                document.getElementById('sideTabSummary').classList.add('active');
+                document.getElementById('summaryModule').style.display = 'block';
+                contextTitle.innerText = "Receive-Dispatch Summary";
+                renderChallanSummaryTable();
             } else if(mode === 'master') {
                 document.getElementById('sideTabMaster').classList.add('active');
                 document.getElementById('masterToolModule').style.display = 'block';
@@ -2988,6 +3046,150 @@
             renderChallanDocument(key);
         }
 
+        // ===================== RECEIVE-DISPATCH SUMMARY =====================
+        // Ek party ke Receipt Challans (goods in) ko us party ke Delivery
+        // Challans (goods out) ke saath FIFO order me pair karta hai, taaki
+        // dikhe ki kaunsa maal wapas dispatch ho gaya (Dispatch OK) aur kaunsa
+        // abhi bhi pending hai. Delivery challan ka apna "dispatchDate" field
+        // hi decide karta hai ki wo challan pending hai ya dispatch ho gaya.
+        function parseChallanDateToTimestamp(str) {
+            if (!str) return 0;
+            const parts = str.split(/[\/\-]/);
+            if (parts.length !== 3) return 0;
+            const d = parseInt(parts[0], 10) || 1;
+            const m = (parseInt(parts[1], 10) || 1) - 1;
+            const y = parseInt(parts[2], 10) || 1970;
+            return new Date(y, m, d).getTime();
+        }
+
+        window.challanSummaryRowsGlobal = [];
+
+        window.renderChallanSummaryTable = function() {
+            const byParty = {};
+            Object.keys(fetchedChallans).forEach(key => {
+                const item = fetchedChallans[key];
+                if (!item || item.status === 'draft') return;
+                const partyKey = (item.customerName && item.customerName.trim() !== '') ? item.customerName.trim() : 'Unknown Party';
+                const type = (item.type === 'delivery' || (item.challanNo || '').includes('STL/DC/')) ? 'delivery' : 'receipt';
+                if (!byParty[partyKey]) byParty[partyKey] = { receipts: [], deliveries: [] };
+                byParty[partyKey][type === 'delivery' ? 'deliveries' : 'receipts'].push({ key: key, data: item });
+            });
+
+            const rows = [];
+            let uidCounter = 0;
+            Object.keys(byParty).sort((a, b) => a.localeCompare(b)).forEach(party => {
+                const g = byParty[party];
+                g.receipts.sort((a, b) => parseChallanDateToTimestamp(a.data.receivingDate) - parseChallanDateToTimestamp(b.data.receivingDate));
+                g.deliveries.sort((a, b) => parseChallanDateToTimestamp(a.data.receivingDate) - parseChallanDateToTimestamp(b.data.receivingDate));
+
+                const maxLen = Math.max(g.receipts.length, g.deliveries.length);
+                for (let i = 0; i < maxLen; i++) {
+                    const r = g.receipts[i] || null;
+                    const d = g.deliveries[i] || null;
+                    // Ek Delivery Challan ka bann jaana hi matlab hai maal dispatch ho gaya -
+                    // alag se "Dispatch Date" field bharna zaroori nahi. Agar wo field bhara
+                    // hua hai to wahi date dikhao, warna Delivery Challan ki apni date
+                    // (receivingDate) hi dispatch date maan lo - date apne aap aa jaayegi.
+                    const isDispatched = !!d;
+                    const effectiveDispatchDate = d ? ((d.data.dispatchDate && d.data.dispatchDate.trim() !== '') ? d.data.dispatchDate : (d.data.receivingDate || '')) : '';
+                    rows.push({
+                        uid: uidCounter++,
+                        party: party,
+                        receiveKey: r ? r.key : '',
+                        receiveChallanNo: r ? (r.data.challanNo || '') : '',
+                        receiveDate: r ? (r.data.receivingDate || '') : '',
+                        dispatchKey: d ? d.key : '',
+                        dispatchChallanNo: d ? (d.data.challanNo || '') : '',
+                        dispatchDate: isDispatched ? effectiveDispatchDate : '',
+                        status: isDispatched ? 'ok' : 'pending'
+                    });
+                }
+            });
+
+            window.challanSummaryRowsGlobal = rows;
+            const searchBox = document.getElementById('summarySearchInput');
+            if (searchBox && searchBox.value.trim() !== '') {
+                filterChallanSummaryTable();
+            } else {
+                renderSummaryTableRowsHtml(rows);
+            }
+        };
+
+        function renderSummaryTableRowsHtml(rows) {
+            const tbody = document.getElementById('summaryTableBody');
+            if (!tbody) return;
+            if (!rows.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No records available.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = rows.map(r => {
+                const badge = r.status === 'ok'
+                    ? '<span class="badge bg-success">Dispatch OK</span>'
+                    : `<span class="badge bg-warning text-dark" style="cursor:pointer;" title="Click to see why this is pending" onclick="showPendingReason(${r.uid})">Pending <i class="fa-solid fa-circle-info ms-1"></i></span>`;
+                const dash = '<span class="text-muted">-</span>';
+                const receiveCell = r.receiveChallanNo
+                    ? `<a href="javascript:void(0)" class="fw-bold text-primary" title="Click to see items in this challan" onclick="renderChallanDocument('${r.receiveKey}')">${r.receiveChallanNo}</a>`
+                    : dash;
+                const dispatchCell = r.dispatchChallanNo
+                    ? `<a href="javascript:void(0)" class="fw-bold text-primary" title="Click to see items in this challan" onclick="renderChallanDocument('${r.dispatchKey}')">${r.dispatchChallanNo}</a>`
+                    : dash;
+                return `
+                    <tr>
+                        <td class="fw-semibold">${r.party}</td>
+                        <td>${receiveCell}</td>
+                        <td>${r.receiveDate || dash}</td>
+                        <td>${dispatchCell}</td>
+                        <td>${r.dispatchDate || dash}</td>
+                        <td class="text-center">${badge}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        let summarySearchDebounceTimer = null;
+        window.filterChallanSummaryTable = function() {
+            clearTimeout(summarySearchDebounceTimer);
+            summarySearchDebounceTimer = setTimeout(() => {
+                const input = document.getElementById('summarySearchInput');
+                const tbody = document.getElementById('summaryTableBody');
+                if (!input || !tbody) return;
+                const query = input.value.trim().toLowerCase();
+                const rows = window.challanSummaryRowsGlobal || [];
+
+                if (!query) {
+                    renderSummaryTableRowsHtml(rows);
+                    return;
+                }
+
+                const filtered = rows.filter(r => {
+                    const statusText = r.status === 'ok' ? 'dispatch ok' : 'pending';
+                    const haystack = [r.party, r.receiveChallanNo, r.receiveDate, r.dispatchChallanNo, r.dispatchDate, statusText]
+                        .join(' ').toLowerCase();
+                    return haystack.includes(query);
+                });
+
+                if (!filtered.length) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-muted">No matching records found for "${input.value}".</td></tr>`;
+                    return;
+                }
+                renderSummaryTableRowsHtml(filtered);
+            }, 180);
+        };
+        // ===================== END RECEIVE-DISPATCH SUMMARY =====================
+
+        window.showPendingReason = function(uid) {
+            const row = (window.challanSummaryRowsGlobal || []).find(r => r.uid === uid);
+            if (!row) return;
+
+            const reasonHtml = `No <b>Delivery Challan</b> has been created yet ${row.receiveChallanNo ? `for Receipt Challan <b>${row.receiveChallanNo}</b>` : 'for this record'} (Party: <b>${row.party}</b>).
+                <br><br>The goods are still lying in-house. Once the item is ready to go out, create a Delivery Challan for it from the <b>Delivery Register</b> — it will then automatically show as <b>Dispatch OK</b> here.`;
+
+            document.getElementById('summaryPendingReasonBody').innerHTML = `<p class="mb-0">${reasonHtml}</p>`;
+            const modalEl = document.getElementById('summaryPendingReasonModal');
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        };
+
+
         window.updateStockSummaryTable = function(filterMode = 'all') {
             const tbody = document.getElementById('stockSummaryTableBody');
             const filterLabel = document.getElementById('stockFilterLabel');
@@ -3644,6 +3846,9 @@
                 if (document.getElementById('partyWiseSummaryModal').classList.contains('show')) {
                     renderPartyWiseModalMain();
                 }
+                if (document.getElementById('summaryModule').style.display === 'block') {
+                    renderChallanSummaryTable();
+                }
                 updateDataListInterface();
                 return;
             }
@@ -3742,6 +3947,9 @@
             }
             if(document.getElementById('draftChallanModule').style.display === 'block') {
                 renderDraftTableRows();
+            }
+            if(document.getElementById('summaryModule').style.display === 'block') {
+                renderChallanSummaryTable();
             }
             if(!document.getElementById('searchResultLogContainer').classList.contains('d-none')) {
                 triggerDashboardSearch();
@@ -3936,6 +4144,7 @@
             document.getElementById('challanListModule').style.display = 'none';
             document.getElementById('masterToolModule').style.display = 'none';
             document.getElementById('serialTrackerModule').style.display = 'none';
+            document.getElementById('summaryModule').style.display = 'none';
             document.getElementById('challanViewSection').style.display = 'block';
             document.getElementById('pageTitleContext').innerText = `Document Inspection: ${targetData.challanNo}`;
         }
@@ -3952,6 +4161,9 @@
             } else if (document.getElementById('sideTabSerialTracker').classList.contains('active')) {
                 document.getElementById('serialTrackerModule').style.display = 'block';
                 document.getElementById('pageTitleContext').innerText = "Advance Serial Lifecyle Tracker";
+            } else if (document.getElementById('sideTabSummary').classList.contains('active')) {
+                document.getElementById('summaryModule').style.display = 'block';
+                document.getElementById('pageTitleContext').innerText = "Receive-Dispatch Summary";
             } else if (document.getElementById('sideTabDraft').classList.contains('active')) {
                 document.getElementById('draftChallanModule').style.display = 'block';
                 document.getElementById('pageTitleContext').innerText = "Draft Challan Workspace";
