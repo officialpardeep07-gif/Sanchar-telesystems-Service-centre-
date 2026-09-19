@@ -1281,7 +1281,6 @@
 
                 <div id="summaryModule" class="panel-card" style="display: none;">
                     <div class="panel-title text-primary"><i class="fa-solid fa-people-arrows"></i> Party-Wise Receive &amp; Dispatch Summary</div>
-                    <p class="text-muted small">For every party, see the Receipt Challan (goods in) matched against the Delivery Challan (goods out) — with a clear Pending / Dispatch OK status. Click any challan number to see exactly which items came in or went out.</p>
 
                     <div class="input-group shadow-sm border-0 mb-3">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -2622,10 +2621,14 @@
             // for Draft edits of it - otherwise typing a serial that already exists
             // in an old receipt silently overwrites the new item you're entering
             // in the Receipt Register with the OLD item's description/accessories/qty.
-            const isOutwardRowSerial = t.classList && t.classList.contains('row-serial') && t.closest('#outwardItemTableBody');
-            if (isOutwardRowSerial || (t.classList && t.classList.contains('de-row-serial'))) {
-                window.autoFillRowFromSerial(t);
-            }
+            // AUTO-FILL DISABLED (by request): Outward Item Arrays / Add Alternate Row
+            // (aur Draft edit rows) me ab Serial No. dalne par Description, Accessories
+            // aur Qty automatically nahi bharenge - sab details manually enter honge.
+            // Dobara ON karna ho to neeche wali lines ka comment (//) hata dein.
+            // const isOutwardRowSerial = t.classList && t.classList.contains('row-serial') && t.closest('#outwardItemTableBody');
+            // if (isOutwardRowSerial || (t.classList && t.classList.contains('de-row-serial'))) {
+            //     window.autoFillRowFromSerial(t);
+            // }
         });
 
         // Returns today's date as YYYY-MM-DD using LOCAL time (avoids the
